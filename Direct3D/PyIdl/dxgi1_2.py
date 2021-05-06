@@ -4,10 +4,10 @@ import ctypes.wintypes as wintypes
 
 import comtypes
 
-from PyIdl.dxgi import *
-from PyIdl.dxgicommon import *
-from PyIdl.dxgiformat import *
-from PyIdl.dxgitype import *
+from Direct3D.PyIdl.dxgi import *
+from Direct3D.PyIdl.dxgicommon import *
+from Direct3D.PyIdl.dxgiformat import *
+from Direct3D.PyIdl.dxgitype import *
 
 
 class IDXGIDisplayControl(comtypes.IUnknown):

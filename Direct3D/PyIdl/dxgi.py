@@ -4,9 +4,9 @@ import ctypes.wintypes as wintypes
 import comtypes
 
 
-import PyIdl.dxgicommon
-import PyIdl.dxgiformat
-import PyIdl.dxgitype
+from Direct3D.PyIdl.dxgicommon import *
+from Direct3D.PyIdl.dxgiformat import *
+from Direct3D.PyIdl.dxgitype   import *
 
 ## --------------------------------------------------------------------------------------------------------
 ##  DXGI API-only types
@@ -74,7 +74,7 @@ class DXGI_OUTPUT_DESC(ctypes.Structure):
     _fields_ = [('DeviceName', wintypes.WCHAR * 32),
                 ('DesktopCoordinates', wintypes.RECT),
                 ('AttachedToDesktop', wintypes.BOOL),
-                ('Rotation', PyIdl.dxgitype.DXGI_MODE_ROTATION),
+                ('Rotation', DXGI_MODE_ROTATION),
                 ('Monitor', wintypes.HMONITOR)
     ]
 
@@ -121,8 +121,8 @@ DXGI_SWAP_CHAIN_FLAG_RESTRICTED_TO_ALL_HOLOGRAPHIC_DISPLAYS = DXGI_SWAP_CHAIN_FL
 
 
 class DXGI_SWAP_CHAIN_DESC(ctypes.Structure):
-    _fields_ = [('BufferDesc', PyIdl.dxgitype.DXGI_MODE_DESC),
-                ('SampleDesc', PyIdl.dxgicommon.DXGI_SAMPLE_DESC),
+    _fields_ = [('BufferDesc', DXGI_MODE_DESC),
+                ('SampleDesc', DXGI_SAMPLE_DESC),
                 ('BufferUsage', DXGI_USAGE),
                 ('BufferCount', ctypes.c_uint),
                 ('OutputWindow', wintypes.HWND),
@@ -223,10 +223,10 @@ class IDXGIOutput(IDXGIObject):
     _methods_ = [
         comtypes.STDMETHOD(comtypes.HRESULT, "GetDesc"),
         comtypes.STDMETHOD(comtypes.HRESULT, "GetDisplayModeList", [
-            PyIdl.dxgiformat.DXGI_FORMAT,
+            DXGI_FORMAT,
             ctypes.c_uint,
             ctypes.POINTER(ctypes.c_uint),
-            ctypes.POINTER(PyIdl.dxgitype.DXGI_MODE_DESC),
+            ctypes.POINTER(DXGI_MODE_DESC),
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "FindClosesMatchingMode"),
         comtypes.STDMETHOD(comtypes.HRESULT, "WaitForVBlank"),
@@ -277,11 +277,11 @@ class IDXGISwapChain(IDXGIDeviceSubObject):
             ctypes.c_uint,
             ctypes.c_uint,
             ctypes.c_uint,
-            PyIdl.dxgiformat.DXGI_FORMAT,
+            DXGI_FORMAT,
             ctypes.c_uint,
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "ResizeTarget", [
-            ctypes.POINTER(PyIdl.dxgitype.DXGI_MODE_DESC),
+            ctypes.POINTER(DXGI_MODE_DESC),
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "GetContainingOutput", [
             ctypes.POINTER(ctypes.POINTER(IDXGIOutput)),
@@ -309,7 +309,9 @@ class IDXGIFactory(IDXGIObject):
 class IDXGIDevice(IDXGIObject):
     _iid_ = comtypes.GUID("{54ec77fa-1377-44e6-8c32-88fd5f44c84c}")
     _methods_ = [
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetAdapter"),
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetAdapter", [
+            ctypes.POINTER(ctypes.POINTER(IDXGIAdapter))
+            ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "CreateSurface"),
         comtypes.STDMETHOD(comtypes.HRESULT, "QueryResourceResidency"),
         comtypes.STDMETHOD(comtypes.HRESULT, "SetGPUThreadPriority"),

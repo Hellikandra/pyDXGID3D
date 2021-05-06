@@ -1,8 +1,8 @@
 import ctypes
 import ctypes.wintypes as wintypes
 
-import PyIdl.dxgicommon
-import PyIdl.dxgiformat
+from Direct3D.PyIdl.dxgicommon import *
+from Direct3D.PyIdl.dxgiformat import *
 
 class DXGI_RGB(ctypes.Structure):
     _fields_ = [('Red', ctypes.c_float),
@@ -62,8 +62,8 @@ DXGI_MODE_ROTATION_ROTATE270 = DXGI_MODE_ROTATION(4)
 class DXGI_MODE_DESC(ctypes.Structure):
     _fields_ = [('Width', ctypes.c_uint),
                 ('Height', ctypes.c_uint),
-                ('RefreshRate', PyIdl.dxgicommon.DXGI_RATIONAL),
-                ('Format', PyIdl.dxgiformat.DXGI_FORMAT),
+                ('RefreshRate', DXGI_RATIONAL),
+                ('Format', DXGI_FORMAT),
                 ('ScanlineOrdering', DXGI_MODE_SCANLINE_ORDER),
                 ('Scaling', DXGI_MODE_SCALING),
     ]

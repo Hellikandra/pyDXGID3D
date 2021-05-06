@@ -14,9 +14,9 @@ import ctypes.wintypes as wintypes
 
 import comtypes
 
-from PyIdl.dxgicommon import *
-from PyIdl.dxgiformat import *
-from PyIdl.d3dcommon import *
+from Direct3D.PyIdl.dxgicommon import *
+from Direct3D.PyIdl.dxgiformat import *
+from Direct3D.PyIdl.d3dcommon import *
 
 
 D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT = 8
