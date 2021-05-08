@@ -225,7 +225,8 @@ def WinMain():
 				# First time through the loop so nothing to clean up
 				FirstTime = False
 			# Re-initialize
-			Ret = OutMgr.InitOutput(WindowHandle, ctypes.byref(OutputCount), ctypes.byref(DeskBounds))
+			SingleOutput = 0
+			Ret = OutMgr.InitOutput(WindowHandle, SingleOutput, ctypes.byref(OutputCount), ctypes.byref(DeskBounds))
 			# Output Manager is the device where the DXGI DirectX is set
 			
 # ============

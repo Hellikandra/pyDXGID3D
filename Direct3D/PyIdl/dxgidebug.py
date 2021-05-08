@@ -263,7 +263,7 @@ class IDXGIDebug(comtypes.IUnknown):
     _iid_ = comtypes.GUID("{119E7452-DE9E-40fe-8806-88F90C12B441}")
     _methods_ = [
         comtypes.STDMETHOD(comtypes.HRESULT, "ReportLiveObjects", [
-            comtypes.GUID,          # apiid
+            ctypes.POINTER(comtypes.GUID),          # apiid
             DXGI_DEBUG_RLO_FLAGS,   # flags
             ]),
     ]
