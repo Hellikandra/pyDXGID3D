@@ -1,8 +1,15 @@
+##
+##   Copyright (C) Microsoft.  All rights reserved.
+##   Windows Kits version 10.0.19041.0
+##
+##   Translate in Python by J. Vnh
+##
 import ctypes
+import ctypes.wintypes as wintypes
 
 class DXGI_RATIONAL(ctypes.Structure):
-	_fields_ = [('Numerator', ctypes.c_uint),
-				('Denominator', ctypes.c_uint),
+	_fields_ = [('Numerator',    wintypes.UINT),
+				('Denominator',  wintypes.UINT),
 	]
 
 
@@ -12,8 +19,8 @@ DXGI_CENTER_MULTISAMPLE_QUALITY_PATTERN   = 0xFFFFFFFE
 
 
 class DXGI_SAMPLE_DESC(ctypes.Structure):
-	_fields_ = [('Count', ctypes.c_uint),
-				('Quality', ctypes.c_uint),
+	_fields_ = [('Count',    wintypes.UINT),
+				('Quality',  wintypes.UINT),
 	]
 
 
@@ -47,3 +54,4 @@ DXGI_COLOR_SPACE_CUSTOM                             = DXGI_COLOR_SPACE_TYPE(0xFF
 
 
 ####### END OF FILE #######
+

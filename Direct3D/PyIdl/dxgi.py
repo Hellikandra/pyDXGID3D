@@ -1,3 +1,9 @@
+##
+##   Copyright (C) Microsoft.  All rights reserved.
+##   Windows Kits version 10.0.19041.0
+##
+##   Translate in Python by J. Vnh
+##
 import ctypes
 import ctypes.wintypes as wintypes
 
@@ -16,7 +22,7 @@ from Direct3D.PyIdl.dxgitype   import *
 # DXGI_USAGE
 # Flags for surface and resource creation options.
 # Each flag is defined as an unsigned integer (typedef UINT DXGI_USAGE)
-DXGI_USAGE = ctypes.c_uint
+
 DXGI_CPU_ACCESS_NONE       = 0
 DXGI_CPU_ACCESS_DYNAMIC    = 1
 DXGI_CPU_ACCESS_READ_WRITE = 2
@@ -30,6 +36,8 @@ DXGI_USAGE_READ_ONLY            = ( 1 << (4 + 4) )
 DXGI_USAGE_DISCARD_ON_PRESENT   = ( 1 << (5 + 4) )
 DXGI_USAGE_UNORDERED_ACCESS     = ( 1 << (6 + 4) )
 
+DXGI_USAGE = ctypes.c_uint
+
 DXGI_USAGE_REMOTE_SWAPCHAIN_BUFER = ( 1 << (15 + 4) )
 DXGI_USAGE_GDI_COMPATIBLE         = ( 1 << (16 + 4) )
 # 1L = long int (C11, $6.4.4.1)
@@ -38,44 +46,44 @@ DXGI_USAGE_GDI_COMPATIBLE         = ( 1 << (16 + 4) )
 
 
 class DXGI_FRAME_STATISTICS(ctypes.Structure):
-    _fields_ = [('PresentCount', ctypes.c_uint),
-                ('PresentRefreshCount', ctypes.c_uint),
-                ('SyncRefreshCount', ctypes.c_uint),
-                ('SyncQPCTime',wintypes.LARGE_INTEGER),
-                ('SyncGPUTime',wintypes.LARGE_INTEGER),
+    _fields_ = [('PresentCount',        wintypes.UINT),
+                ('PresentRefreshCount', wintypes.UINT),
+                ('SyncRefreshCount',    wintypes.UINT),
+                ('SyncQPCTime',         wintypes.LARGE_INTEGER),
+                ('SyncGPUTime',         wintypes.LARGE_INTEGER),
     ]
 
 
 class DXGI_MAPPED_RECT(ctypes.Structure):
-    _fields_ = [('Pitch', ctypes.c_int),
-                ('pBits',ctypes.POINTER(wintypes.BYTE)),
+    _fields_ = [('Pitch', wintypes.INT),
+                ('pBits', ctypes.POINTER(wintypes.BYTE)),
     ]
 
 
 class LUID(ctypes.Structure):
-    _fields_ = [("LowPart", wintypes.DWORD), 
+    _fields_ = [("LowPart",  wintypes.DWORD), 
                 ("HighPart", wintypes.LONG),
     ]
 
 
 class DXGI_ADAPTER_DESC(ctypes.Structure):
-    _fields_ = [('Description', wintypes.WCHAR * 128),
-                ('VendorId', ctypes.c_uint),
-                ('DeviceId', ctypes.c_uint),
-                ('SubSysId', ctypes.c_uint),
-                ('Revision', ctypes.c_uint),
-                ('DedicatedVideoMemory', wintypes.ULARGE_INTEGER),
+    _fields_ = [('Description',           wintypes.WCHAR * 128),
+                ('VendorId',              wintypes.UINT),
+                ('DeviceId',              wintypes.UINT),
+                ('SubSysId',              wintypes.UINT),
+                ('Revision',              wintypes.UINT),
+                ('DedicatedVideoMemory',  wintypes.ULARGE_INTEGER),
                 ('DedicatedSystemMemory', wintypes.ULARGE_INTEGER),
-                ('SharedSystemMemory', wintypes.ULARGE_INTEGER),
-                ('AdapterLuid', LUID),
+                ('SharedSystemMemory',    wintypes.ULARGE_INTEGER),
+                ('AdapterLuid',           LUID),
     ]
 
 class DXGI_OUTPUT_DESC(ctypes.Structure):
-    _fields_ = [('DeviceName', wintypes.WCHAR * 32),
+    _fields_ = [('DeviceName',         wintypes.WCHAR * 32),
                 ('DesktopCoordinates', wintypes.RECT),
-                ('AttachedToDesktop', wintypes.BOOL),
-                ('Rotation', DXGI_MODE_ROTATION),
-                ('Monitor', wintypes.HMONITOR)
+                ('AttachedToDesktop',  wintypes.BOOL),
+                ('Rotation',           DXGI_MODE_ROTATION),
+                ('Monitor',            wintypes.HMONITOR)
     ]
 
 
@@ -96,6 +104,12 @@ DXGI_RESIDENCY_FULLY_RESIDENT            = DXGI_RESIDENCY(1)
 DXGI_RESIDENCY_RESIDENT_IN_SHARED_MEMORY = DXGI_RESIDENCY(2)
 DXGI_RESIDENCY_EVICTED_TO_DISK           = DXGI_RESIDENCY(3)
 
+class DXGI_SURFACE_DESC(ctypes.Structure):
+    _fields_ = [('Width',      wintypes.UINT),
+                ('Height',     wintypes.UINT),
+                ('Format',     DXGI_FORMAT),
+                ('SampleDesc', DXGI_SAMPLE_DESC),
+    ]
 
 DXGI_SWAP_EFFECT = ctypes.c_uint
 DXGI_SWAP_EFFECT_DISCARD         = DXGI_SWAP_EFFECT(0)
@@ -121,14 +135,14 @@ DXGI_SWAP_CHAIN_FLAG_RESTRICTED_TO_ALL_HOLOGRAPHIC_DISPLAYS = DXGI_SWAP_CHAIN_FL
 
 
 class DXGI_SWAP_CHAIN_DESC(ctypes.Structure):
-    _fields_ = [('BufferDesc', DXGI_MODE_DESC),
-                ('SampleDesc', DXGI_SAMPLE_DESC),
-                ('BufferUsage', DXGI_USAGE),
-                ('BufferCount', ctypes.c_uint),
+    _fields_ = [('BufferDesc',   DXGI_MODE_DESC),
+                ('SampleDesc',   DXGI_SAMPLE_DESC),
+                ('BufferUsage',  DXGI_USAGE),
+                ('BufferCount',  wintypes.UINT),
                 ('OutputWindow', wintypes.HWND),
-                ('Windowed', wintypes.BOOL),
-                ('SwapEffect', DXGI_SWAP_EFFECT),
-                ('Flags', ctypes.c_uint), # DXGI_SWAP_CHAIN_FLAG
+                ('Windowed',     wintypes.BOOL),
+                ('SwapEffect',   DXGI_SWAP_EFFECT),
+                ('Flags',        wintypes.UINT), # DXGI_SWAP_CHAIN_FLAG
     ]
 
 
@@ -138,23 +152,23 @@ class DXGI_SWAP_CHAIN_DESC(ctypes.Structure):
 class IDXGIObject(comtypes.IUnknown):
     _iid_ = comtypes.GUID("{aec22fb8-76f3-4639-9be0-28eb43a67a2e}")
     _methods_ = [
-        comtypes.STDMETHOD(comtypes.HRESULT, "SetPrivateData", 
-            [comtypes.GUID,
+        comtypes.STDMETHOD(comtypes.HRESULT, "SetPrivateData", [
+            comtypes.GUID,
             ctypes.c_uint,
-            ctypes.c_void_p
+            ctypes.c_void_p,
             ]),
-        comtypes.STDMETHOD(comtypes.HRESULT, "SetPrivateDataInterface",
-            [comtypes.GUID, # REFGUID        Name
-            ctypes.c_void_p # const IUnknown *pUnknown
+        comtypes.STDMETHOD(comtypes.HRESULT, "SetPrivateDataInterface", [
+            comtypes.GUID,  
+            ctypes.POINTER(comtypes.IUnknown),
             ]),
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetPrivateData",
-            [comtypes.GUID, 
-            ctypes.c_uint, 
-            ctypes.c_void_p
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetPrivateData", [
+            comtypes.GUID, 
+            ctypes.POINTER(ctypes.c_uint), 
+            ctypes.c_void_p,
             ]),
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetParent",
-            [comtypes.GUID,
-            ctypes.POINTER(ctypes.c_void_p)
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetParent", [
+            comtypes.GUID,
+            ctypes.POINTER(ctypes.c_void_p),
             ]),
     ]
 
@@ -162,9 +176,9 @@ class IDXGIObject(comtypes.IUnknown):
 class IDXGIDeviceSubObject(IDXGIObject):
     _iid_ = comtypes.GUID("{3d3e0379-f9de-4d58-bb6c-18d62992f1a6}")
     _methods_ = [
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetDevice",
-            [comtypes.GUID,
-            ctypes.POINTER(ctypes.c_void_p)
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetDevice", [
+            comtypes.GUID,
+            ctypes.POINTER(ctypes.c_void_p),
             ]),
     ]
 
@@ -172,18 +186,31 @@ class IDXGIDeviceSubObject(IDXGIObject):
 class IDXGIResource(IDXGIDeviceSubObject):
     _iid_ = comtypes.GUID("{035f3ab4-482e-4e50-b41f-8a7f8bd8960b}")
     _methods_ = [
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetSharedHandle"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetUsage"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "SetEvictionPriority"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetEvictionPriority"),
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetSharedHandle", [
+            ctypes.POINTER(wintypes.HANDLE),
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetUsage", [
+            ctypes.POINTER(DXGI_USAGE),
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "SetEvictionPriority", [
+            wintypes.UINT,
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetEvictionPriority", [
+            ctypes.POINTER(wintypes.UINT),
+            ]),
     ]
 
 
 class IDXGIKeyedMutex(IDXGIDeviceSubObject):
     _iid_ = comtypes.GUID("{9d8e1289-d7b3-465f-8126-250e349af85d}")
     _methods_ = [
-        comtypes.STDMETHOD(comtypes.HRESULT, "AcquireSync"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "ReleaseSync"),
+        comtypes.STDMETHOD(comtypes.HRESULT, "AcquireSync", [
+            ctypes.c_ulonglong,
+            wintypes.DWORD,
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "ReleaseSync", [
+            ctypes.c_ulonglong,
+            ]),
     ]
 
 DXGI_MAP_READ    = 1 # 1UL
@@ -193,54 +220,97 @@ DXGI_MAP_DISCARD = 4 # 3UL
 class IDXGISurface(IDXGIDeviceSubObject):
     _iid_ = comtypes.GUID("{cafcb56c-6ac3-4889-bf47-9e23bbd260ec}")
     _methods_ = [
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetDesc"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "Map"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "Unmap"),
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetDesc", [
+            ctypes.POINTER(DXGI_SURFACE_DESC),
+            ctypes.POINTER(DXGI_MAPPED_RECT),
+            wintypes.UINT,
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "Map", [
+            ctypes.POINTER(DXGI_MAPPED_RECT),
+            wintypes.UINT,
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "Unmap", []),
     ]
 
 
 class IDXGISurface1(IDXGISurface):
     _iid_ = comtypes.GUID("{4AE63092-6327-4c1b-80AE-BFE12EA32B86}")
     _methods_ = [
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetDC"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "ReleaseDC"),
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetDC", [
+            wintypes.BOOL,
+            ctypes.POINTER(wintypes.HDC),
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "ReleaseDC", [
+            ctypes.POINTER(wintypes.RECT)]),
+    ]
+
+
+
+DXGI_ENUM_MODES_INTERLACED = 1 # 1UL
+DXGI_ENUM_MODES_SCALING    = 2 # 2UL
+
+
+class IDXGIOutput(IDXGIObject):
+    _iid_ = comtypes.GUID("{ae02eedb-c735-4690-8d52-5a8dc20213aa}")
+    _methods_ = [
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetDesc", [
+            ctypes.POINTER(DXGI_OUTPUT_DESC),
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetDisplayModeList", [
+            DXGI_FORMAT,
+            wintypes.UINT,
+            ctypes.POINTER(wintypes.UINT),
+            ctypes.POINTER(DXGI_MODE_DESC),
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "FindClosestMatchingMode", [
+            ctypes.POINTER(DXGI_MODE_DESC),
+            ctypes.POINTER(DXGI_MODE_DESC),
+            ctypes.POINTER(comtypes.IUnknown),
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "WaitForVBlank", []),
+        comtypes.STDMETHOD(comtypes.HRESULT, "TakeOwnership", [
+            ctypes.POINTER(comtypes.IUnknown),
+            wintypes.BOOL,
+            ]),
+        comtypes.STDMETHOD(None, "ReleaseOwnership", []),
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetGammaControlCapabilities", [
+            ctypes.POINTER(DXGI_GAMMA_CONTROL_CAPABILITIES),
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "SetGammaControl", [
+            ctypes.POINTER(DXGI_GAMMA_CONTROL),
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetGammaControl", [
+            ctypes.POINTER(DXGI_GAMMA_CONTROL),
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "SetDisplaySurface", [
+            ctypes.POINTER(IDXGISurface),
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetDisplaySurfaceData", [
+            ctypes.POINTER(IDXGISurface),
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetFrameStatistics", [
+            ctypes.POINTER(DXGI_FRAME_STATISTICS),
+            ]),
     ]
 
 class IDXGIAdapter(IDXGIObject):
     _iid_ = comtypes.GUID("{2411e7e1-12ac-4ccf-bd14-9798e8534dc0}")
     _methods_ = [
-        comtypes.STDMETHOD(comtypes.HRESULT, "EnumOutputs"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetDesc",
-            [ctypes.POINTER(DXGI_ADAPTER_DESC)]),
-        comtypes.STDMETHOD(comtypes.HRESULT, "CheckInterfaceSupport"),
-    ]
-
-DXGI_ENUM_MODES_INTERLACED = 1 # 1UL
-DXGI_ENUM_MODES_SCALING    = 2 # 2UL
-
-class IDXGIOutput(IDXGIObject):
-    _iid_ = comtypes.GUID()
-    _methods_ = [
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetDesc"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetDisplayModeList", [
-            DXGI_FORMAT,
-            ctypes.c_uint,
-            ctypes.POINTER(ctypes.c_uint),
-            ctypes.POINTER(DXGI_MODE_DESC),
+        comtypes.STDMETHOD(comtypes.HRESULT, "EnumOutputs", [
+            wintypes.UINT,
+            ctypes.POINTER(ctypes.POINTER(IDXGIOutput)),
             ]),
-        comtypes.STDMETHOD(comtypes.HRESULT, "FindClosesMatchingMode"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "WaitForVBlank"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "TakeOwnerShip"),
-        comtypes.STDMETHOD(None, "ReleaseOwnership"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetGammaControlCapabilities"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "SetGammaControl"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetGammaControl"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "SetDisplaySurface"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetDisplaySurfaceData"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetFrameStatistics"),
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetDesc", [
+            ctypes.POINTER(DXGI_ADAPTER_DESC),
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "CheckInterfaceSupport", [
+            comtypes.GUID,
+            ctypes.POINTER(wintypes.LARGE_INTEGER),
+            ]),
     ]
 
-DXGI_MAX_SWAP_CHAIN_BUFFERS = 16
+
+DXGI_MAX_SWAP_CHAIN_BUFFERS        = 16
 DXGI_PRESENT_TEST                  = 1   # 0x00000001UL" )
 DXGI_PRESENT_DO_NOT_SEQUENCE       = 2   # 0x00000002UL" )
 DXGI_PRESENT_RESTART               = 4   # 0x00000004UL" )
@@ -256,29 +326,31 @@ class IDXGISwapChain(IDXGIDeviceSubObject):
     _iid_ = comtypes.GUID("{310d36a0-d2e7-4c0a-aa04-6a9d23b8886a}")
     _methods_ = [
         comtypes.STDMETHOD(comtypes.HRESULT, "Present", [
-            ctypes.c_uint,
-            ctypes.c_uint,
+            wintypes.UINT,
+            wintypes.UINT,
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "GetBuffer", [
-            ctypes.c_uint,
-            ctypes.POINTER(comtypes.GUID),
+            wintypes.UINT,
+            comtypes.GUID,
             ctypes.POINTER(ctypes.c_void_p),
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "SetFullscreenState",[
-            ctypes.wintypes.BOOL,
+            wintypes.BOOL,
             ctypes.POINTER(IDXGIOutput),
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "GetFullscreenState", [
             ctypes.POINTER(ctypes.wintypes.BOOL),
             ctypes.POINTER(ctypes.POINTER(IDXGIOutput)),
             ]),
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetDesc"),
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetDesc", [
+            ctypes.POINTER(DXGI_SWAP_CHAIN_DESC),
+            ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "ResizeBuffers", [
-            ctypes.c_uint,
-            ctypes.c_uint,
-            ctypes.c_uint,
+            wintypes.UINT,
+            wintypes.UINT,
+            wintypes.UINT,
             DXGI_FORMAT,
-            ctypes.c_uint,
+            wintypes.UINT,
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "ResizeTarget", [
             ctypes.POINTER(DXGI_MODE_DESC),
@@ -286,8 +358,12 @@ class IDXGISwapChain(IDXGIDeviceSubObject):
         comtypes.STDMETHOD(comtypes.HRESULT, "GetContainingOutput", [
             ctypes.POINTER(ctypes.POINTER(IDXGIOutput)),
             ]),
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetFrameStatistics"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetLastPresentCount"),
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetFrameStatistics", [
+            ctypes.POINTER(DXGI_FRAME_STATISTICS),
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetLastPresentCount", [
+            ctypes.POINTER(wintypes.UINT),
+            ]),
     ]
 
 DXGI_MWA_NO_WINDOW_CHANGES = ( 1 << 0 )
@@ -298,24 +374,52 @@ DXGI_MWA_VALID             = 0x7
 class IDXGIFactory(IDXGIObject):
     _iid_ = comtypes.GUID("{7b7166ec-21c7-44ae-b21a-c9ae321ae369}")
     _methods_ = [
-        comtypes.STDMETHOD(comtypes.HRESULT, "EnumAdapters",
-            [ctypes.c_uint, ctypes.POINTER(ctypes.POINTER(IDXGIAdapter))]),
-        comtypes.STDMETHOD(comtypes.HRESULT, "MakeWindowAssociation"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetWindowAssociation"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "CreateSwapChain"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "CreateSoftwareAdapter"),
+        comtypes.STDMETHOD(comtypes.HRESULT, "EnumAdapters", [
+            wintypes.UINT,
+            ctypes.POINTER(ctypes.POINTER(IDXGIAdapter)),
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "MakeWindowAssociation", [
+            wintypes.HWND,
+            wintypes.UINT,
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetWindowAssociation", [
+            ctypes.POINTER(wintypes.HWND),
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "CreateSwapChain", [
+            ctypes.POINTER(comtypes.IUnknown),
+            ctypes.POINTER(DXGI_SWAP_CHAIN_DESC),
+            ctypes.POINTER(ctypes.POINTER(IDXGISwapChain)),
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "CreateSoftwareAdapter", [
+            wintypes.HMODULE,
+            ctypes.POINTER(ctypes.POINTER(IDXGIAdapter)),
+            ]),
     ]
 
 class IDXGIDevice(IDXGIObject):
     _iid_ = comtypes.GUID("{54ec77fa-1377-44e6-8c32-88fd5f44c84c}")
     _methods_ = [
         comtypes.STDMETHOD(comtypes.HRESULT, "GetAdapter", [
-            ctypes.POINTER(ctypes.POINTER(IDXGIAdapter))
+            ctypes.POINTER(ctypes.POINTER(IDXGIAdapter)),
             ]),
-        comtypes.STDMETHOD(comtypes.HRESULT, "CreateSurface"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "QueryResourceResidency"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "SetGPUThreadPriority"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetGPUThreadPriority"),
+        comtypes.STDMETHOD(comtypes.HRESULT, "CreateSurface", [
+            ctypes.POINTER(DXGI_SURFACE_DESC),
+            wintypes.UINT,
+            DXGI_USAGE,
+            ctypes.POINTER(DXGI_SHARED_RESOURCE),
+            ctypes.POINTER(ctypes.POINTER(IDXGISurface)),
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "QueryResourceResidency", [
+            ctypes.POINTER(comtypes.IUnknown),
+            ctypes.POINTER(DXGI_RESIDENCY),
+            wintypes.UINT,
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "SetGPUThreadPriority", [
+            wintypes.INT,
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetGPUThreadPriority", [
+            ctypes.POINTER(wintypes.INT),
+            ]),
     ]
 
 
@@ -331,41 +435,51 @@ DXGI_ADAPTER_FLAG_FORCE_DWORD = DXGI_ADAPTER_FLAG(0xFFFFFFFF)
 
 class DXGI_ADAPTER_DESC1(ctypes.Structure):
     _fields_ = [('Description', wintypes.WCHAR * 128),
-                ('VendorId', ctypes.c_uint),
-                ('DeviceId', ctypes.c_uint),
-                ('SubSysId', ctypes.c_uint),
-                ('Revision', ctypes.c_uint),
-                ('DedicatedVideoMemory', wintypes.ULARGE_INTEGER),
+                ('VendorId',    wintypes.UINT),
+                ('DeviceId',    wintypes.UINT),
+                ('SubSysId',    wintypes.UINT),
+                ('Revision',    wintypes.UINT),
+                ('DedicatedVideoMemory',  wintypes.ULARGE_INTEGER),
                 ('DedicatedSystemMemory', wintypes.ULARGE_INTEGER),
-                ('SharedSystemMemory', wintypes.ULARGE_INTEGER),
+                ('SharedSystemMemory',    wintypes.ULARGE_INTEGER),
                 ('AdapterLuid', LUID),
-                ('Flags', ctypes.c_uint),
+                ('Flags',       wintypes.UINT), # DXGI_ADAPTER_FLAG
     ]
 
 class DXGI_DISPLAY_COLOR_SPACE(ctypes.Structure):
-    _fields_ = [('PrimaryCoordinates', (ctypes.c_float * 8) * 2),
-                ('WhitePoints', (ctypes.c_float * 16) * 2),
+    _fields_ = [('PrimaryCoordinates', (wintypes.FLOAT * 8)  * 2),
+                ('WhitePoints',        (wintypes.FLOAT * 16) * 2),
     ]
 
-class IDXGIFactory1(IDXGIFactory):
-    _iid_ = comtypes.GUID("{770aae78-f26f-4dba-a829-253c83d1b387}")
-    _methods_ = [
-        comtypes.STDMETHOD(comtypes.HRESULT, "EnumAdapters1"),
-        comtypes.STDMETHOD(wintypes.BOOL, "IsCurrent"),
-    ]
 
 class IDXGIAdapter1(IDXGIAdapter):
     _iid_ = comtypes.GUID("{29038f61-3839-4626-91fd-086879011a05}")
     _methods_ = [
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetDesc1"),
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetDesc1", [
+            ctypes.POINTER(DXGI_ADAPTER_DESC1),
+            ]),
+    ]
+class IDXGIFactory1(IDXGIFactory):
+    _iid_ = comtypes.GUID("{770aae78-f26f-4dba-a829-253c83d1b387}")
+    _methods_ = [
+        comtypes.STDMETHOD(comtypes.HRESULT, "EnumAdapters1", [
+            wintypes.UINT,
+            ctypes.POINTER(ctypes.POINTER(IDXGIAdapter1)),
+            ]),
+        comtypes.STDMETHOD(wintypes.BOOL, "IsCurrent", []),
     ]
 
 class IDXGIDevice1(IDXGIDevice):
     _iid_ = comtypes.GUID("{77db970f-6276-48ba-ba28-070143b4392c}")
     _methods_ = [
-        comtypes.STDMETHOD(comtypes.HRESULT, "SetMaximumFrameltency"),
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetMaximumFrameltency"),
+        comtypes.STDMETHOD(comtypes.HRESULT, "SetMaximumFrameltency", [
+            wintypes.UINT,
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetMaximumFrameltency", [
+            ctypes.POINTER(wintypes.UINT),
+            ]),
     ]
 
 
 ####### END OF FILE #######
+

@@ -45,7 +45,7 @@ class OutputManager:
 		__m_WindowHandle = Window
 		DriverType = [D3D_DRIVER_TYPE_HARDWARE.value, D3D_DRIVER_TYPE_WARP.value, D3D_DRIVER_TYPE_REFERENCE.value]
 		NumDriverTypes = len(DriverType)
-		FeatureLevels = [D3D_FEATURE_LEVEL_11_1.value, D3D_FEATURE_LEVEL_11_0.value, D3D_FEATURE_LEVEL_10_1.value, D3D_FEATURE_LEVEL_10_0.value, D3D_FEATURE_LEVEL_9_1.value]
+		FeatureLevels = [D3D_FEATURE_LEVEL_11_0.value, D3D_FEATURE_LEVEL_10_1.value, D3D_FEATURE_LEVEL_10_0.value, D3D_FEATURE_LEVEL_9_1.value]
 		NumFeatureLevels = len(FeatureLevels)
 		FeatureLevel = D3D_FEATURE_LEVEL()
 
@@ -61,7 +61,9 @@ class OutputManager:
 
 		# Get DXGI Factory
 		DxgiDevice = ctypes.POINTER(IDXGIDevice)()
-		DxgiDevice = self.__m_Device.QueryInterface(IDXGIDevice)
+		print(DxgiDevice)
+		print(ctypes.byref(DxgiDevice))
+		DxgiDevice = self.__m_Device.QueryInterface(IDXGIDevice, IDXGIDevice._iid_)
 		if hr is None:
 			return print("Failed to QI for DXGI Device") # ProcesFailure with DUPL_...
 
@@ -101,16 +103,18 @@ class OutputManager:
 		SwapChainDesc.BufferUsage        = DXGI_USAGE_RENDER_TARGET_OUTPUT
 		SwapChainDesc.SampleDesc.Count   = 1
 		SwapChainDesc.SampleDesc.Quality = 0
+		SwapChainDesc.Flags				 = DXGI_SWAP_CHAIN_FLAG_DISPLAY_ONLY
 
 		print("1 IN OFFICIAL : ", ctypes.POINTER(comtypes.IUnknown))
 		print("1 IN REAL     : ", self.__m_Device)
+		print("1 IN REAL     : ", ctypes.byref(self.__m_Device))
 		print(" ============== ")
 		print("2 IN OFFICIAL : ", wintypes.HWND)
 		print("2 IN REAL     : ", Window)
 		print(" ============== ")
 		print("3 IN OFFICIAL : ", ctypes.POINTER(DXGI_SWAP_CHAIN_DESC1))
 		print("3 IN REAL     : ", SwapChainDesc)
-		SwapChainDesc = ctypes.pointer(SwapChainDesc)
+		#SwapChainDesc = ctypes.pointer(SwapChainDesc)
 		print("3 IN REAL     : ", SwapChainDesc)
 		print(" ============== ")
 		print("4 IN OFFICIAL : ", ctypes.POINTER(DXGI_SWAP_CHAIN_FULLSCREEN_DESC))
@@ -126,10 +130,15 @@ class OutputManager:
 		print("6 IN REAL     : ", ctypes.pointer(self.__m_SwapChain))
 		#self.__m_SwapChain = ctypes.pointer(self.__m_SwapChain)
 		print("6 IN REAL     : ", ctypes.byref(self.__m_SwapChain))
+		print("6 IN REAL     : ", ctypes.byref(self.__m_SwapChain))
+		print("6 IN REAL     : ", ctypes.addressof(self.__m_SwapChain))
 		print(" ============== ")
-		ppAdapter = ctypes.POINTER(IDXGIAdapter)
-		
-		print(self.__m_Device.GetAdapter(ppAdapter))
+		#temp = ctypes.c_void_p(0)
+		#swapChain_Test = ctypes.POINTER(IDXGISwapChain)()
+		#ctypes.memset(swapChain_Test, 0, ctypes.sizeof(swapChain_Test))
+		#hr = self.__m_Factory.CreateSwapChainForComposition(self.__m_Device, SwapChainDesc, None, self.__m_SwapChain)
+		#print(hr)
+		#hr = self.__m_Factory.CreateSwapChainForCoreWindow(self.__m_Device, Window, SwapChainDesc, None, self.__m_SwapChain)
 		hr = self.__m_Factory.CreateSwapChainForHwnd(self.__m_Device, Window, SwapChainDesc, None, None, self.__m_SwapChain)
 		if hr != 0:
 			return print("Failed to create window swapchain") # ProcessFailure DUPL_RETURN...

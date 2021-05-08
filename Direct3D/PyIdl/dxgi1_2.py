@@ -1,4 +1,9 @@
-# Copyright (c) Microsoft Corporation.  All Rights Reserved
+##
+##   Copyright (C) Microsoft.  All rights reserved.
+##   Windows Kits version 10.0.19041.0
+##
+##   Translate in Python by J. Vnh
+##
 import ctypes
 import ctypes.wintypes as wintypes
 
@@ -8,14 +13,14 @@ from Direct3D.PyIdl.dxgi import *
 from Direct3D.PyIdl.dxgicommon import *
 from Direct3D.PyIdl.dxgiformat import *
 from Direct3D.PyIdl.dxgitype import *
-
+from Direct3D.PyIdl.d3d11 import *
 
 class IDXGIDisplayControl(comtypes.IUnknown):
     _iid_ = comtypes.GUID("{ea9dbf1a-c88e-4486-854a-98aa0138f30c}")
     _methods_ = [
         comtypes.STDMETHOD(ctypes.c_bool, "IsStereoEnabled",  [ ]),
         comtypes.STDMETHOD(None,          "SetStereoEnabled", [
-            ctypes.c_bool,
+            wintypes.BOOL,
             ]), 
     ]
 
@@ -30,14 +35,14 @@ class DXGI_OUTDUPL_MOVE_RECT(ctypes.Structure):
     ]
 
 class DXGI_OUTDUPL_DESC(ctypes.Structure):
-    _fields_ = [('ModeDesc', DXGI_MODE_DESC),
-                ('Rotation', DXGI_MODE_ROTATION),
-                ('DesktopImageInSystemMemory', ctypes.c_bool),
+    _fields_ = [('ModeDesc',                   DXGI_MODE_DESC),
+                ('Rotation',                   DXGI_MODE_ROTATION),
+                ('DesktopImageInSystemMemory', wintypes.BOOL),
     ]
 
 class DXGI_OUTDUPL_POINTER_POSITION(ctypes.Structure):
     _fields_ = [('Position', wintypes.POINT),
-                ('Visible', ctypes.c_bool),
+                ('Visible',  wintypes.UINT),
     ]
 
 DXGI_OUTDUPL_POINTER_SHAPE_TYPE = ctypes.c_uint
@@ -46,22 +51,22 @@ DXGI_OUTDUPL_POINTER_SHAPE_TYPE_COLOR          = DXGI_OUTDUPL_POINTER_SHAPE_TYPE
 DXGI_OUTDUPL_POINTER_SHAPE_TYPE_MASKED_COLOR   = DXGI_OUTDUPL_POINTER_SHAPE_TYPE(0x00000004)
 
 class DXGI_OUTDUPL_POINTER_SHAPE_INFO(ctypes.Structure):
-    _fields_ = [('Type', ctypes.c_uint),
-                ('Width', ctypes.c_uint),
-                ('Height', ctypes.c_uint),
-                ('Pitch', ctypes.c_uint),
+    _fields_ = [('Type',    wintypes.UINT),
+                ('Width',   wintypes.UINT),
+                ('Height',  wintypes.UINT),
+                ('Pitch',   wintypes.UINT),
                 ('HotSpot', wintypes.POINT),
     ]
 
 class DXGI_OUTDUPL_FRAME_INFO(ctypes.Structure):
-    _fields_ = [('LastPresentTime', wintypes.LARGE_INTEGER),
-                ('LastMouseUpdateTime',wintypes.LARGE_INTEGER),
-                ('AccumulatedFrames', ctypes.c_uint),
-                ('RectsCoalesced', ctypes.c_bool),
-                ('ProtectedContentMaskedOut', ctypes.c_bool),
-                ('PointerPosition', DXGI_OUTDUPL_POINTER_POSITION),
-                ('TotalMetadataBufferSize', ctypes.c_uint),
-                ('PointerShapeBufferSize', ctypes.c_uint),
+    _fields_ = [('LastPresentTime',           wintypes.LARGE_INTEGER),
+                ('LastMouseUpdateTime',       wintypes.LARGE_INTEGER),
+                ('AccumulatedFrames',         wintypes.UINT),
+                ('RectsCoalesced',            wintypes.BOOL),
+                ('ProtectedContentMaskedOut', wintypes.BOOL),
+                ('PointerPosition',           DXGI_OUTDUPL_POINTER_POSITION),
+                ('TotalMetadataBufferSize',   wintypes.UINT),
+                ('PointerShapeBufferSize',    wintypes.UINT),
     ]
 
 ## --------------------------------------------------------------------------------------------------------
@@ -70,28 +75,28 @@ class DXGI_OUTDUPL_FRAME_INFO(ctypes.Structure):
 class IDXGIOutputDuplication(IDXGIObject):
     _iid_ = comtypes.GUID("{191cfac3-a341-470d-b26e-a864f428319c}")
     _methods_ = [
-        comtypes.STDMETHOD(comtypes.HRESULT,"GetDesc", [
+        comtypes.STDMETHOD(None,"GetDesc", [
             ctypes.POINTER(DXGI_OUTDUPL_DESC),
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT,"AcquireNextFrame", [
-            ctypes.c_uint,
+            wintypes.UINT,
             ctypes.POINTER(DXGI_OUTDUPL_FRAME_INFO),
             ctypes.POINTER(ctypes.POINTER(IDXGIResource)),
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT,"GetFrameDirtyRects", [
-            ctypes.c_uint,
-            ctypes.c_void_p,
-            ctypes.POINTER(ctypes.c_uint),
+            wintypes.UINT,
+            ctypes.POINTER(wintypes.RECT),
+            ctypes.POINTER(wintypes.UINT),
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT,"GetFrameMoveRects", [
-            ctypes.c_uint,
+            wintypes.UINT,
             ctypes.POINTER(DXGI_OUTDUPL_MOVE_RECT),
-            ctypes.POINTER(ctypes.c_uint),
+            ctypes.POINTER(wintypes.UINT),
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT,"GetFramePointerShape", [
-            ctypes.c_uint,
+            wintypes.UINT,
             ctypes.c_void_p,
-            ctypes.POINTER(ctypes.c_uint),
+            ctypes.POINTER(wintypes.UINT),
             ctypes.POINTER(DXGI_OUTDUPL_POINTER_SHAPE_INFO),
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT,"MapDesktopSurface", [
@@ -102,11 +107,11 @@ class IDXGIOutputDuplication(IDXGIObject):
     ]
 
 DXGI_ALPHA_MODE = ctypes.c_uint
-DXGI_ALPHA_MODE_UNSPECIFIED = DXGI_ALPHA_MODE(0)
+DXGI_ALPHA_MODE_UNSPECIFIED   = DXGI_ALPHA_MODE(0)
 DXGI_ALPHA_MODE_PREMULTIPLIED = DXGI_ALPHA_MODE(1)
-DXGI_ALPHA_MODE_STRAIGHT = DXGI_ALPHA_MODE(2)
-DXGI_ALPHA_MODE_IGNORE = DXGI_ALPHA_MODE(3)
-DXGI_ALPHA_MODE_FORCE_DWORD = DXGI_ALPHA_MODE(0xffffffff)
+DXGI_ALPHA_MODE_STRAIGHT      = DXGI_ALPHA_MODE(2)
+DXGI_ALPHA_MODE_IGNORE        = DXGI_ALPHA_MODE(3)
+DXGI_ALPHA_MODE_FORCE_DWORD   = DXGI_ALPHA_MODE(0xffffffff)
 
 class IDXGISurface2(IDXGISurface1):
     _iid_ = comtypes.GUID("{aba496dd-b617-4cb8-a866-bc44d7eb1fa2}")
@@ -114,67 +119,67 @@ class IDXGISurface2(IDXGISurface1):
         comtypes.STDMETHOD(comtypes.HRESULT, "GetResource", [
             ctypes.POINTER(comtypes.GUID),
             ctypes.POINTER(ctypes.c_void_p),
-            ctypes.POINTER(ctypes.c_uint),
+            ctypes.POINTER(wintypes.UINT),
             ]),
     ]
 
 class SECURITY_ATTRIBUTES(ctypes.Structure):
-    _fields_ = [('nLength', wintypes.DWORD),
+    _fields_ = [('nLength',              wintypes.DWORD),
                 ('lpSecurityDescriptor', wintypes.LPVOID),
-                ('bInheritHandle', ctypes.c_bool),
+                ('bInheritHandle',       wintypes.BOOL),
     ]
 
 class IDXGIResource1(IDXGIResource):
     _iid_ = comtypes.GUID("{30961379-4609-4a41-998e-54fe567ee0c1}")
     _methods_ = [
         comtypes.STDMETHOD(comtypes.HRESULT, "CreateSubresourceSurface", [
-            ctypes.c_uint,
+            wintypes.UINT,
             ctypes.POINTER(ctypes.POINTER(IDXGISurface2)),
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "CreateSharedHandle", [
             ctypes.POINTER(SECURITY_ATTRIBUTES),
             wintypes.DWORD,
             wintypes.LPCWSTR,
-            wintypes.HANDLE,
+            ctypes.POINTER(wintypes.HANDLE),
             ])
     ]
 
-DXGI_OFFER_RESOURCE_PRIORITY = ctypes.c_uint
-DXGI_OFFER_RESOURCE_PRIORITY_LOW = DXGI_OFFER_RESOURCE_PRIORITY(1)
+DXGI_OFFER_RESOURCE_PRIORITY        = ctypes.c_uint
+DXGI_OFFER_RESOURCE_PRIORITY_LOW    = DXGI_OFFER_RESOURCE_PRIORITY(1)
 DXGI_OFFER_RESOURCE_PRIORITY_NORMAL = DXGI_OFFER_RESOURCE_PRIORITY(2)
-DXGI_OFFER_RESOURCE_PRIORITY_HIGH = DXGI_OFFER_RESOURCE_PRIORITY(3)
+DXGI_OFFER_RESOURCE_PRIORITY_HIGH   = DXGI_OFFER_RESOURCE_PRIORITY(3)
 
 class IDXGIDevice2(IDXGIDevice1):
     _iid_ = comtypes.GUID("{05008617-fbfd-4051-a790-144884b4f6a9}")
     _methods_ = [
         comtypes.STDMETHOD(comtypes.HRESULT, "OfferResources", [
-            ctypes.c_uint,
-            ctypes.POINTER(IDXGIResource),
+            wintypes.UINT,
+            ctypes.POINTER(ctypes.POINTER(IDXGIResource)),
             DXGI_OFFER_RESOURCE_PRIORITY,
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "ReclaimResources", [
-            ctypes.c_uint,
-            ctypes.POINTER(IDXGIResource),
-            ctypes.POINTER(ctypes.c_bool),
+            wintypes.UINT,
+            ctypes.POINTER(ctypes.POINTER(IDXGIResource)),
+            ctypes.POINTER(wintypes.BOOL),
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "EnqueueSetEvent", [
             wintypes.HANDLE,
             ]),
     ]
 
-DXGI_ENUM_MODES_STEREO = 4 ## 4UL
+DXGI_ENUM_MODES_STEREO          = 4 ## 4UL
 DXGI_ENUM_MODES_DISABLED_STEREO = 8 ## 8UL
-DXGI_SHARED_RESOURCE_READ = 0x80000000
-DXGI_SHARED_RESOURCE_WRITE = 1
+DXGI_SHARED_RESOURCE_READ       = 0x80000000
+DXGI_SHARED_RESOURCE_WRITE      = 1
 
 class DXGI_MODE_DESC1(ctypes.Structure):
-    _fields_ = [('Width', ctypes.c_uint),
-                ('Height', ctypes.c_uint),
-                ('RefreshRate', DXGI_RATIONAL),
-                ('Format', DXGI_FORMAT),
+    _fields_ = [('Width',            wintypes.UINT),
+                ('Height',           wintypes.UINT),
+                ('RefreshRate',      DXGI_RATIONAL),
+                ('Format',           DXGI_FORMAT),
                 ('ScanlineOrdering', DXGI_MODE_SCANLINE_ORDER),
-                ('Scaling', DXGI_MODE_SCALING),
-                ('Stereo', ctypes.c_bool),
+                ('Scaling',          DXGI_MODE_SCALING),
+                ('Stereo',           wintypes.BOOL),
     ]
 
 
@@ -187,24 +192,24 @@ DXGI_SCALING_NONE                 = DXGI_SCALING(1)
 DXGI_SCALING_ASPECT_RATIO_STRETCH = DXGI_SCALING(2)
 
 class DXGI_SWAP_CHAIN_DESC1(ctypes.Structure):
-    _fields_ = [('Width', ctypes.c_uint),
-                ('Height', ctypes.c_uint),
-                ('Format', DXGI_FORMAT),
-                ('Stereo', ctypes.c_bool),
-                ('SampleDesc', DXGI_SAMPLE_DESC),
+    _fields_ = [('Width',       wintypes.UINT),
+                ('Height',      wintypes.UINT),
+                ('Format',      DXGI_FORMAT),
+                ('Stereo',      wintypes.BOOL),
+                ('SampleDesc',  DXGI_SAMPLE_DESC),
                 ('BufferUsage', DXGI_USAGE),
-                ('BufferCount', ctypes.c_uint),
-                ('Scaling', DXGI_SCALING),
-                ('SwapEffect', DXGI_SWAP_EFFECT),
-                ('AlphaMode', DXGI_ALPHA_MODE),
-                ('Flags', ctypes.c_uint), ## DXGI_SWAP_CHAIN_FLAG
+                ('BufferCount', wintypes.UINT),
+                ('Scaling',     DXGI_SCALING),
+                ('SwapEffect',  DXGI_SWAP_EFFECT),
+                ('AlphaMode',   DXGI_ALPHA_MODE),
+                ('Flags',       wintypes.UINT), ## DXGI_SWAP_CHAIN_FLAG
     ]
 
 class DXGI_SWAP_CHAIN_FULLSCREEN_DESC(ctypes.Structure):
-    _fields_ = [('RefreshRate', DXGI_RATIONAL),
+    _fields_ = [('RefreshRate',      DXGI_RATIONAL),
                 ('ScanlineOrdering', DXGI_MODE_SCANLINE_ORDER),
-                ('Scaling', DXGI_MODE_SCALING),
-                ('Windowed', ctypes.c_bool),
+                ('Scaling',          DXGI_MODE_SCALING),
+                ('Windowed',         wintypes.BOOL),
     ]
 
 class DXGI_PRESENT_PARAMETERS(ctypes.Structure):
@@ -234,11 +239,11 @@ class IDXGISwapChain1(IDXGISwapChain):
             ctypes.POINTER(ctypes.c_void_p),
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "Present1", [
-            ctypes.c_uint,
-            ctypes.c_uint,
+            wintypes.BOOL,
+            wintypes.BOOL,
             ctypes.POINTER(DXGI_PRESENT_PARAMETERS),
             ]),
-        comtypes.STDMETHOD(ctypes.c_bool, "IsTemporaryMonoSupported", []),
+        comtypes.STDMETHOD(wintypes.BOOL, "IsTemporaryMonoSupported", []),
         comtypes.STDMETHOD(comtypes.HRESULT, "GetRestrictToOutput", [
             ctypes.POINTER(ctypes.POINTER(IDXGIOutput)),
             ]),
@@ -263,7 +268,7 @@ class IDXGISwapChain1(IDXGISwapChain):
 class IDXGIFactory2(IDXGIFactory1):
     _iid_ = comtypes.GUID("{50c83a1c-e072-4c48-87b0-3630fa36a6d0}")
     _methods_ = [
-        comtypes.STDMETHOD(ctypes.c_bool   , "IsWindowedStereoEnabled", []),
+        comtypes.STDMETHOD(wintypes.BOOL , "IsWindowedStereoEnabled", []),
         comtypes.STDMETHOD(comtypes.HRESULT, "CreateSwapChainForHwnd", [
             ctypes.POINTER(comtypes.IUnknown),
             wintypes.HWND,
@@ -285,7 +290,7 @@ class IDXGIFactory2(IDXGIFactory1):
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "RegisterStereoStatusWindow", [
             wintypes.HWND,
-            ctypes.c_uint,
+            wintypes.UINT,
             ctypes.POINTER(wintypes.DWORD),
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "RegisterStereoStatusEvent", [
@@ -297,7 +302,7 @@ class IDXGIFactory2(IDXGIFactory1):
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "RegisterOcclusionStatusWindow", [
             wintypes.HWND,
-            ctypes.c_uint,
+            wintypes.UINT,
             ctypes.POINTER(wintypes.DWORD),
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "RegisterOcclusionStatusEvent", [
@@ -311,7 +316,7 @@ class IDXGIFactory2(IDXGIFactory1):
             ctypes.POINTER(comtypes.IUnknown),
             ctypes.POINTER(DXGI_SWAP_CHAIN_DESC1),
             ctypes.POINTER(IDXGIOutput),
-            ctypes.POINTER(ctypes.POINTER(IDXGISwapChain1))
+            ctypes.POINTER(ctypes.POINTER(IDXGISwapChain1)),
             ]),
     ]
 
@@ -334,18 +339,18 @@ DXGI_COMPUTE_PREEMPTION_THREAD_BOUNDARY          = DXGI_COMPUTE_PREEMPTION_GRANU
 DXGI_COMPUTE_PREEMPTION_INSTRUCTION_BOUNDARY     = DXGI_COMPUTE_PREEMPTION_GRANULARITY(4)
 
 class DXGI_ADAPTER_DESC2(ctypes.Structure):
-    _fields_ = [('Description',wintypes.WCHAR * 128),
-                ('VendorId', ctypes.c_uint),
-                ('DeviceId', ctypes.c_uint),
-                ('SubSysId', ctypes.c_uint),
-                ('Revision', ctypes.c_uint),
-                ('DedicatedVideoMemory',ctypes.c_size_t),
-                ('DedicatedSystemMemory',ctypes.c_size_t),
-                ('SharedSystemMemory',ctypes.c_size_t),
-                ('AdapterLuid', LUID),
-                ('Flags', ctypes.c_uint),
+    _fields_ = [('Description',           wintypes.WCHAR * 128),
+                ('VendorId',              wintypes.UINT),
+                ('DeviceId',              wintypes.UINT),
+                ('SubSysId',              wintypes.UINT),
+                ('Revision',              wintypes.UINT),
+                ('DedicatedVideoMemory',  ctypes.c_size_t),
+                ('DedicatedSystemMemory', ctypes.c_size_t),
+                ('SharedSystemMemory',    ctypes.c_size_t),
+                ('AdapterLuid',           LUID),
+                ('Flags',                 wintypes.UINT),
                 ('GraphicsPreemptionGranularity', DXGI_GRAPHICS_PREEMPTION_GRANULARITY),
-                ('ComputePreemptionGranularity', DXGI_GRAPHICS_PREEMPTION_GRANULARITY),
+                ('ComputePreemptionGranularity',  DXGI_GRAPHICS_PREEMPTION_GRANULARITY),
     ]
 
 
@@ -369,8 +374,8 @@ class IDXGIOutput1(IDXGIOutput):
     _methods_ = [
         comtypes.STDMETHOD(comtypes.HRESULT, "GetDisplayModeList1", [
             DXGI_FORMAT,
-            ctypes.c_uint,
-            ctypes.POINTER(ctypes.c_uint),
+            wintypes.UINT,
+            ctypes.POINTER(wintypes.UINT),
             ctypes.POINTER(DXGI_MODE_DESC1),
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "FindClosestMatchingMode1", [

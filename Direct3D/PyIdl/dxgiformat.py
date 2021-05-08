@@ -1,5 +1,12 @@
+##
+##   Copyright (C) Microsoft.  All rights reserved.
+##   Windows Kits version 10.0.19041.0
+##
+##   Translate in Python by J. Vnh
+##
 import ctypes
 
+DXGI_FORMAT_DEFINED = 1
 
 DXGI_FORMAT = ctypes.c_uint
 DXGI_FORMAT_UNKNOWN                                 = DXGI_FORMAT(0)
@@ -130,3 +137,4 @@ DXGI_FORMAT_FORCE_UINT                              = DXGI_FORMAT(0xFFFFFFFF)
 
 
 ####### END OF FILE #######
+

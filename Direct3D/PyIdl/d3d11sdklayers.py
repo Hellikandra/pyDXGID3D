@@ -62,3 +62,29 @@ D3D11_SHADER_TRACKING_RESOURCE_TYPE_GROUPSHARED_MEMORY = 4    # call affects all
 D3D11_SHADER_TRACKING_RESOURCE_TYPE_ALL_SHARED_MEMORY = 5     # call affects everything except device memory created without UAV bind flags
 D3D11_SHADER_TRACKING_RESOURCE_TYPE_GROUPSHARED_NON_UAV = 6   # call affects everything except device memory created with UAV bind flags
 D3D11_SHADER_TRACKING_RESOURCE_TYPE_ALL = 7                   # call affects all memory on the device
+
+
+D3D11_SHADER_TRACKING_OPTION = ctypes.c_uint
+D3D11_SHADER_TRACKING_OPTION_IGNORE                                       = 0
+D3D11_SHADER_TRACKING_OPTION_TRACK_UNINITIALIZED                          = 0x1    # track reading uninitialized data
+D3D11_SHADER_TRACKING_OPTION_TRACK_RAW                                    = 0x2    # track read-after-write hazards
+D3D11_SHADER_TRACKING_OPTION_TRACK_WAR                                    = 0x4    # track write-after-read hazards
+D3D11_SHADER_TRACKING_OPTION_TRACK_WAW                                    = 0x8    # track write-after-write hazards
+D3D11_SHADER_TRACKING_OPTION_ALLOW_SAME                                   = 0x10   # allow a hazard if the data
+D3D11_SHADER_TRACKING_OPTION_TRACK_ATOMIC_CONSISTENCY                     = 0x20   # make sure only one type of atomic is used on an address written didn't change the value
+D3D11_SHADER_TRACKING_OPTION_TRACK_RAW_ACROSS_THREADGROUPS                = 0x40   # track read-after-write hazards across thread groups
+D3D11_SHADER_TRACKING_OPTION_TRACK_WAR_ACROSS_THREADGROUPS                = 0x80   # track write-after-read hazards across thread groups
+D3D11_SHADER_TRACKING_OPTION_TRACK_WAW_ACROSS_THREADGROUPS                = 0x100  # track write-after-write hazards across thread groups
+D3D11_SHADER_TRACKING_OPTION_TRACK_ATOMIC_CONSISTENCY_ACROSS_THREADGROUPS = 0x200  # make sure only one type of atomic is used on an address across thread groups
+D3D11_SHADER_TRACKING_OPTION_UAV_SPECIFIC_FLAGS                           = D3D11_SHADER_TRACKING_OPTION_TRACK_RAW_ACROSS_THREADGROUPS | D3D11_SHADER_TRACKING_OPTION_TRACK_WAR_ACROSS_THREADGROUPS | D3D11_SHADER_TRACKING_OPTION_TRACK_WAW_ACROSS_THREADGROUPS | D3D11_SHADER_TRACKING_OPTION_TRACK_ATOMIC_CONSISTENCY_ACROSS_THREADGROUPS # flags ignored for GSM
+D3D11_SHADER_TRACKING_OPTION_ALL_HAZARDS                                  = D3D11_SHADER_TRACKING_OPTION_TRACK_RAW | D3D11_SHADER_TRACKING_OPTION_TRACK_WAR | D3D11_SHADER_TRACKING_OPTION_TRACK_WAW | D3D11_SHADER_TRACKING_OPTION_TRACK_ATOMIC_CONSISTENCY | D3D11_SHADER_TRACKING_OPTION_TRACK_RAW_ACROSS_THREADGROUPS | D3D11_SHADER_TRACKING_OPTION_TRACK_WAR_ACROSS_THREADGROUPS | D3D11_SHADER_TRACKING_OPTION_TRACK_WAW_ACROSS_THREADGROUPS | D3D11_SHADER_TRACKING_OPTION_TRACK_ATOMIC_CONSISTENCY_ACROSS_THREADGROUPS
+D3D11_SHADER_TRACKING_OPTION_ALL_HAZARDS_ALLOWING_SAME                    = D3D11_SHADER_TRACKING_OPTION_ALL_HAZARDS | D3D11_SHADER_TRACKING_OPTION_ALLOW_SAME
+D3D11_SHADER_TRACKING_OPTION_ALL_OPTIONS                                  = D3D11_SHADER_TRACKING_OPTION_ALL_HAZARDS_ALLOWING_SAME | D3D11_SHADER_TRACKING_OPTION_TRACK_UNINITIALIZED
+
+class ID3D11TracingDevice(comtypes.IUnknown):
+	_iid_ = comtypes.GUID("{1911c771-1587-413e-a7e0-fb26c3de0268}")
+	_methods_ [
+		comtypes.STDMETHOD(comtypes.HRESULT, "SetShaderTrackingOptionsByType", [])
+		comtypes.STDMETHOD(comtypes.HRESULT, "SetShaderTrackingOptions", [])
+
+	]
