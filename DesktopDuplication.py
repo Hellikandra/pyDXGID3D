@@ -128,6 +128,11 @@ def WinMain():
 	# Window
 	WindowHandle = None # wintypes.HWND
 
+
+	# Window # SingleOutput is normally configure by ProcessCmdline(&SingleOutput)
+	# By C++ Program, we can see that the SingleOutput is set @ -1
+	SingleOutput = -1
+
 	# Event used by the threads to signal an unexcpected error and we want to quit the app
 	UnexpectedErrorEvent = ctypes.windll.kernel32.CreateEventW(None, True, False, None) # The ExW provide an access violation 0x00..01
 	if not UnexpectedErrorEvent:
@@ -225,8 +230,7 @@ def WinMain():
 				# First time through the loop so nothing to clean up
 				FirstTime = False
 			# Re-initialize
-			SingleOutput = 0
-			Ret = OutMgr.InitOutput(WindowHandle, SingleOutput, ctypes.byref(OutputCount), ctypes.byref(DeskBounds))
+			Ret = OutMgr.InitOutput(WindowHandle, SingleOutput, ctypes.byref(OutputCount), DeskBounds)
 			# Output Manager is the device where the DXGI DirectX is set
 			
 # ============

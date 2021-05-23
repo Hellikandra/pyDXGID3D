@@ -10,6 +10,8 @@ from Direct3D.PyIdl.dxgidebug import *
 
 WM_USER    = 0x0400
 OCCLUSION_STATUS_MSG = WM_USER
+INT_MIN = (-2147483647 - 1) ## minimum (signed) int value
+INT_MAX = 2147483647
 
 class RECT(ctypes.Structure): # https://docs.microsoft.com/en-us/windows/desktop/api/windef/ns-windef-rect
 	_fields_ = [('left', ctypes.c_long),
@@ -64,7 +66,7 @@ class OutputManager:
 		# Get DXGI Factory
 		DxgiDevice = ctypes.POINTER(IDXGIDevice)()
 		DxgiDevice = self.__m_Device.QueryInterface(IDXGIDevice, IDXGIDevice._iid_)
-		if hr is None:
+		if hr != 0:
 			return print("Failed to QI for DXGI Device") # ProcesFailure with DUPL_...
 
 		DxgiAdapter = ctypes.POINTER(IDXGIAdapter)()
@@ -111,7 +113,15 @@ class OutputManager:
 			return print("Failed to make window association")
 
 		# Create Shared Texture 
-		Return = __CreateSharedSurf(SingleOutput,)
+		Return = self.__CreateSharedSurf(SingleOutput, OutCount, DeskBounds)
+		if Return != 0: # DUPL_RETURN_SUCCESS
+			return Return
+
+		# Make new render target view
+		Return = self.__MakeRTV()
+		if Return != 0: # DUPL_RETURN_SUCCESS
+			return Return
+
 		return print("InitOutput currently in success") # return DUPL_RETURN...
 
 	def UpdateApplicationWindow(self, PointerInfo, Occluded):
@@ -137,7 +147,44 @@ class OutputManager:
 		return 0 # return void
 	def __InitShaders(self):
 		return 0 # return DUPL_RETURN
-	def __CreateSharedSurf(self):
+	def __CreateSharedSurf(self, SingleOutput, OutCount, DeskBounds):
+		hr = 0
+		# Get DXGI Resource
+		DxgiDevice = ctypes.POINTER(IDXGIDevice)()
+		DxgiDevice = self.__m_Device.QueryInterface(IDXGIDevice, IDXGIDevice._iid_)
+		if hr != 0:
+			return print("Failed to QI for DXGI Device") # ProcesFailure with DUPL_...
+
+		DxgiAdapter = ctypes.POINTER(IDXGIAdapter)()
+		hr = DxgiDevice.GetParent(IDXGIAdapter._iid_, ctypes.byref(DxgiAdapter))
+		if hr != 0:
+			return print("Failed to get parent DXGI Adapter") # ProcessFailure with DUPL_...
+
+		DeskBounds.left = INT_MAX
+		DeskBounds.right = INT_MIN
+		DeskBounds.top = INT_MAX
+		DeskBounds.bottom = INT_MIN
+
+		DxgiOutput = ctypes.POINTER(IDXGIOutput)()
+
+		# Figure out right dimensions for full size desktop texture and # of outputs to duplicate
+		OutputCount = 0
+		if SingleOutput < 0:
+			hr = 0
+			while hr == 0:
+				if DxgiOutput:
+					print("DxgiOutput exist !")
+				hr = DxgiAdapter.EnumOutputs(OutputCount, ctypes.byref(DxgiOutput))
+				print(hr)
+				print(DxgiOutput)
+				if DxgiOutput and (hr == 0):
+					DesktopDesc = DXGI_OUTPUT_DESC()
+					DxgiOutput.GetDesc(ctypes.byref(DesktopDesc))
+					print("Get Desc")
+				OutputCount += 1
+
+
+
 		return 0 # return DUPL_RETURN
 	def __DrawFrame(self):
 		return 0 # return DUPL_RETURN

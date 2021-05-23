@@ -1,5 +1,7 @@
 # pyDXGID3D
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+[![master](https://travis-ci.com/Hellikandra/pyDXGID3D.svg?branch=master)](https://travis-ci.com/github/Hellikandra/pyDXGID3D)
 Currently under implementation and test
 
 DXGI - Microsoft DirectX Graphics Infrastructure
