@@ -1784,8 +1784,15 @@ class ID3D11DeviceContext(ID3D11DeviceChild):
         comtypes.STDMETHOD(None, "PSSetShader", []),
         comtypes.STDMETHOD(None, "PSSetSamplers", []),
         comtypes.STDMETHOD(None, "VSSetShader", []),
-        comtypes.STDMETHOD(None, "DrawIndexed", []),
-        comtypes.STDMETHOD(None, "Draw", []),
+        comtypes.STDMETHOD(None, "DrawIndexed", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.c_int,
+            ]),
+        comtypes.STDMETHOD(None, "Draw", [
+            ctypes.c_uint,
+            ctypes.c_uint, 
+            ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "Map", []),
         comtypes.STDMETHOD(None, "Unmap", []),
         comtypes.STDMETHOD(None, "PSSetConstantBuffers", []),
@@ -1796,64 +1803,195 @@ class ID3D11DeviceContext(ID3D11DeviceChild):
 
         ## !!! Order of functions is in decreasing order of priority ( as far as performance is concerned ) !!!
         ## !!! BEGIN MIDDLE-FREQUENCY !!!
-        comtypes.STDMETHOD(None, "DrawIndexedInstanced", []),
-        comtypes.STDMETHOD(None, "DrawInstanced", []),
-        comtypes.STDMETHOD(None, "GSSetConstantBuffers", []),
-        comtypes.STDMETHOD(None, "GSSetShader", []),
+        comtypes.STDMETHOD(None, "DrawIndexedInstanced", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.c_int,
+            ctypes.c_uint,
+            ]),
+        comtypes.STDMETHOD(None, "DrawInstanced", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ]),
+        comtypes.STDMETHOD(None, "GSSetConstantBuffers", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ctypes.POINTER(ID3D11Buffer)),
+            ]),
+        comtypes.STDMETHOD(None, "GSSetShader", [
+            ctypes.POINTER(ID3D11GeometryShader),
+            ctypes.POINTER(ctypes.POINTER(ID3D11ClassInstance)),
+            ctypes.c_uint,
+            ]),
         comtypes.STDMETHOD(None, "IASetPrimitiveTopology", []),
         comtypes.STDMETHOD(None, "VSSetShaderResources", []),
         comtypes.STDMETHOD(None, "VSSetSamplers", []),
-        comtypes.STDMETHOD(None, "Begin", []),
-        comtypes.STDMETHOD(None, "End", []),
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetData", []),
+        comtypes.STDMETHOD(None, "Begin", [
+            ctypes.POINTER(ID3D11Asynchronous),
+            ]),
+        comtypes.STDMETHOD(None, "End", [
+            ctypes.POINTER(ID3D11Asynchronous),
+            ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetData", [
+            ctypes.POINTER(ID3D11Asynchronous),
+            comtypes.c_void_p,
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ]),
         comtypes.STDMETHOD(None, "SetPredication", []),
-        comtypes.STDMETHOD(None, "GSSetShaderResources", []),
-        comtypes.STDMETHOD(None, "GSSetSamplers", []),
+        comtypes.STDMETHOD(None, "GSSetShaderResources", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ctypes.POINTER(ID3D11ShaderResourceView)),
+            ]),
+        comtypes.STDMETHOD(None, "GSSetSamplers", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ctypes.POINTER(ID3D11SamplerState)),
+            ]),
         comtypes.STDMETHOD(None, "OMSetRenderTargets", [
-            wintypes.UINT,                # UINT NumViews
+            wintypes.UINT,                                              # UINT NumViews
             ctypes.POINTER(ctypes.POINTER(ID3D11RenderTargetView)),     # ID3D11RenderTargetView * const * ppRenderTargetsViews
-            ctypes.POINTER(ID3D11DepthStencilView),     # ID3D11DepthStencilView *pDepthStencilView
+            ctypes.POINTER(ID3D11DepthStencilView),                     # ID3D11DepthStencilView *pDepthStencilView
             ]),
         comtypes.STDMETHOD(None, "OMSetRenderTargetsAndUnorderedAccessViews", []),
         comtypes.STDMETHOD(None, "OMSetBlendState", []),
         comtypes.STDMETHOD(None, "SOSetTargets", []),
         comtypes.STDMETHOD(None, "DrawAuto", []),
-        comtypes.STDMETHOD(None, "DrawIndexedInstancedIndirect", []),
-        comtypes.STDMETHOD(None, "DrawInstancedIndirect", []),
-        comtypes.STDMETHOD(None, "Dispatch", []),
-        comtypes.STDMETHOD(None, "DispatchIndirect", []),
+        comtypes.STDMETHOD(None, "DrawIndexedInstancedIndirect", [
+            ctypes.POINTER(ID3D11Buffer),
+            ctypes.c_uint,
+            ]),
+        comtypes.STDMETHOD(None, "DrawInstancedIndirect", [
+            ctypes.POINTER(ID3D11Buffer),
+            ctypes.c_uint,
+            ]),
+        comtypes.STDMETHOD(None, "Dispatch", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ]),
+        comtypes.STDMETHOD(None, "DispatchIndirect", [
+            ctypes.POINTER(ID3D11Buffer),
+            ctypes.c_uint,
+            ]),
         comtypes.STDMETHOD(None, "RSSetState", []),
-        comtypes.STDMETHOD(None, "RSSetViewports", []),
+        comtypes.STDMETHOD(None, "RSSetViewports", [
+            wintypes.UINT,
+            ctypes.POINTER(D3D11_VIEWPORT),
+            ]),
         comtypes.STDMETHOD(None, "RSSetScissorRects", []),
-        comtypes.STDMETHOD(None, "CopySubresourceRegion", []),
-        comtypes.STDMETHOD(None, "CopyResource", []),
+        comtypes.STDMETHOD(None, "CopySubresourceRegion", [
+            ctypes.POINTER(ID3D11Resource),
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ID3D11Resource),
+            ctypes.c_uint,
+            ctypes.POINTER(D3D11_BOX),
+            ]),
+        comtypes.STDMETHOD(None, "CopyResource", [
+            ctypes.POINTER(ID3D11Resource),
+            ctypes.POINTER(ID3D11Resource),
+            ]),
         comtypes.STDMETHOD(None, "UpdateSubresource", []),
-        comtypes.STDMETHOD(None, "CopyStructureCount", []),
+        comtypes.STDMETHOD(None, "CopyStructureCount", [
+            ctypes.POINTER(ID3D11Buffer),
+            ctypes.c_uint,
+            ctypes.POINTER(ID3D11UnorderedAccessView),
+            ]),
         comtypes.STDMETHOD(None, "ClearRenderTargetView", [
             ctypes.POINTER(ID3D11RenderTargetView),    # ID3D11RenderTargetView *pRenderTargetView
             ctypes.c_float * 4,                        # const FLOAT [4]        ColorRGBA
             ]),
-        comtypes.STDMETHOD(None, "ClearUnorderedAccessViewUint", []),
-        comtypes.STDMETHOD(None, "ClearUnorderedAccessViewFloat", []),
-        comtypes.STDMETHOD(None, "ClearDepthStencilView", []),
-        comtypes.STDMETHOD(None, "GenerateMips", []),
+        comtypes.STDMETHOD(None, "ClearUnorderedAccessViewUint", [
+            ctypes.POINTER(ID3D11UnorderedAccessView),
+            ctypes.c_uint * 4,
+            ]),
+        comtypes.STDMETHOD(None, "ClearUnorderedAccessViewFloat", [
+            ctypes.POINTER(ID3D11UnorderedAccessView),
+            ctypes.c_float * 4,
+            ]),
+        comtypes.STDMETHOD(None, "ClearDepthStencilView", [
+            ctypes.POINTER(ID3D11DepthStencilView),
+            wintypes.UINT,
+            ctypes.c_float,
+            ctypes.c_uint8,
+            ]),
+        comtypes.STDMETHOD(None, "GenerateMips", [
+            ctypes.POINTER(ID3D11ShaderResourceView),
+            ]),
         comtypes.STDMETHOD(None, "SetResourceMinLOD", []),
-        comtypes.STDMETHOD(ctypes.c_float, "GetResourceMinLOD", []),
+        comtypes.STDMETHOD(ctypes.c_float, "GetResourceMinLOD", [
+            ctypes.POINTER(ID3D11Resource),
+            ]),
         comtypes.STDMETHOD(None, "ResolveSubresource", []),
-        comtypes.STDMETHOD(None, "ExecuteCommandList", []),
+        comtypes.STDMETHOD(None, "ExecuteCommandList", [
+            ctypes.POINTER(ID3D11CommandList),
+            ctypes.c_bool,
+            ]),
         comtypes.STDMETHOD(None, "HSSetShaderResources", []),
         comtypes.STDMETHOD(None, "HSSetShader", []),
-        comtypes.STDMETHOD(None, "HSSetSamplers", []),
-        comtypes.STDMETHOD(None, "HSSetConstantBuffers", []),
-        comtypes.STDMETHOD(None, "DSSetShaderResources", []),
-        comtypes.STDMETHOD(None, "DSSetShader", []),
-        comtypes.STDMETHOD(None, "DSSetSamplers", []),
-        comtypes.STDMETHOD(None, "DSSetConstantBuffers", []),
-        comtypes.STDMETHOD(None, "CSSetShaderResources", []),
-        comtypes.STDMETHOD(None, "CSSetUnorderedAccessViews", []),
-        comtypes.STDMETHOD(None, "CSSetShader", []),
-        comtypes.STDMETHOD(None, "CSSetSamplers", []),
-        comtypes.STDMETHOD(None, "CSSetConstantBuffers", []),
+        comtypes.STDMETHOD(None, "HSSetSamplers", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ctypes.POINTER(ID3D11SamplerState)),
+            ]),
+        comtypes.STDMETHOD(None, "HSSetConstantBuffers", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ctypes.POINTER(ID3D11Buffer)),
+            ]),
+        comtypes.STDMETHOD(None, "DSSetShaderResources", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ctypes.POINTER(ID3D11ShaderResourceView)),
+            ]),
+        comtypes.STDMETHOD(None, "DSSetShader", [
+            ctypes.POINTER(ID3D11DomainShader),
+            ctypes.POINTER(ctypes.POINTER(ID3D11ClassInstance)),
+            ctypes.c_uint,
+            ]),
+        comtypes.STDMETHOD(None, "DSSetSamplers", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ctypes.POINTER(ID3D11SamplerState)),
+            ]),
+        comtypes.STDMETHOD(None, "DSSetConstantBuffers", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ctypes.POINTER(ID3D11Buffer)),
+            ]),
+        comtypes.STDMETHOD(None, "CSSetShaderResources", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ID3D11ShaderResourceView),
+            ]),
+        comtypes.STDMETHOD(None, "CSSetUnorderedAccessViews", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ctypes.POINTER(ID3D11UnorderedAccessView)),
+            ctypes.POINTER(ctypes.c_uint),
+            ]),
+        comtypes.STDMETHOD(None, "CSSetShader", [
+            ctypes.POINTER(ID3D11ComputeShader),
+            ctypes.POINTER(ctypes.POINTER(ID3D11ClassInstance)),
+            ctypes.c_uint,
+            ]),
+        comtypes.STDMETHOD(None, "CSSetSamplers", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ID3D11SamplerState),
+            ]),
+        comtypes.STDMETHOD(None, "CSSetConstantBuffers", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ID3D11Buffer),
+            ]),
 
         ## GET functions
         comtypes.STDMETHOD(None, "VSGetConstantBuffers", []),
@@ -1865,14 +2003,33 @@ class ID3D11DeviceContext(ID3D11DeviceChild):
         comtypes.STDMETHOD(None, "IAGetInputLayout", []),
         comtypes.STDMETHOD(None, "IAGetVertexBuffers", []),
         comtypes.STDMETHOD(None, "IAGetIndexBuffer", []),
-        comtypes.STDMETHOD(None, "GSGetConstantBuffers", []),
-        comtypes.STDMETHOD(None, "GSGetShader", []),
+        comtypes.STDMETHOD(None, "GSGetConstantBuffers", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ID3D11Buffer),
+            ]),
+        comtypes.STDMETHOD(None, "GSGetShader", [
+            ctypes.POINTER(ctypes.POINTER(ID3D11GeometryShader)),
+            ctypes.POINTER(ctypes.POINTER(ID3D11ClassInstance)),
+            ctypes.c_uint,
+            ]),
         comtypes.STDMETHOD(None, "IAGetPrimitiveTopology", []),
         comtypes.STDMETHOD(None, "VSGetShaderResources", []),
         comtypes.STDMETHOD(None, "VSGetSamplers", []),
-        comtypes.STDMETHOD(None, "GetPredication", []),
-        comtypes.STDMETHOD(None, "GSGetShaderResources", []),
-        comtypes.STDMETHOD(None, "GSGetSamplers", []),
+        comtypes.STDMETHOD(None, "GetPredication", [
+            ctypes.POINTER(ctypes.POINTER(ID3D11Predicate)),
+            ctypes.c_bool,
+            ]),
+        comtypes.STDMETHOD(None, "GSGetShaderResources", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ctypes.POINTER(ID3D11ShaderResourceView)),
+            ]),
+        comtypes.STDMETHOD(None, "GSGetSamplers", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ctypes.POINTER(ID3D11SamplerState)),
+            ]),
         comtypes.STDMETHOD(None, "OMGetRenderTargets", []),
         comtypes.STDMETHOD(None, "OMGetRenderTargetsAndUnorderedAccessViews", []),
         comtypes.STDMETHOD(None, "OMGetBlendState", []),
@@ -1881,19 +2038,67 @@ class ID3D11DeviceContext(ID3D11DeviceChild):
         comtypes.STDMETHOD(None, "RSGetState", []),
         comtypes.STDMETHOD(None, "RSGetViewports", []),
         comtypes.STDMETHOD(None, "RSGetScissorRects", []),
-        comtypes.STDMETHOD(None, "HSGetShaderResources", []),
+        comtypes.STDMETHOD(None, "HSGetShaderResources", [
+            ctypes.POINTER(ctypes.POINTER(ID3D11HullShader)),
+            ctypes.POINTER(ctypes.POINTER(ID3D11ClassInstance)),
+            ctypes.c_uint,
+            ]),
         comtypes.STDMETHOD(None, "HSGetShader", []),
-        comtypes.STDMETHOD(None, "HSGetSamplers", []),
-        comtypes.STDMETHOD(None, "HSGetConstantBuffers", []),
-        comtypes.STDMETHOD(None, "DSGetShaderResources", []),
-        comtypes.STDMETHOD(None, "DSGetShader", []),
-        comtypes.STDMETHOD(None, "DSGetSamplers", []),
-        comtypes.STDMETHOD(None, "DSGetConstantBuffers", []),
-        comtypes.STDMETHOD(None, "CSGetShaderResources", []),
-        comtypes.STDMETHOD(None, "CSGetUnorderedAccessViews", []),
-        comtypes.STDMETHOD(None, "CSGetShader", []),
-        comtypes.STDMETHOD(None, "CSGetSamplers", []),
-        comtypes.STDMETHOD(None, "CSGetConstantBuffers", []),
+        comtypes.STDMETHOD(None, "HSGetSamplers", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ctypes.POINTER(ID3D11SamplerState)),
+            ]),
+        comtypes.STDMETHOD(None, "HSGetConstantBuffers", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ctypes.POINTER(ID3D11Buffer)),
+            ]),
+        comtypes.STDMETHOD(None, "DSGetShaderResources", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ctypes.POINTER(ID3D11ShaderResourceView)),
+            ]),
+        comtypes.STDMETHOD(None, "DSGetShader", [
+            ctypes.POINTER(ctypes.POINTER(ID3D11DomainShader)),
+            ctypes.POINTER(ctypes.POINTER(ID3D11ClassInstance)),
+            ctypes.c_uint,
+            ]),
+        comtypes.STDMETHOD(None, "DSGetSamplers", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ctypes.POINTER(ID3D11SamplerState)),
+            ]),
+        comtypes.STDMETHOD(None, "DSGetConstantBuffers", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ID3D11Buffer),
+            ]),
+        comtypes.STDMETHOD(None, "CSGetShaderResources", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ctypes.POINTER(ID3D11ShaderResourceView)),
+            ]),
+        comtypes.STDMETHOD(None, "CSGetUnorderedAccessViews", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ctypes.POINTER(ID3D11UnorderedAccessView)),
+            ]),
+        comtypes.STDMETHOD(None, "CSGetShader", [
+            ctypes.POINTER(ctypes.POINTER(ID3D11ComputeShader)),
+            ctypes.POINTER(ctypes.POINTER(ID3D11ClassInstance)),
+            ctypes.c_uint,
+            ]),
+        comtypes.STDMETHOD(None, "CSGetSamplers", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ctypes.POINTER(ID3D11SamplerState)),
+            ]),
+        comtypes.STDMETHOD(None, "CSGetConstantBuffers", [
+            ctypes.c_uint,
+            ctypes.c_uint,
+            ctypes.POINTER(ctypes.POINTER(ID3D11Buffer)),
+            ]),
         ## END GET Functions
 
         comtypes.STDMETHOD(None, "ClearState", []),

@@ -41,9 +41,11 @@ class OutputManager:
 		self.__m_NeedsResize     = False # bool
 		self.__m_OcclusionCookie = 0 # DWORD
 
+
 	def __del__(self): # ~OUTPUTMANAGER();
 		#print("I am being automatically destroyed. Goodbye!")
 		self.CleanRefs()
+
 
 	def InitOutput(self, Window, SingleOutput, OutCount, DeskBounds):
 		#hr # HRESULT
@@ -122,16 +124,25 @@ class OutputManager:
 		if Return != 0: # DUPL_RETURN_SUCCESS
 			return Return
 
+		# Set view port
+		self.__SetViewPort(Width, Height)
+		# Crea
 		return print("InitOutput currently in success") # return DUPL_RETURN...
+
 
 	def UpdateApplicationWindow(self, PointerInfo, Occluded):
 		return 0 # return DUPL_RETURN
 
+
 	def CleanRefs(self):
 		#print("OutputManager CleanRefs()")
 		return 0 # return void
+
+
 	def GetSharedHandle(self):
 		return 0 # return HANDLE
+
+
 	def WindowResize(self):
 		__m_NeedsResize = True
 
@@ -141,22 +152,54 @@ class OutputManager:
 		return 0 # return DUPL_RETURN
 
 	def __MakeRTV(self):
+		BackBuffer = ctypes.POINTER(ID3D11Texture2D)()
+		hr = self.__m_SwapChain.GetBuffer(0, ID3D11Texture2D._iid_, ctypes.byref(BackBuffer))
+		if hr != 0:
+			return print("Failed to get backbuffer for making render target view in OUTPUTMANAGER")
+
+		hr = self.__m_Device.CreateRenderTargetView(BackBuffer, None, ctypes.byref(self.__m_RTV))
+		if hr != 0:
+			return print("Failed to create render target view in OUTPUTMANAGER")
+
+		# Set a new render target
+		self.__m_DeviceContext.OMSetRenderTargets(1, ctypes.byref(self.__m_RTV), None)		
+
 		return 0 # return DUPL_RETURN
 
-	def __SetViewPort(self):
-		return 0 # return void
+	def __SetViewPort(self, Width, Height):
+		VP = D3D11_VIEWPORT()
+		ctypes.memset(ctypes.addressof(VP),0, ctypes.sizeof(VP))
+		#print(Width, "x",Height)
+		VP.Width    = float(Width)
+		VP.Height   = float(Height)
+		VP.MinDepth = 0.0
+		VP.MaxDepth = 1.0
+		VP.TopLeftX = 0
+		VP.TopLeftY = 0
+		
+		self.__m_DeviceContext.RSSetViewports(1, ctypes.byref(VP))
+
+
 	def __InitShaders(self):
 		return 0 # return DUPL_RETURN
+
+
 	def __CreateSharedSurf(self, SingleOutput, OutCount, DeskBounds):
 		hr = 0
 		# Get DXGI Resource
 		DxgiDevice = ctypes.POINTER(IDXGIDevice)()
+		# print("Print before : DxgiDevice : ", DxgiDevice)
 		DxgiDevice = self.__m_Device.QueryInterface(IDXGIDevice, IDXGIDevice._iid_)
+		# print("Print after  : DxgiDevice : ", DxgiDevice)
+		# print("test of self.__m_Device   : ", self.__m_Device)
 		if hr != 0:
 			return print("Failed to QI for DXGI Device") # ProcesFailure with DUPL_...
 
 		DxgiAdapter = ctypes.POINTER(IDXGIAdapter)()
+		# print("Print before : DxgiAdapter : ", DxgiAdapter)
 		hr = DxgiDevice.GetParent(IDXGIAdapter._iid_, ctypes.byref(DxgiAdapter))
+		# print("Print after  : DxgiAdapter : ", DxgiAdapter)
+
 		if hr != 0:
 			return print("Failed to get parent DXGI Adapter") # ProcessFailure with DUPL_...
 
@@ -166,30 +209,88 @@ class OutputManager:
 		DeskBounds.bottom = INT_MIN
 
 		DxgiOutput = ctypes.POINTER(IDXGIOutput)()
-
+		# DxgiOutputDesc = DXGI_OUTPUT_DESC()
+		# ctypes.memset(ctypes.addressof(DxgiOutputDesc), 0, ctypes.sizeof(DXGI_OUTPUT_DESC()))
+		# print(DxgiOutputDesc)
+		# print(DxgiOutput.GetDesc(DxgiOutputDesc))
 		# Figure out right dimensions for full size desktop texture and # of outputs to duplicate
 		OutputCount = 0
 		if SingleOutput < 0:
 			hr = 0
 			while hr == 0:
 				if DxgiOutput:
-					print("DxgiOutput exist !")
-				hr = DxgiAdapter.EnumOutputs(OutputCount, ctypes.byref(DxgiOutput))
-				print(hr)
-				print(DxgiOutput)
+					pass
+				try:
+					hr = DxgiAdapter.EnumOutputs(OutputCount, ctypes.byref(DxgiOutput)) # DXGI_ERROR_NOT_FOUND
+				except:
+					#print(hr)
+					break
 				if DxgiOutput and (hr == 0):
 					DesktopDesc = DXGI_OUTPUT_DESC()
 					DxgiOutput.GetDesc(ctypes.byref(DesktopDesc))
-					print("Get Desc")
+					#print("Get Desc")
+					DeskBounds.left   = min(DesktopDesc.DesktopCoordinates.left,   DeskBounds.left)
+					DeskBounds.top    = min(DesktopDesc.DesktopCoordinates.top,    DeskBounds.top)
+					DeskBounds.right  = max(DesktopDesc.DesktopCoordinates.right,  DeskBounds.right)
+					DeskBounds.bottom = max(DesktopDesc.DesktopCoordinates.bottom, DeskBounds.bottom)
+
 				OutputCount += 1
+		else:
+			hr = DxgiAdapter.EnumOutputs(SingleOutput, ctypes.byref(DxgiOutput));
+			if hr != 0:
+				DxgiAdapter.Release()
+				DxgiAdapter = None
+				return print("Output specified to be duplicated does not exist")
+			DesktopDesc = DXGI_OUTPUT_DESC()
+			DxgiOutput.GetDesc(ctypes.byref(DesktopDesc))
+			DeskBounds.left    = DesktopDesc.DesktopCoordinates.left
+			DeskBounds.top     = DesktopDesc.DesktopCoordinates.top
+			DeskBounds.right   = DesktopDesc.DesktopCoordinates.right
+			DeskBounds.bottom  = DesktopDesc.DesktopCoordinates.bottom
 
+			OutputCount = 1
 
+		if OutputCount == 0:
+			# we could not find any outputs, the system must be in a transition so return error
+			# so we will attempt to recreate
+			return print("DUPL_RETURN_ERROR_EXPECTED")
 
+		DeskTexD = D3D11_TEXTURE2D_DESC()
+		ctypes.memset(ctypes.addressof(DeskTexD),0, ctypes.sizeof(DeskTexD))
+		DeskTexD.Width = DeskBounds.right - DeskBounds.left
+		DeskTexD.Height = DeskBounds.bottom - DeskBounds.top
+		DeskTexD.MipLevels = 1
+		DeskTexD.ArraySize = 1
+		DeskTexD.Format = DXGI_FORMAT_B8G8R8A8_UNORM.value
+		DeskTexD.SampleDesc.Count = 1
+		DeskTexD.Usage = D3D11_USAGE_DEFAULT
+		DeskTexD.BindFlags = D3D11_BIND_RENDER_TARGET.value | D3D11_BIND_SHADER_RESOURCE.value
+		DeskTexD.CPUAccessFlags = 0
+		DeskTexD.MiscFlags = D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX.value
+
+		hr = self.__m_Device.CreateTexture2D(ctypes.byref(DeskTexD), None, ctypes.byref(self.__m_SharedSurf));
+		if hr != 0:
+			print('hr failed')
+			if OutputCount != 1:
+				return print("Failed to create DirectX shared texture - we are attempting to create a texture the size of the complete desktop and this may be larger than the maximum texture size of your GPU.  Please try again using the -output command line parameter to duplicate only 1 monitor or configure your computer to a single monitor configuration")
+			else:
+				return print("Failed to create shared texture")
+
+		self.__m_KeyMutex = self.__m_SharedSurf.QueryInterface(IDXGIKeyedMutex, IDXGIKeyedMutex._iid_)
+		print(self.__m_KeyMutex)	
+		if hr != 0:
+			return print("Failed to query for keyed mutex in OUTPUTMANAGER")
 		return 0 # return DUPL_RETURN
+
+
 	def __DrawFrame(self):
 		return 0 # return DUPL_RETURN
+
+
 	def __DrawMouse(self):
 		return 0 # return DUPL_RETURN
+
+
 	def __ResizeSwapChain(self):
 		return 0 # return DUPL_RETURN
 
