@@ -22,6 +22,9 @@ class RECT(ctypes.Structure): # https://docs.microsoft.com/en-us/windows/desktop
 
 class OutputManager:
 	## ## public ## ##
+	##
+	## Constructor NULLs out all pointers & set appropriatee var vals
+	##
 	def __init__(self): # OUTPUTMANAGER()
 		print("Hi, I am being instanciated!")
 		self.__m_SwapChain     = ctypes.POINTER(IDXGISwapChain1)() # IDXGISwapChain1*
@@ -42,11 +45,17 @@ class OutputManager:
 		self.__m_OcclusionCookie = 0 # DWORD
 
 
+	##
+	## Destructor which calls CleanRefs to release all reference and memory.
+	##
 	def __del__(self): # ~OUTPUTMANAGER();
 		#print("I am being automatically destroyed. Goodbye!")
 		self.CleanRefs()
 
 
+	## 
+	## Initialize all state
+	## 
 	def InitOutput(self, Window, SingleOutput, OutCount, DeskBounds):
 		#hr # HRESULT
 		self.__m_WindowHandle = Window
@@ -104,7 +113,7 @@ class OutputManager:
 		SwapChainDesc.SampleDesc.Count   = 1
 		SwapChainDesc.SampleDesc.Quality = 0
 		SwapChainDesc.Flags				 = DXGI_SWAP_CHAIN_FLAG_DISPLAY_ONLY
-		
+
 		hr = self.__m_Factory.CreateSwapChainForHwnd(self.__m_Device, Window, SwapChainDesc, None, None, self.__m_SwapChain)
 		if hr != 0:
 			return print("Failed to create window swapchain") # ProcessFailure DUPL_RETURN...
@@ -133,16 +142,54 @@ class OutputManager:
 	def UpdateApplicationWindow(self, PointerInfo, Occluded):
 		return 0 # return DUPL_RETURN
 
-
+	##
+	## Release all reference
+	##
 	def CleanRefs(self):
-		#print("OutputManager CleanRefs()")
-		return 0 # return void
+		if (self.__m_VertexShader):
+			self.__m_VertexShader.Release()
+			self.__m_VertexShader = None
+		if (self.__m_PixelShader):
+			self.__m_PixelShader.Release()
+			self.__m_PixelShader = None
+		if (self.__m_InputLayout):
+			self.__m_InputLayout.Release()
+			self.__m_InputLayout = None
+		if (self.__m_RTV):
+			self.__m_RTV.Release()
+			self.__m_RTV = None
+		if (self.__m_BlendState):
+			self.__m_BlendState.Release()
+			self.__m_BlendState = None
+		if (self.__m_DeviceContext):
+			self.__m_DeviceContext.Release()
+			self.__m_DeviceContext = None
+		if (self.__m_Device):
+			self.__m_Device.Release()
+			self.__m_Device = None
+		if (self.__m_SwapChain):
+			self.__m_SwapChain.Release()
+			self.__m_SwapChain = None
+		if (self.__m_SharedSurf):
+			self.__m_SharedSurf.Release()
+			self.__m_SharedSurf = None
+		if (self.__m_KeyMutex):
+			self.__m_KeyMutex.Release()
+			self.__m_KeyMutex = None
+		if (self.__m_Factory):
+			if (self.__m_OcclusionCookie):
+				self.__m_Factory.UnregisterOcclusionStatus(self.__m_OcclusionCookie)
+				self.__m_OcclusionCookie = 0
+			self.__m_Factory.Release()
+			self.__m_Factory = None
 
 
 	def GetSharedHandle(self):
 		return 0 # return HANDLE
 
-
+	##
+	## Indicates that window has been resized.
+	##
 	def WindowResize(self):
 		__m_NeedsResize = True
 
@@ -156,28 +203,36 @@ class OutputManager:
 		hr = self.__m_SwapChain.GetBuffer(0, ID3D11Texture2D._iid_, ctypes.byref(BackBuffer))
 		if hr != 0:
 			return print("Failed to get backbuffer for making render target view in OUTPUTMANAGER")
-
 		hr = self.__m_Device.CreateRenderTargetView(BackBuffer, None, ctypes.byref(self.__m_RTV))
+		BackBuffer.Release()
 		if hr != 0:
 			return print("Failed to create render target view in OUTPUTMANAGER")
 
 		# Set a new render target
-		self.__m_DeviceContext.OMSetRenderTargets(1, ctypes.byref(self.__m_RTV), None)		
-
+		self.__m_DeviceContext.OMSetRenderTargets(1, ctypes.byref(self.__m_RTV), None)
 		return 0 # return DUPL_RETURN
 
 	def __SetViewPort(self, Width, Height):
 		VP = D3D11_VIEWPORT()
 		ctypes.memset(ctypes.addressof(VP),0, ctypes.sizeof(VP))
-		#print(Width, "x",Height)
+		print(Width, "x",Height)
+		print(self.__m_SwapChain)
+		print(self.__m_Device)
+		print(self.__m_Factory)
+		print(self.__m_RTV)
+		print(self.__m_SharedSurf)
+		print(self.__m_KeyMutex)
+		print(self.__m_WindowHandle)
+		print(self.__m_NeedsResize)
+		print(self.__m_OcclusionCookie)
 		VP.Width    = float(Width)
 		VP.Height   = float(Height)
 		VP.MinDepth = 0.0
 		VP.MaxDepth = 1.0
-		VP.TopLeftX = 0
-		VP.TopLeftY = 0
-		
-		self.__m_DeviceContext.RSSetViewports(1, ctypes.byref(VP))
+		VP.TopLeftX = 0.0
+		VP.TopLeftY = 0.0
+		print(VP)
+		#self.__m_DeviceContext.RSSetViewports(1, VP)
 
 
 	def __InitShaders(self):
@@ -275,9 +330,9 @@ class OutputManager:
 				return print("Failed to create DirectX shared texture - we are attempting to create a texture the size of the complete desktop and this may be larger than the maximum texture size of your GPU.  Please try again using the -output command line parameter to duplicate only 1 monitor or configure your computer to a single monitor configuration")
 			else:
 				return print("Failed to create shared texture")
-
+		
 		self.__m_KeyMutex = self.__m_SharedSurf.QueryInterface(IDXGIKeyedMutex, IDXGIKeyedMutex._iid_)
-		print(self.__m_KeyMutex)	
+		
 		if hr != 0:
 			return print("Failed to query for keyed mutex in OUTPUTMANAGER")
 		return 0 # return DUPL_RETURN
