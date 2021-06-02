@@ -36,21 +36,21 @@ class ID3D11Debug(comtypes.IUnknown):
 	_iid_ = comtypes.GUID("{79CF2233-7536-4948-9D36-1E4692DC5760}")
 	_mehtods_ = [
 		comtypes.STDMETHOD(comtypes.HRESULT,"SetFeatureMask", []),
-		comtypes.STDMETHOD(ctypes.c_uint,"GetFeatureMask",[])
-		comtypes.STDMETHOD(comtypes.HRESULT,"SetPresentPerRenderOpDelay",[])
-		comtypes.STDMETHOD(ctypes.c_uint,"GetPresentPerRenderOpDelay",[])
-		comtypes.STDMETHOD(comtypes.HRESULT,"SetSwapChain",[])
-		comtypes.STDMETHOD(comtypes.HRESULT,"GetSwapChain",[])
-		comtypes.STDMETHOD(comtypes.HRESULT,"ValidateContext",[])
-		comtypes.STDMETHOD(comtypes.HRESULT,"ReportLiveDeviceObjects",[])
-		comtypes.STDMETHOD(comtypes.HRESULT,"ValidateContextForDispatch",[])
+		comtypes.STDMETHOD(ctypes.c_uint,"GetFeatureMask",[]),
+		comtypes.STDMETHOD(comtypes.HRESULT,"SetPresentPerRenderOpDelay",[]),
+		comtypes.STDMETHOD(ctypes.c_uint,"GetPresentPerRenderOpDelay",[]),
+		comtypes.STDMETHOD(comtypes.HRESULT,"SetSwapChain",[]),
+		comtypes.STDMETHOD(comtypes.HRESULT,"GetSwapChain",[]),
+		comtypes.STDMETHOD(comtypes.HRESULT,"ValidateContext",[]),
+		comtypes.STDMETHOD(comtypes.HRESULT,"ReportLiveDeviceObjects",[]),
+		comtypes.STDMETHOD(comtypes.HRESULT,"ValidateContextForDispatch",[]),
 	]
 
 class ID3D11SwitchToRef(comtypes.IUnknown):
 	_iid_ = comtypes.GUID("{1EF337E3-58E7-4F83-A692-DB221F5ED47E}")
 	_mehtods_ = [
-		comtypes.STDMETHOD(ctypes.wintypes.BOOL,"SetUseRef", [])
-		comtypes.STDMETHOD(ctypes.wintypes.BOOL,"GetUseRef", [])
+		comtypes.STDMETHOD(ctypes.wintypes.BOOL,"SetUseRef", []),
+		comtypes.STDMETHOD(ctypes.wintypes.BOOL,"GetUseRef", []),
 	]
 
 D3D11_SHADER_TRACKING_RESOURCE_TYPE = ctypes.c_uint
@@ -83,8 +83,28 @@ D3D11_SHADER_TRACKING_OPTION_ALL_OPTIONS                                  = D3D1
 
 class ID3D11TracingDevice(comtypes.IUnknown):
 	_iid_ = comtypes.GUID("{1911c771-1587-413e-a7e0-fb26c3de0268}")
-	_methods_ [
-		comtypes.STDMETHOD(comtypes.HRESULT, "SetShaderTrackingOptionsByType", [])
-		comtypes.STDMETHOD(comtypes.HRESULT, "SetShaderTrackingOptions", [])
+	_methods_ = [
+		comtypes.STDMETHOD(comtypes.HRESULT, "SetShaderTrackingOptionsByType", []),
+		comtypes.STDMETHOD(comtypes.HRESULT, "SetShaderTrackingOptions", []),
+	]
+
+
+class ID3D11RefTrackingOptions(comtypes.IUnknown):
+	_iid_ = comtypes.GUID("{193dacdf-0db2-4c05-a55c-ef06cac56fd9}")
+	_methods_ = [
+
+	]
+
+
+class ID3D11RefDefaultTrackingOptions(comtypes.IUnknown):
+	_iid_ = comtypes.GUID("{03916615-c644-418c-9bf4-75db5be63ca0}")
+	_methods_ = [
+
+	]
+
+
+class ID3D11InfoQueue(comtypes.IUnknown):
+	_iid_ = comtypes.GUID("{6543dbb6-1b48-42f5-ab82-e97ec74326f6}")
+	_methods_ = [
 
 	]
