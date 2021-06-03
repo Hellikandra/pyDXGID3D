@@ -3324,7 +3324,7 @@ class ID3D11Device(comtypes.IUnknown):
         comtypes.STDMETHOD(comtypes.HRESULT, "CheckMultisampleQualityLevels", [
             DXGI_FORMAT,
             wintypes.UINT,
-            ctypes.POINTER(wintypes.UINT),
+            ctypes.POINTER(ctypes.c_uint),
             ]),
         comtypes.STDMETHOD(None, "CheckCounterInfo", [
             ctypes.POINTER(D3D11_COUNTER_INFO),

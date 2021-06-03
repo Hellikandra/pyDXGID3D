@@ -232,7 +232,7 @@ class OutputManager:
 		VP.TopLeftX = 0.0
 		VP.TopLeftY = 0.0
 		print(VP)
-		#self.__m_DeviceContext.RSSetViewports(1, VP)
+		self.__m_DeviceContext.RSSetViewports(1, VP)
 
 
 	def __InitShaders(self):

@@ -278,6 +278,16 @@ def MainWindowFrame():
     print("Height", backBufferDesc.Height)
     pBackBuffer.Release()
     
+    d3d_device_context.OMSetRenderTargets(1, ctypes.byref(pRTV), None)
+    VP = Direct3D.PyIdl.d3d11.D3D11_VIEWPORT()
+    ctypes.memset(ctypes.addressof(VP),0, ctypes.sizeof(VP))
+    VP.Width = 800.0
+    VP.Height = 600.0
+    VP.MinDepth = 0.0
+    VP.MaxDepth = 1.0
+    VP.TopLeftX = 0.0
+    VP.TopLeftY = 0.0
+    d3d_device_context.RSSetViewports(1, ctypes.byref(VP))
 
     # Mode Switching
     currentMode = 0
