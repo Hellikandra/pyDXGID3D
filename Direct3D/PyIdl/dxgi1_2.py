@@ -387,7 +387,7 @@ class IDXGIOutput1(IDXGIOutput):
             ctypes.POINTER(IDXGIResource),
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "DuplicateOutput", [
-            ctypes.POINTER(comtypes.IUnknown),
+            ctypes.POINTER(ID3D11Device),
             ctypes.POINTER(ctypes.POINTER(IDXGIOutputDuplication)),
             ]),
     ]

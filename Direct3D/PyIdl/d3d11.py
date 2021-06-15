@@ -1957,7 +1957,7 @@ class ID3D11DeviceContext(ID3D11DeviceChild):
             ctypes.POINTER(ID3D11RasterizerState),
             ]),
         comtypes.STDMETHOD(None, "RSSetViewports", [
-            wintypes.UINT,
+            ctypes.c_uint,
             ctypes.POINTER(D3D11_VIEWPORT),
             ]),
         comtypes.STDMETHOD(None, "RSSetScissorRects", [
