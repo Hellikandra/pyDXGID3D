@@ -224,7 +224,7 @@ def MainWindowFrame():
     
     hResult = ctypes.windll.d3d11.D3D11CreateDeviceAndSwapChain(
         None, 1,    # D3D_DRIVE_TYPE_HARDWARE
-        None, 2,    # D3D11_CREATE_DEVICE_DEBUG (0x2) # D3D11_CREATE_DEVICE_SINGLETHREADED (0x1) default use
+        None, 1,    # D3D11_CREATE_DEVICE_DEBUG (0x2) # D3D11_CREATE_DEVICE_SINGLETHREADED (0x1) default use
         None, None , 7, # D3D11_SDK_VERSION
         ctypes.byref(dxgi_scd),
         ctypes.byref(dxgi_swap_chain),

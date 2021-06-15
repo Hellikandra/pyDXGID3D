@@ -42,6 +42,7 @@ SW_SHOW = 5
 WAIT_OBJECT_0 = STATUS_WAIT_0 + 0
 WM_DESTROY = 2
 WM_QUIT    = 0x0012
+WM_SIZE    = 0x0005
 WM_USER    = 0x0400
 
 WS_OVERLAPPED       = 0x00000000#L
@@ -115,6 +116,8 @@ def ProcessFailure(Device, Str, Title, hr, ExpectedErrors):
 def WndProc(hwnd, uMsg, wParam, lParam):
 	if uMsg == WM_DESTROY:
 		ctypes.windll.user32.PostQuitMessage(0)
+	elif uMsg == WM_SIZE:
+		OutMgr.WindowResize();
 	else:
 		return ctypes.windll.user32.DefWindowProcW(hwnd, uMsg, ctypes.c_ulonglong(wParam), ctypes.c_longlong(lParam))
 	return 0
@@ -231,6 +234,7 @@ def WinMain():
 				FirstTime = False
 			# Re-initialize
 			Ret = OutMgr.InitOutput(WindowHandle, SingleOutput, ctypes.byref(OutputCount), DeskBounds)
+			print("Ret OutMgr.InitOutput : ", Ret)
 			# Output Manager is the device where the DXGI DirectX is set
 			
 # ============
