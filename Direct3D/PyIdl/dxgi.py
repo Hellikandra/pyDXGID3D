@@ -329,11 +329,11 @@ class IDXGISwapChain(IDXGIDeviceSubObject):
             wintypes.UINT,
             wintypes.UINT,
             ]),
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetBuffer", [
-            wintypes.UINT,
-            comtypes.GUID,
-            ctypes.POINTER(ctypes.c_void_p),
-            ]),
+        comtypes.COMMETHOD([], comtypes.HRESULT, "GetBuffer", 
+            (['in'], wintypes.UINT,'Buffer'),
+            (['in'], comtypes.GUID, 'riid'),
+            (['in'], ctypes.POINTER(ctypes.c_void_p), 'ppSurface'),
+            ),
         comtypes.STDMETHOD(comtypes.HRESULT, "SetFullscreenState",[
             wintypes.BOOL,
             ctypes.POINTER(IDXGIOutput),

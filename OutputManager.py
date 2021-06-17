@@ -68,7 +68,7 @@ class OutputManager:
 		# # Store Window handle
 		self.__m_WindowHandle = Window
 		# # Drive types supported
-		DriverType = [D3D_DRIVER_TYPE_HARDWARE.value, D3D_DRIVER_TYPE_WARP.value, D3D_DRIVER_TYPE_REFERENCE.value]
+		DriverType = [D3D_DRIVER_TYPE_HARDWARE, D3D_DRIVER_TYPE_WARP, D3D_DRIVER_TYPE_REFERENCE]
 		NumDriverTypes = len(DriverType)
 
 		# # Feature levels supported
@@ -97,6 +97,7 @@ class OutputManager:
 		# Get DXGI Factory
 		DxgiDevice = ctypes.POINTER(IDXGIDevice)() # == nullptr
 		DxgiDevice = self.__m_Device.QueryInterface(IDXGIDevice, IDXGIDevice._iid_)
+		print("test dxgidevice query : ", DxgiDevice)
 		# how to test if DxgiDevice is clearly set ?
 		if hr != 0:
 			return print("Failed to QI for DXGI Device") # ProcesFailure with DUPL_...
@@ -132,11 +133,11 @@ class OutputManager:
 		# Create Swapchain for window
 		SwapChainDesc = DXGI_SWAP_CHAIN_DESC1()
 		ctypes.memset(ctypes.addressof(SwapChainDesc), 0, ctypes.sizeof(SwapChainDesc))
-		SwapChainDesc.SwapEffect         = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL.value
+		SwapChainDesc.SwapEffect         = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL
 		SwapChainDesc.BufferCount        = 2
 		SwapChainDesc.Width              = Width
 		SwapChainDesc.Height             = Height
-		SwapChainDesc.Format             = DXGI_FORMAT_B8G8R8A8_UNORM.value
+		SwapChainDesc.Format             = DXGI_FORMAT_B8G8R8A8_UNORM
 		SwapChainDesc.BufferUsage        = DXGI_USAGE_RENDER_TARGET_OUTPUT
 		SwapChainDesc.SampleDesc.Count   = 1
 		SwapChainDesc.SampleDesc.Quality = 0
