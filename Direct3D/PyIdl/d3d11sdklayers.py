@@ -103,7 +103,10 @@ D3D11_SHADER_TRACKING_OPTION_ALL_OPTIONS                                  = D3D1
 class ID3D11TracingDevice(comtypes.IUnknown):
     _iid_ = comtypes.GUID("{1911c771-1587-413e-a7e0-fb26c3de0268}")
     _methods_ = [
-        comtypes.STDMETHOD(comtypes.HRESULT, "SetShaderTrackingOptionsByType", []),
+        comtypes.STDMETHOD(comtypes.HRESULT, "SetShaderTrackingOptionsByType", [
+            wintypes.UINT,
+            wintypes.UINT,
+            ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "SetShaderTrackingOptions", []),
     ]
 

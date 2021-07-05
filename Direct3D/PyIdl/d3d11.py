@@ -170,7 +170,7 @@ from Direct3D.PyIdl.d3dcommon import *
 #define D3D11_DS_OUTPUT_REGISTER_COMPONENT_BIT_COUNT    ( 32 )
 #define D3D11_DS_OUTPUT_REGISTER_COUNT  ( 32 )
 #define D3D11_FLOAT16_FUSED_TOLERANCE_IN_ULP    ( 0.6 )
-#define D3D11_FLOAT32_MAX   ( 3.402823466e+38f )
+D3D11_FLOAT32_MAX = 3.402823466e+38
 #define D3D11_FLOAT32_TO_INTEGER_TOLERANCE_IN_ULP   ( 0.6f )
 #define D3D11_FLOAT_TO_SRGB_EXPONENT_DENOMINATOR    ( 2.4f )
 #define D3D11_FLOAT_TO_SRGB_EXPONENT_NUMERATOR  ( 1.0f )
@@ -696,11 +696,11 @@ D3D11_BLEND_OP_MIN          = D3D11_BLEND_OP(4) # min semantics are like min sha
 D3D11_BLEND_OP_MAX          = D3D11_BLEND_OP(5) # max semantics are like max shader instruction
 
 D3D11_COLOR_WRITE_ENABLE = ctypes.c_uint
-D3D11_COLOR_WRITE_ENABLE_RED   = D3D11_COLOR_WRITE_ENABLE(1)
-D3D11_COLOR_WRITE_ENABLE_GREEN = D3D11_COLOR_WRITE_ENABLE(2)
-D3D11_COLOR_WRITE_ENABLE_BLUE  = D3D11_COLOR_WRITE_ENABLE(4)
-D3D11_COLOR_WRITE_ENABLE_ALPHA = D3D11_COLOR_WRITE_ENABLE(8)
-D3D11_COLOR_WRITE_ENABLE_ALL   = D3D11_COLOR_WRITE_ENABLE(1 | 2 | 4 | 8) # cover all type
+D3D11_COLOR_WRITE_ENABLE_RED   = D3D11_COLOR_WRITE_ENABLE(1).value
+D3D11_COLOR_WRITE_ENABLE_GREEN = D3D11_COLOR_WRITE_ENABLE(2).value
+D3D11_COLOR_WRITE_ENABLE_BLUE  = D3D11_COLOR_WRITE_ENABLE(4).value
+D3D11_COLOR_WRITE_ENABLE_ALPHA = D3D11_COLOR_WRITE_ENABLE(8).value
+D3D11_COLOR_WRITE_ENABLE_ALL   = D3D11_COLOR_WRITE_ENABLE(1 | 2 | 4 | 8).value # cover all type
 
 class D3D11_RENDER_TARGET_BLEND_DESC(ctypes.Structure):
     _fields_ = [('BlendEnable',           wintypes.BOOL),
@@ -1929,6 +1929,10 @@ class ID3D11DeviceContext(ID3D11DeviceChild):
             ctypes.c_float * 4,
             ctypes.c_uint,
             ]),
+        comtypes.STDMETHOD(None, "OMSetDepthStencilState", [
+        	ctypes.POINTER(ID3D11DepthStencilState),
+        	ctypes.c_uint,
+        	]),
         comtypes.STDMETHOD(None, "SOSetTargets", [
             ctypes.c_uint,
             ctypes.POINTER(ctypes.POINTER(ID3D11Buffer)),
@@ -3230,7 +3234,7 @@ class ID3D11Device(comtypes.IUnknown):
             ctypes.POINTER(ctypes.POINTER(ID3D11InputLayout)),
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "CreateVertexShader", [
-            ctypes.c_void_p,
+            ctypes.c_char_p,
             ctypes.c_size_t,
             ctypes.POINTER(ID3D11ClassLinkage),
             ctypes.POINTER(ctypes.POINTER(ID3D11VertexShader)),
