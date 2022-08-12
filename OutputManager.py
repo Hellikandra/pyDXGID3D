@@ -1,5 +1,5 @@
 # OutputManager
-import ctypes 
+import ctypes
 
 from Direct3D.PyIdl.d3dcommon      import *
 from Direct3D.PyIdl.d3d11          import *
@@ -440,7 +440,9 @@ class OutputManager:
             return print("Failed to query for keyed mutex in OUTPUTMANAGER")
         return 0 # return DUPL_RETURN
 
-
+    def __UpdateApplicationWIndow(self):
+        hr = 0
+        return 0 # return DUPL_RETURN
     def __DrawFrame(self):
         return 0 # return DUPL_RETURN
 

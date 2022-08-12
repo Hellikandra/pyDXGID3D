@@ -17,7 +17,7 @@ class ThreadManager:
 		return 0 # return DUPL_RETURN
 
 	def GetPointerInfo(self):
-		return 0 # return PTR_INFO* 
+		return 0 # return PTR_INFO*
 
 	def WaitForThreadTermination(self):
 		return 0 # return void

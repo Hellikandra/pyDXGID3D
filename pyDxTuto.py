@@ -1,5 +1,5 @@
 #Lib Tester
-import ctypes 
+import ctypes
 import comtypes
 
 ## D3D11 Layer
