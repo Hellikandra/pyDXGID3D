@@ -6,9 +6,7 @@ python:
   - "3.10"
 
 # command to install dependencies
-install:
-  - pip install -r requirements.txt
+#install:
 
 # command to run tests
-script:
-  - wgdi_d3d
+#script:
