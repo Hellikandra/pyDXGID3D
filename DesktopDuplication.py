@@ -239,6 +239,7 @@ def WinMain():
 
 			if (Ret == 0):
 				print("OutMgr.InitOuput success!")
+				sharedHandle = OutMgr.GetSharedHandle()
 				
 			
 # ============
