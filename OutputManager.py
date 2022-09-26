@@ -258,7 +258,14 @@ class OutputManager:
 
 
     def GetSharedHandle(self):
-        return 0 # return HANDLE
+        Hnd = wintypes.HANDLE
+        DXGIResource = ctypes.POINTER(IDXGIResource)() # == nullptr
+        hr = self.__m_SharedSurf.QueryInterface(IDXGIResource, IDXGIResource._iid_)
+        if hr == 0:
+            DXGIResource.GetSharedHandle(ctypes.POINTER(Hnd))
+            DXGIResource.Release()
+            DXGIResource = None
+        return Hnd # return HANDLE
 
 
     ## ## private ## ##
@@ -443,7 +450,7 @@ class OutputManager:
     def __UpdateApplicationWIndow(self):
         hr = 0
         hr = __m_KeyMutex.AquireSync(1, 100)
-        if hr == 258 # winerror.h WAIT_TIMEOUT 258L
+        if hr == 258: # winerror.h WAIT_TIMEOUT 258L
             print("Success")
         return 0 # return DUPL_RETURN
     def __DrawFrame(self):
