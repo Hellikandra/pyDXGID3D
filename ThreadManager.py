@@ -7,6 +7,7 @@ class ThreadManager:
 		self.__mPtrInfo        = None # PTR_INFO m_PtrInfo
 		self.__m_ThreadHandles = None # _Field_size_(m_ThreadCount) HANDLE* m_ThreadHandles;
 		self.__m_ThreadData    = None # _Field_size_(m_ThreadCount) THREAD_DATA* m_ThreadData;
+
 	def __del__(self): # ~THREADMANAGER();
 		print("ThreadManager del")
 

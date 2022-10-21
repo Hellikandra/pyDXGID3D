@@ -145,7 +145,7 @@ def WinMain():
 	ExpectedErrorEvent = ctypes.windll.kernel32.CreateEventW(None, True, False, None)
 	if not ExpectedErrorEvent:
 		ProcessFailure(None, u"ExpectedErrorEvent creation failed", u"Error", E_UNEXPECTED)
-		return 0		
+		return 0
 	# Event to tell spawned threads to quit
 	TerminateThreadsEvent = ctypes.windll.kernel32.CreateEventW(None, True, False, None)
 	if not TerminateThreadsEvent:
@@ -221,6 +221,7 @@ def WinMain():
 				ctypes.windll.kernel32.SetEvent(TerminateThreadsEvent)
 				ThreadMgr.WaitForThreadTermination()
 				ctypes.windll.kernel32.ResetEvent(TerminateThreadsEvent)
+				ctypes.windll.kernel32.ResetEvent(ExpectedErrorEvent)
 
 				# Clean up
 				ThreadMgr.Clean()
@@ -228,20 +229,28 @@ def WinMain():
 
 				# As we have encounter an error due to a system transition we wait before trying again, using this dynamic wait
 				# the wait period will get progessively long to avoid wasting too much system resource if this state lasts a long time
-				## DynamicWait.Wait()
+				DynamicWait.Wait()
 			else:
 				# First time through the loop so nothing to clean up
 				FirstTime = False
+
 			# Re-initialize
 			Ret = OutMgr.InitOutput(WindowHandle, SingleOutput, ctypes.byref(OutputCount), DeskBounds)
-			#print("Ret OutMgr.InitOutput : ", Ret)
-			# Output Manager is the device where the DXGI DirectX is set
-
 			if (Ret == 0):
 				print("OutMgr.InitOuput success!")
 				sharedHandle = OutMgr.GetSharedHandle()
-				
-			
+				if sharedHandle:
+					Ret = 0
+					#Ret = ThreadMgr.Initialize(SingleOutput, OutputCount, UnexpectedErrorEvent, ExpectedErrorEvent, TerminateThreadsEvent, sharedHandle, ctypes.byref(DeskBounds))
+				else:
+					print("Failed to get handle of shared surface")
+					Ret = 2 # DUPL_RETURN_ERROR_UNEXPECTED
+			Occluded = True
+		else:
+			if not Occluded:
+				Ret = OutMgr.UpdateApplicationWindow(ThreadMgr.GetPointerInfo(), ctypes.byref(Occluded))
+
+		# check if for errors
 # ============
 # -- MAIN --
 # ============
