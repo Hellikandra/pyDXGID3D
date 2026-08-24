@@ -219,3 +219,48 @@ def test_no_bare_except():
             if isinstance(node, ast.ExceptHandler) and node.type is None:
                 bad.append("%s:%d" % (os.path.basename(path), node.lineno))
     assert not bad, "bare except:\n  " + "\n  ".join(bad)
+
+
+#: Modules a bare tier 0 runner does not have. `conftest.py` is exempt: it
+#: imports comtypes inside a try/except precisely so it can define the skip
+#: markers, which is the mechanism that makes every other exemption unnecessary.
+UNAVAILABLE_AT_TIER_0 = ("comtypes", "Direct3D")
+
+
+def _module_level_imports(tree):
+    """Names imported at module scope. Imports inside functions do not count."""
+    found = set()
+    for node in tree.body:
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                found.add(alias.name.split(".")[0])
+        elif isinstance(node, ast.ImportFrom) and node.module and not node.level:
+            found.add(node.module.split(".")[0])
+    return found
+
+
+def test_no_test_module_imports_the_bindings_at_module_scope():
+    """Tier 0 runs on Linux with pytest and nothing else.
+
+    pytest imports every test file during collection regardless of `-m`, so a
+    single module-level `import comtypes` fails the entire tier 0 job before one
+    skip marker is consulted - and it passes locally, where comtypes is always
+    installed. That is exactly how it got through: the marker
+    `pytestmark = [pytest.mark.tier2, needs_comtypes]` skips the TESTS, not the
+    IMPORT.
+
+    Keep those imports inside the functions that need them.
+    """
+    offenders = []
+    for path in sorted(glob.glob(os.path.join(REPO_ROOT, "tests", "test_*.py"))):
+        with io.open(path, encoding="utf-8") as handle:
+            tree = ast.parse(handle.read())
+        for name in sorted(_module_level_imports(tree) & set(UNAVAILABLE_AT_TIER_0)):
+            offenders.append("%s imports %s at module scope"
+                             % (os.path.basename(path), name))
+
+    assert not offenders, (
+        "these would break collection on the tier 0 runner, which has neither "
+        "comtypes nor a Windows DLL to load:\n  " + "\n  ".join(offenders)
+        + "\n\nMove the import inside the test function. Run "
+          "`python tools/tier0_sandbox.py -m tier0 -q` to check locally.")

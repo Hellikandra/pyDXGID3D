@@ -11,7 +11,6 @@ lifetime, and that the same region captured two ways gives the same bytes.
 """
 import gc
 
-import comtypes
 import pytest
 
 from conftest import needs_comtypes, needs_windows
@@ -305,6 +304,14 @@ class _Failing(object):
         self._state = state
 
     def AcquireNextFrame(self, *args):
+        # Imported here, not at module scope. Tier 0 runs on a machine with no
+        # comtypes at all, and pytest imports every test file during collection
+        # regardless of -m, so a module-level `import comtypes` fails the whole
+        # tier 0 job before a single skip marker is consulted. Every other test
+        # module in this suite keeps its comtypes and Direct3D imports inside
+        # functions for the same reason.
+        import comtypes
+
         if self._state["left"] > 0:
             self._state["left"] -= 1
             self._state["fired"] += 1
