@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "pyDXGI3D"
+name = "pyDXGID3D"
 version = "0.0.1"
-description = "DXGI / Direct3D Screen Capture using python"
-readme = "readme.md"
+description = "Python ctypes/comtypes bindings for DXGI and Direct3D 11"
+readme = "README.md"
 authors = ["Jean Vanhay"]
 license = "MIT"
 repository = "https://github.com/Hellikandra/pyDXGID3D"
-keywords = ["DXGI", "Direct3D", "Screen Capture", "Windows"]
+keywords = ["DXGI", "Direct3D", "Direct3D11", "ctypes", "comtypes", "Windows"]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Intended Audience :: Developers",
@@ -14,28 +14,43 @@ classifiers = [
     "Natural Language :: English",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: Microsoft :: Windows :: Windows 10",
+    "Operating System :: Microsoft :: Windows :: Windows 11",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.10"
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Multimedia :: Graphics",
     "Topic :: Multimedia :: Graphics :: Capture",
-    "Topic :: Multimedia :: Graphics :: Capture :: Screen Capture"
+    "Topic :: Multimedia :: Graphics :: Capture :: Screen Capture",
+    "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 packages = [
-	{include = "Direct3D"},
+    { include = "Direct3D" },
 ]
-include = []
 
 [tool.poetry.dependencies]
 python = ">=3.8"
+# ctypes is standard library - the PyPI package of that name is an abandoned
+# 2007 distribution and declaring it makes the project uninstallable.
+comtypes = ">=1.2,<2"
 
-comtypes = "~1.1.13"
-ctypes = "~1.1.0"
+[tool.poetry.group.dev.dependencies]
+pytest = ">=7.0"
 
-[tool.poetry.dev-dependencies]
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "tier0: static checks - no Windows, no comtypes, no GPU",
+    "tier1: needs Windows and comtypes; WARP is enough, no GPU required",
+    "tier2: needs a real GPU and an interactive desktop session",
+    "tier3: performance gates",
+]
 
 [tool.black]
+line-length = 100
 
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
