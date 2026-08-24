@@ -1,0 +1,55 @@
+pyDXGID3D
+Copyright (c) 2020-2026 Hellikandra / Jean Vanhay
+Licensed under the MIT License. See LICENSE.
+
+================================================================================
+Third-party material
+================================================================================
+
+This project contains material derived from Microsoft sources. It is listed here
+for attribution and transparency.
+
+--------------------------------------------------------------------------------
+1. Interface definitions under Direct3D/PyIdl/
+--------------------------------------------------------------------------------
+
+The modules under Direct3D/PyIdl/ are Python translations of the interface
+definition files (.idl) distributed with the Microsoft Windows Software
+Development Kit. Interface names, method names and signatures, structure layouts,
+enumeration values and IID GUIDs originate from those files and remain the
+property of Microsoft Corporation.
+
+    Copyright (C) Microsoft Corporation. All rights reserved.
+
+Translated from: Windows SDK 10.0.19041.0
+Source files:    dxgi.idl, dxgi1_2.idl, dxgicommon.idl, dxgiformat.idl,
+                 dxgitype.idl, dxgidebug.h, d3d11.idl, d3d11sdklayers.idl,
+                 d3dcommon.idl
+
+--------------------------------------------------------------------------------
+2. Compiled shader blobs
+--------------------------------------------------------------------------------
+
+VertexShader.py and PixelShader.py contain compiled DXBC bytecode built from the
+HLSL shaders in Microsoft's DXGI desktop duplication sample. The HLSL source text
+is embedded in the compiled blobs and carries:
+
+    // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
+    // ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+    // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
+    // PARTICULAR PURPOSE.
+    //
+    // Copyright (c) Microsoft Corporation. All rights reserved
+
+Original sample:
+https://github.com/microsoftarchive/msdn-code-gallery-microsoft/tree/master/Official%20Windows%20Platform%20Sample/DXGI%20desktop%20duplication%20sample
+
+--------------------------------------------------------------------------------
+3. Structural inspiration
+--------------------------------------------------------------------------------
+
+The application-layer class structure (OutputManager, ThreadManager) follows the
+C++ desktop duplication sample referenced above. SerpentAI/D3DShot was consulted
+as a reference implementation:
+
+    https://github.com/SerpentAI/D3DShot   (MIT License)

@@ -41,7 +41,7 @@ All implemented interfaces carry a verified IID.
 
 ## Planned
 
-In priority order. See `.claude/analysis/` for the full plan.
+In priority order:
 
 - DXGI 1.3 – 1.6 — including `IDXGIOutput5::DuplicateOutput1`
 - Direct3D 11.1 – 11.4 — including `ID3D11Multithread` and `ID3D11Fence`

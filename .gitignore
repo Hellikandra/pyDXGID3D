@@ -60,7 +60,3 @@ $RECYCLE.BIN/
 
 # Generated bindings are COMMITTED on purpose - they are meant to be reviewed.
 # Do not add Direct3D/PyIdl/*.py here.
-
-# NOTE: .claude/ is tracked on purpose. The analysis and session history live
-# with the project rather than in the user profile. Uncomment to opt out:
-# .claude/
