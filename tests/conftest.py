@@ -77,3 +77,31 @@ def warp_device():
     # _compointer_base.__del__; calling Release() as well double-releases and
     # faults on the second call. See finding F-52 - the same C++ habit that
     # OutputManager.CleanRefs() carries.
+
+
+@pytest.fixture(scope="session")
+def capturable_output():
+    """The first attached output, or skip.
+
+    Tier 2 and above need a real display. There is none on a hosted runner, none
+    over a disconnected RDP session and none in a service, so this skips rather
+    than fails - constraint C-7.
+    """
+    if not (ON_WINDOWS and HAVE_COMTYPES):
+        pytest.skip("needs Windows and comtypes")
+    from Direct3D.Capture import enumerate_outputs
+
+    outputs = enumerate_outputs()
+    if not outputs:
+        pytest.skip("no attached display - tier 2 needs an interactive desktop")
+    return outputs[0]
+
+
+@pytest.fixture(scope="session")
+def numpy_module():
+    """numpy, or skip. It is an optional extra, not a dependency."""
+    try:
+        import numpy
+    except ImportError:
+        pytest.skip("numpy is not installed - it is the [numpy] extra")
+    return numpy
