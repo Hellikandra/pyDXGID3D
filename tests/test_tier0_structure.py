@@ -90,6 +90,9 @@ EMPTY_BY_DESIGN = {
     "ID3D11VertexShader", "ID3D11HullShader", "ID3D11DomainShader",
     "ID3D11GeometryShader", "ID3D11PixelShader", "ID3D11ComputeShader",
     "ID3D11InputLayout", "ID3D11Predicate",
+    # d3d11_1.idl: `interface ID3DDeviceContextState : ID3D11DeviceChild {};`
+    # A handle you pass to SwapDeviceContextState, nothing more.
+    "ID3DDeviceContextState",
 }
 
 

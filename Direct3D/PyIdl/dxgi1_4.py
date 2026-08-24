@@ -32,18 +32,10 @@ DXGI_SWAP_CHAIN_COLOR_SPACE_SUPPORT_FLAG_PRESENT         = DXGI_SWAP_CHAIN_COLOR
 DXGI_SWAP_CHAIN_COLOR_SPACE_SUPPORT_FLAG_OVERLAY_PRESENT = DXGI_SWAP_CHAIN_COLOR_SPACE_SUPPORT_FLAG(0x00000002).value
 
 
-## ---------------------------------------------- structures ----
-
-
-class DXGI_QUERY_VIDEO_MEMORY_INFO(ctypes.Structure):
-    _fields_ = [('Budget',                  ctypes.c_uint64),
-                ('CurrentUsage',            ctypes.c_uint64),
-                ('AvailableForReservation', ctypes.c_uint64),
-                ('CurrentReservation',      ctypes.c_uint64),
-    ]
-
-
 ## ---------------------------------------------- interfaces ----
+
+## Declarations only. Vtables are assigned at the end of the file, once every
+## class exists, so anything may reference anything.
 
 
 class IDXGIAdapter3(IDXGIAdapter2):
@@ -60,6 +52,17 @@ class IDXGIOutput4(IDXGIOutput3):
 
 class IDXGISwapChain3(IDXGISwapChain2):
     _iid_ = comtypes.GUID("{94d99bdb-f1f8-4ab0-b236-7da0170edab1}")
+
+
+## ---------------------------------------------- structures ----
+
+
+class DXGI_QUERY_VIDEO_MEMORY_INFO(ctypes.Structure):
+    _fields_ = [('Budget',                  ctypes.c_uint64),
+                ('CurrentUsage',            ctypes.c_uint64),
+                ('AvailableForReservation', ctypes.c_uint64),
+                ('CurrentReservation',      ctypes.c_uint64),
+    ]
 
 
 ## ------------------------- vtables, assigned once every class exists ----

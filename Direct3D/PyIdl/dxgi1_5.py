@@ -40,6 +40,28 @@ DXGI_RECLAIM_RESOURCE_RESULT_DISCARDED     = DXGI_RECLAIM_RESOURCE_RESULTS(1).va
 DXGI_RECLAIM_RESOURCE_RESULT_NOT_COMMITTED = DXGI_RECLAIM_RESOURCE_RESULTS(2).value
 
 
+## ---------------------------------------------- interfaces ----
+
+## Declarations only. Vtables are assigned at the end of the file, once every
+## class exists, so anything may reference anything.
+
+
+class IDXGIDevice4(IDXGIDevice3):
+    _iid_ = comtypes.GUID("{95B4F95F-D8DA-4CA4-9EE6-3B76D5968A10}")
+
+
+class IDXGIFactory5(IDXGIFactory4):
+    _iid_ = comtypes.GUID("{7632e1f5-ee65-4dca-87fd-84cd75f8838d}")
+
+
+class IDXGIOutput5(IDXGIOutput4):
+    _iid_ = comtypes.GUID("{80A07424-AB52-42EB-833C-0C42FD282D98}")
+
+
+class IDXGISwapChain4(IDXGISwapChain3):
+    _iid_ = comtypes.GUID("{3D585D5A-BD4A-489E-B1F4-3DBCB6452FFB}")
+
+
 ## ---------------------------------------------- structures ----
 
 
@@ -58,25 +80,6 @@ class DXGI_HDR_METADATA_HDR10(ctypes.Structure):
 class DXGI_HDR_METADATA_HDR10PLUS(ctypes.Structure):
     _fields_ = [('Data', ctypes.c_ubyte * 72),
     ]
-
-
-## ---------------------------------------------- interfaces ----
-
-
-class IDXGIDevice4(IDXGIDevice3):
-    _iid_ = comtypes.GUID("{95B4F95F-D8DA-4CA4-9EE6-3B76D5968A10}")
-
-
-class IDXGIFactory5(IDXGIFactory4):
-    _iid_ = comtypes.GUID("{7632e1f5-ee65-4dca-87fd-84cd75f8838d}")
-
-
-class IDXGIOutput5(IDXGIOutput4):
-    _iid_ = comtypes.GUID("{80A07424-AB52-42EB-833C-0C42FD282D98}")
-
-
-class IDXGISwapChain4(IDXGISwapChain3):
-    _iid_ = comtypes.GUID("{3D585D5A-BD4A-489E-B1F4-3DBCB6452FFB}")
 
 
 ## ------------------------- vtables, assigned once every class exists ----

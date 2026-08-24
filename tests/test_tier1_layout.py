@@ -35,17 +35,18 @@ BINDING_MODULES = [
     "Direct3D.PyIdl.dxgi1_3", "Direct3D.PyIdl.dxgi1_4",
     "Direct3D.PyIdl.dxgi1_5", "Direct3D.PyIdl.dxgi1_6",
     "Direct3D.PyIdl.d3dcommon", "Direct3D.PyIdl.d3d11",
+    "Direct3D.PyIdl.d3d11_1", "Direct3D.PyIdl.d3d11_2",
+    "Direct3D.PyIdl.d3d11_3", "Direct3D.PyIdl.d3d11_4",
     "Direct3D.PyIdl.d3d11sdklayers",
 ]
 
 #: Structures the bindings deliberately do not declare, or declare under a
 #: different name. Each needs a reason, not just an entry.
-EXPECTED_ABSENT = {
-    # The SDK's struct tag is misspelled (missing a C) while its typedef is not.
-    # The bindings copied the tag. See F-50.
-    "D3D11_AUTHENTICATED_QUERY_ACCESSIBILITY_OUTPUT":
-        "declared under the SDK's misspelled tag ACESSIBILITY - F-50",
-}
+#: F-50 used to live here: the SDK's struct tag is misspelled (missing a C)
+#: while its typedef is not, and the hand-written module copied the tag. The
+#: generator keys on the typedef, so the structure is now declared under the
+#: name the SDK actually exports and the exception is gone.
+EXPECTED_ABSENT = {}
 
 
 @pytest.fixture(scope="session")
@@ -90,24 +91,17 @@ def test_pointer_width_matches_layout_data(layout):
 #: Structures whose layout is known-wrong, with the reason. Each is a finding.
 #: The dict is asserted exactly: a NEW mismatch fails, and fixing one requires
 #: deleting its entry. Ratchet downwards only.
-KNOWN_SIZE_MISMATCH = {
-    "D3D11_VIDEO_PROCESSOR_COLOR_SPACE":
-        "F-54: six SDK bitfields totalling 32 bits, declared as six full UINTs",
-    "D3D11_AUTHENTICATED_CONFIGURE_PROTECTION_INPUT":
-        "F-54: contains a bitfield union declared as plain fields",
-    "D3D11_AUTHENTICATED_QUERY_PROTECTION_OUTPUT":
-        "F-54: contains a bitfield union declared as plain fields",
-    "D3D11_VIDEO_PROCESSOR_STREAM":
-        "F-56: six pointer fields commented out pending a forward reference",
-}
+#: Empty, and that is the point. It held four entries - F-54's three bitfield
+#: structures and F-56's D3D11_VIDEO_PROCESSOR_STREAM, whose six pointer fields
+#: were commented out pending a forward reference. Generating d3d11.py from the
+#: IDL fixed all four, and the ratchet below made deleting them compulsory
+#: rather than optional.
+KNOWN_SIZE_MISMATCH = {}
 
-#: Field names that differ from the SDK, with the reason. Same ratchet.
-KNOWN_NAME_MISMATCH = {
-    "D3D11_AUTHENTICATED_QUERY_CHANNEL_TYPE_OUTPUT": "F-55: copy-paste from a sibling struct",
-    "D3D11_AUTHENTICATED_QUERY_OUTPUT_ID_COUNT_INPUT": "F-55: copy-paste from a sibling struct",
-    "D3D11_AUTHENTICATED_QUERY_RESTRICTED_SHARED_RESOURCE_PROCESS_COUNT_OUTPUT":
-        "F-55: copy-paste from a sibling struct",
-}
+#: Also empty. F-55's three structures carried field names copy-pasted from a
+#: sibling; the generator reads them from the IDL, so they are right by
+#: construction.
+KNOWN_NAME_MISMATCH = {}
 
 
 def test_structure_sizes(layout, bound_structs):
@@ -164,16 +158,24 @@ def test_field_names_match_the_sdk(layout, bound_structs):
         struct = bound_structs.get(name)
         if struct is None or not spec["fields"]:
             continue
-        if name in KNOWN_NAME_MISMATCH:
-            continue
         declared = [f[0] for f in getattr(struct, "_fields_", [])]
         if len(declared) != len(spec["fields"]):
             continue        # a count mismatch is a different fault
-        for field in sorted(spec["fields"]):
-            if field not in declared:
+        wrong = [f for f in sorted(spec["fields"]) if f not in declared]
+        if name in KNOWN_NAME_MISMATCH:
+            # The same ratchet the size test carries. Without it this allowlist
+            # could not rot loudly: an entry that had quietly been fixed would
+            # go on suppressing a check nobody was failing, and the next real
+            # defect in that structure would be invisible.
+            if not wrong:
                 problems.append(
-                    "%s: SDK field %r is not declared; binding has %s"
-                    % (name, field, ", ".join(repr(d) for d in declared)))
+                    "%s now matches the SDK - delete its KNOWN_NAME_MISMATCH "
+                    "entry" % name)
+            continue
+        for field in wrong:
+            problems.append(
+                "%s: SDK field %r is not declared; binding has %s"
+                % (name, field, ", ".join(repr(d) for d in declared)))
     assert not problems, "field name mismatch:\n  " + "\n  ".join(problems)
 
 

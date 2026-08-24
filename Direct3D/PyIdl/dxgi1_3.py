@@ -40,36 +40,10 @@ DXGI_OVERLAY_SUPPORT_FLAG_DIRECT  = DXGI_OVERLAY_SUPPORT_FLAG(0x1).value
 DXGI_OVERLAY_SUPPORT_FLAG_SCALING = DXGI_OVERLAY_SUPPORT_FLAG(0x2).value
 
 
-## ---------------------------------------------- structures ----
-
-
-class DXGI_DECODE_SWAP_CHAIN_DESC(ctypes.Structure):
-    _fields_ = [('Flags', ctypes.c_uint32),
-    ]
-
-
-class DXGI_FRAME_STATISTICS_MEDIA(ctypes.Structure):
-    _fields_ = [('PresentCount',            ctypes.c_uint32),
-                ('PresentRefreshCount',     ctypes.c_uint32),
-                ('SyncRefreshCount',        ctypes.c_uint32),
-                ('SyncQPCTime',             ctypes.c_int64),
-                ('SyncGPUTime',             ctypes.c_int64),
-                ('CompositionMode',         DXGI_FRAME_PRESENTATION_MODE),
-                ('ApprovedPresentDuration', ctypes.c_uint32),
-    ]
-
-
-class DXGI_MATRIX_3X2_F(ctypes.Structure):
-    _fields_ = [('_11', ctypes.c_float),
-                ('_12', ctypes.c_float),
-                ('_21', ctypes.c_float),
-                ('_22', ctypes.c_float),
-                ('_31', ctypes.c_float),
-                ('_32', ctypes.c_float),
-    ]
-
-
 ## ---------------------------------------------- interfaces ----
+
+## Declarations only. Vtables are assigned at the end of the file, once every
+## class exists, so anything may reference anything.
 
 
 class IDXGIDecodeSwapChain(comtypes.IUnknown):
@@ -102,6 +76,35 @@ class IDXGISwapChain2(IDXGISwapChain1):
 
 class IDXGISwapChainMedia(comtypes.IUnknown):
     _iid_ = comtypes.GUID("{dd95b90b-f05f-4f6a-bd65-25bfb264bd84}")
+
+
+## ---------------------------------------------- structures ----
+
+
+class DXGI_DECODE_SWAP_CHAIN_DESC(ctypes.Structure):
+    _fields_ = [('Flags', ctypes.c_uint32),
+    ]
+
+
+class DXGI_FRAME_STATISTICS_MEDIA(ctypes.Structure):
+    _fields_ = [('PresentCount',            ctypes.c_uint32),
+                ('PresentRefreshCount',     ctypes.c_uint32),
+                ('SyncRefreshCount',        ctypes.c_uint32),
+                ('SyncQPCTime',             ctypes.c_int64),
+                ('SyncGPUTime',             ctypes.c_int64),
+                ('CompositionMode',         DXGI_FRAME_PRESENTATION_MODE),
+                ('ApprovedPresentDuration', ctypes.c_uint32),
+    ]
+
+
+class DXGI_MATRIX_3X2_F(ctypes.Structure):
+    _fields_ = [('_11', ctypes.c_float),
+                ('_12', ctypes.c_float),
+                ('_21', ctypes.c_float),
+                ('_22', ctypes.c_float),
+                ('_31', ctypes.c_float),
+                ('_32', ctypes.c_float),
+    ]
 
 
 ## ------------------------- vtables, assigned once every class exists ----

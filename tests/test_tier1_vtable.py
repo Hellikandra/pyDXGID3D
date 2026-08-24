@@ -35,6 +35,10 @@ MODULE_IDL = {
     "dxgi1_5": "dxgi1_5.idl",
     "dxgi1_6": "dxgi1_6.idl",
     "d3d11": "d3d11.idl",
+    "d3d11_1": "d3d11_1.idl",
+    "d3d11_2": "d3d11_2.idl",
+    "d3d11_3": "d3d11_3.idl",
+    "d3d11_4": "d3d11_4.idl",
     "d3d11sdklayers": "d3d11sdklayers.idl",
     "d3dcommon": "d3dcommon.idl",
 }
@@ -247,12 +251,24 @@ def test_no_new_parameterless_stubs(module, sdk_include):
     assert len(stubs) <= budget, (
         "%d parameterless stubs in %s, budget is %d. New ones are not "
         "acceptable:\n  %s" % (len(stubs), module, budget, "\n  ".join(stubs)))
+    assert len(stubs) == budget, (
+        "%s has %d parameterless stubs but its budget is still %d. Lower it: a "
+        "budget above the real count is a ratchet that has come loose, and it "
+        "would silently absorb the next %d regressions."
+        % (module, len(stubs), budget, budget - len(stubs)))
 
 
 #: Frozen at the count measured when this test was written. Ratchet downwards
 #: only - raising a number here means a regression was accepted.
 STUB_BUDGET = {
-    "d3d11": 74,             # ID3D11VideoContext 56, ID3D11VideoDevice 16, +2
+    # Was 74 - ID3D11VideoContext 56, ID3D11VideoDevice 16, and two others.
+    # Generating d3d11.py from the IDL took every one of them to a real
+    # parameter list, so the whole of F-49 is gone from this module.
+    "d3d11": 0,
+    "d3d11_1": 0,
+    "d3d11_2": 0,
+    "d3d11_3": 0,
+    "d3d11_4": 0,
     "d3d11sdklayers": 9,     # ID3D11InfoQueue 8, ID3D11TracingDevice 1
     "d3dcommon": 1,          # ID3DDestructionNotifier
     "dxgi": 0,

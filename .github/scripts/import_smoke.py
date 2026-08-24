@@ -22,6 +22,10 @@ MODULES = [
     "Direct3D.PyIdl.dxgidebug",
     "Direct3D.PyIdl.d3dcommon",
     "Direct3D.PyIdl.d3d11",
+    "Direct3D.PyIdl.d3d11_1",
+    "Direct3D.PyIdl.d3d11_2",
+    "Direct3D.PyIdl.d3d11_3",
+    "Direct3D.PyIdl.d3d11_4",
     "Direct3D.PyIdl.d3d11sdklayers",
 ]
 

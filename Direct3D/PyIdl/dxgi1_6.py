@@ -41,6 +41,28 @@ DXGI_HARDWARE_COMPOSITION_SUPPORT_FLAG_WINDOWED         = DXGI_HARDWARE_COMPOSIT
 DXGI_HARDWARE_COMPOSITION_SUPPORT_FLAG_CURSOR_STRETCHED = DXGI_HARDWARE_COMPOSITION_SUPPORT_FLAGS(4).value
 
 
+## ---------------------------------------------- interfaces ----
+
+## Declarations only. Vtables are assigned at the end of the file, once every
+## class exists, so anything may reference anything.
+
+
+class IDXGIAdapter4(IDXGIAdapter3):
+    _iid_ = comtypes.GUID("{3c8d99d1-4fbf-4181-a82c-af66bf7bd24e}")
+
+
+class IDXGIFactory6(IDXGIFactory5):
+    _iid_ = comtypes.GUID("{c1b6694f-ff09-44a9-b03c-77900a0a1d17}")
+
+
+class IDXGIFactory7(IDXGIFactory6):
+    _iid_ = comtypes.GUID("{a4966eed-76db-44da-84c1-ee9a7afb20a8}")
+
+
+class IDXGIOutput6(IDXGIOutput5):
+    _iid_ = comtypes.GUID("{068346e8-aaec-4b84-add7-137f513f77a1}")
+
+
 ## ---------------------------------------------- structures ----
 
 
@@ -76,25 +98,6 @@ class DXGI_OUTPUT_DESC1(ctypes.Structure):
                 ('MaxLuminance',          ctypes.c_float),
                 ('MaxFullFrameLuminance', ctypes.c_float),
     ]
-
-
-## ---------------------------------------------- interfaces ----
-
-
-class IDXGIAdapter4(IDXGIAdapter3):
-    _iid_ = comtypes.GUID("{3c8d99d1-4fbf-4181-a82c-af66bf7bd24e}")
-
-
-class IDXGIFactory6(IDXGIFactory5):
-    _iid_ = comtypes.GUID("{c1b6694f-ff09-44a9-b03c-77900a0a1d17}")
-
-
-class IDXGIFactory7(IDXGIFactory6):
-    _iid_ = comtypes.GUID("{a4966eed-76db-44da-84c1-ee9a7afb20a8}")
-
-
-class IDXGIOutput6(IDXGIOutput5):
-    _iid_ = comtypes.GUID("{068346e8-aaec-4b84-add7-137f513f77a1}")
 
 
 ## ------------------------- vtables, assigned once every class exists ----

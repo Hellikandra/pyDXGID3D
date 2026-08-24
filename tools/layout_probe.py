@@ -42,12 +42,14 @@ DEFAULT_OUT = os.path.join(ROOT, "tests", "data", "struct_layout.json")
 PROBE_IDLS = [
     "dxgicommon.idl", "dxgitype.idl", "dxgi.idl", "dxgi1_2.idl",
     "dxgi1_3.idl", "dxgi1_4.idl", "dxgi1_5.idl", "dxgi1_6.idl",
-    "d3dcommon.idl", "d3d11.idl", "d3d11sdklayers.idl",
+    "d3dcommon.idl", "d3d11.idl", "d3d11_1.idl", "d3d11_2.idl",
+    "d3d11_3.idl", "d3d11_4.idl", "d3d11sdklayers.idl",
 ]
 
 #: Headers the probe includes. dxgi1_2.h pulls in dxgi.h, dxgitype.h and
 #: dxgicommon.h; d3d11.h pulls in d3dcommon.h.
-INCLUDES = ["windows.h", "dxgi1_6.h", "d3d11.h", "d3d11sdklayers.h"]
+# d3d11_4.h pulls in d3d11_3.h, which pulls in _2 and _1 and d3d11.h.
+INCLUDES = ["windows.h", "dxgi1_6.h", "d3d11_4.h", "d3d11sdklayers.h"]
 
 #: Structures the SDK declares but that are unavailable to a plain C build -
 #: guarded by an SDK version macro, or C++ only.

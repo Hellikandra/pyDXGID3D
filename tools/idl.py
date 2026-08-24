@@ -163,6 +163,55 @@ def parse_interfaces(text):
 
 _TYPEDEF_NAME_RE = re.compile(r"\s*([A-Za-z_][A-Za-z0-9_]*)\s*[,;]")
 
+_UNION_RE = re.compile(
+    r"typedef\s+union\s+([A-Za-z_][A-Za-z0-9_]*)\s*\n?\s*\{", re.M)
+_NAMED_STRUCT_RE = re.compile(r"\bstruct\b[^{]*\{")
+
+
+def parse_unions(text):
+    """Top-level `typedef union` declarations.
+
+    Rare - one in d3d11.idl and one in d3d12.idl across the whole target set -
+    but D3D11_AUTHENTICATED_PROTECTION_FLAGS is referenced by several structures,
+    so missing it makes the generated module fail to import rather than merely
+    lose a type.
+
+    It is also the most nested construct in the set: a union containing a NAMED
+    struct of bitfields alongside a plain UINT, which is the classic
+    flags-or-value overlay.
+
+        {name: {'members': [(type, fname, bounds, bits), ...],
+                'nested':  [(fieldname, [(type, fname, bounds, bits), ...])]}}
+    """
+    text = strip_comments(text)
+    out = {}
+    for match in _UNION_RE.finditer(text):
+        tag = match.group(1)
+        open_index = text.index("{", match.start())
+        body, close_index = _balanced_body(text, open_index)
+
+        trailing = _TYPEDEF_NAME_RE.match(text, close_index + 1)
+        name = trailing.group(1) if trailing else tag
+
+        nested, remainder = [], body
+        while True:
+            inner = _NAMED_STRUCT_RE.search(remainder)
+            if not inner:
+                break
+            brace = remainder.index("{", inner.start())
+            fields_text, end = _balanced_body(remainder, brace)
+            after = remainder[end + 1:]
+            label = _TYPEDEF_NAME_RE.match(after)
+            nested.append((label.group(1) if label else "s%d" % len(nested),
+                           parse_struct_fields(fields_text)))
+            remainder = (remainder[:inner.start()]
+                         + after[label.end():] if label else after)
+
+        out[name] = {"tag": tag,
+                     "members": parse_struct_fields(remainder),
+                     "nested": nested}
+    return out
+
 
 def parse_structs(text):
     """{name: {'tag', 'fields': [(type, name, array_len), ...], 'opaque': bool}}.
@@ -195,32 +244,41 @@ def parse_structs(text):
 
         opaque = bool(re.search(r"\bunion\b|\bstruct\b", body))
 
-        union = None
-        if opaque and "union" in body and not re.search(r"\bstruct\b", body):
-            # An anonymous union inside a structure. The SDK writes
+        segments = None
+        if opaque and re.search(r"\bunion\b", body) \
+                and not re.search(r"\bstruct\b", body):
+            # Anonymous unions inside a structure. The SDK writes
             #     union { D3D11_BUFFER_RTV Buffer; ... } ;
             # and ctypes expresses it as a nested class plus _anonymous_ - the
             # shape the hand-written D3D11_RENDER_TARGET_VIEW_DESC already uses.
-            # The body is split at the union so field ORDER survives, which
-            # matters because every offset after it depends on the position.
-            head = body.index("union")
-            open_u = body.index("{", head)
-            inner, close_u = _balanced_body(body, open_u)
-            union = {
-                "members": parse_struct_fields(inner),
-                "before": parse_struct_fields(body[:head]),
-                "after": parse_struct_fields(body[close_u + 1:]),
-            }
+            #
+            # The body is cut into ordered segments so field ORDER survives,
+            # which matters because every offset after a union depends on where
+            # it sits. There can be more than one: D3D11_BUFFER_SRV carries two
+            # back to back, and handling only the first silently flattened the
+            # second into plain fields - eight bytes of structure emitted as
+            # twelve.
+            segments, rest = [], body
+            while True:
+                found = re.search(r"\bunion\b", rest)
+                if not found:
+                    break
+                open_u = rest.index("{", found.start())
+                inner, close_u = _balanced_body(rest, open_u)
+                segments.append(("fields", parse_struct_fields(rest[:found.start()])))
+                segments.append(("union", parse_struct_fields(inner)))
+                rest = rest[close_u + 1:]
+            segments.append(("fields", parse_struct_fields(rest)))
             opaque = False
 
         fields = []
-        if not opaque and union is None:
+        if not opaque and segments is None:
             for found in _FIELD_RE.finditer(body):
                 ftype, fname, bound = found.groups()
                 fields.append((ftype.replace(" ", ""), fname, bound))
         out[name] = {"tag": tag, "fields": fields, "opaque": opaque,
-                     "union": union,
-                     "parsed_fields": ([] if (opaque or union)
+                     "segments": segments,
+                     "parsed_fields": ([] if (opaque or segments)
                                        else parse_struct_fields(body))}
     return out
 
@@ -391,6 +449,17 @@ _DEFINE_RE = re.compile(
     r'cpp_quote\(\s*"\s*#define\s+([A-Za-z_][A-Za-z0-9_]*)\s+(.+?)\s*"\s*\)')
 
 
+#: `const UINT D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT = 8;` - MIDL's own way of
+#: declaring a constant, as opposed to the preprocessor's. d3d11.idl writes 340
+#: of them and d3d12.idl 392, and they are used as array bounds, so they are not
+#: optional: without them the generated module fails to import.
+_CONST_RE = re.compile(
+    r"^[ \t]*const[ \t]+[A-Za-z_][A-Za-z0-9_]*[ \t]+"
+    r"([A-Za-z_][A-Za-z0-9_]*)[ \t]*=[ \t]*"
+    r"([^;]+);",
+    re.M)
+
+
 _BARE_DEFINE_RE = re.compile(
     "^[ 	]*#define[ 	]+"
     "([A-Za-z_][A-Za-z0-9_]*)[ 	]+"
@@ -422,6 +491,12 @@ def parse_defines(text):
     # import rather than merely lose a constant.
     for match in _BARE_DEFINE_RE.finditer(text):
         take(match.group(1), match.group(2))
+
+    # MIDL `const` declarations. Emitted after the defines but collected in file
+    # order among themselves, because they refer to each other:
+    # `const UINT _FACD3D11DEBUG = _FACD3D11 + 1;`.
+    for match in _CONST_RE.finditer(text):
+        take(match.group(1), match.group(2))
     return out
 
 
@@ -429,8 +504,14 @@ def parse_defines(text):
 _FIELD_FULL_RE = re.compile(
     r"^[ \t]*(?:\[[^\]]*\][ \t]*)?"          # MIDL / SAL annotation
     r"(?:const[ \t]+)?"
-    r"([A-Za-z_][A-Za-z0-9_]*(?:[ \t]*\*+)?)[ \t]+"   # type, maybe pointer
-    r"([A-Za-z_][A-Za-z0-9_]*)"                          # name
+    r"([A-Za-z_][A-Za-z0-9_]*)"                        # type
+    # The asterisks bind to the NAME in this SDK - `void *pData`,
+    # `ID3D11VideoProcessorInputView **ppPastSurfaces` - so requiring
+    # whitespace after them dropped every pointer field on the floor. Silently:
+    # D3D11_MAPPED_SUBRESOURCE came out 8 bytes instead of 16, which is the
+    # structure Desktop Duplication reads every frame through.
+    r"(?:[ \t]*(\*+)[ \t]*|[ \t]+)"                    # pointer depth, or a gap
+    r"([A-Za-z_][A-Za-z0-9_]*)"                        # name
     r"((?:[ \t]*\[[ \t]*[0-9A-Za-z_]+[ \t]*\])*)"      # [N], or [N][M]
     r"(?:[ \t]*:[ \t]*([0-9]+))?"                      # : bits
     r"[ \t]*;", re.M)
@@ -444,7 +525,8 @@ def parse_struct_fields(body):
     """
     fields = []
     for found in _FIELD_FULL_RE.finditer(body):
-        ftype, fname, bound, bits = found.groups()
+        ftype, stars, fname, bound, bits = found.groups()
+        ftype = ftype + (stars or "")
         # A field can carry more than one dimension: DXGI_DISPLAY_COLOR_SPACE
         # declares FLOAT PrimaryCoordinates[8][2]. Bounds travel as a list so
         # the emitter can compose them in the right order.
@@ -493,6 +575,7 @@ def module_constructs(sdk, name):
         "idl": name,
         "interfaces": parse_interfaces(raw),
         "structs": parse_structs(raw),
+        "unions": parse_unions(raw),
         "enums": parse_enums(raw),
         "defines": parse_defines(raw),
         "typedefs": parse_typedefs(raw),

@@ -133,6 +133,7 @@ class Emitter(object):
             raise SystemExit("not a targeted IDL, or not in this kit: %s" % name)
         self.source = SOURCE or _FALLBACK_SOURCE
         self.local = (set(self.parsed["structs"]) | set(self.parsed["enums"])
+                      | set(self.parsed.get("unions", {}))
                       | {a for a, _u in self.parsed.get("typedefs", [])})
         self.interfaces = set(self.parsed["interfaces"])
         self.unmapped = set()
@@ -185,14 +186,12 @@ class Emitter(object):
         for name, spec in structs.items():
             refs = set()
             candidates = list(spec.get("parsed_fields", []))
-            union = spec.get("union")
-            if union:
+            for _kind, fields in spec.get("segments") or []:
                 # A union-carrying structure has no parsed_fields, so its
-                # dependencies live in the union members and the fields either
-                # side of it. Missing these ordered D3D11_DEPTH_STENCIL_VIEW_DESC
-                # before D3D11_TEX1D_DSV, which it contains.
-                candidates += (list(union["members"]) + list(union["before"])
-                               + list(union["after"]))
+                # dependencies live in the segments. Missing these ordered
+                # D3D11_DEPTH_STENCIL_VIEW_DESC before D3D11_TEX1D_DSV, which it
+                # contains.
+                candidates += list(fields)
             for ftype, _fname, _bound, _bits in candidates:
                 base = ftype.rstrip("*")
                 if base in structs and base != name:
@@ -249,6 +248,10 @@ class Emitter(object):
         value = value.strip()
         value = re.sub(r"\b(0[xX][0-9a-fA-F]+|\d+)[uUlL]+\b", r"\1", value)
         value = re.sub(r"\b(\d+\.\d*(?:[eE][-+]?\d+)?)[fF]\b", r"\1", value)
+        # C reads a leading zero as octal; Python 3 refuses the form outright.
+        # D3D11_SPEC_DATE_MONTH = 05 is the only one that bites, and it means 5
+        # either way, but 0o keeps the C meaning for any that do not.
+        value = re.sub(r"(?<![\w.])0([0-7]+)\b", r"0o\1", value)
         return value
 
     def emit_typedefs(self, local):
@@ -298,35 +301,51 @@ class Emitter(object):
         return "\n".join(lines)
 
 
-    def _emit_struct_with_union(self, name, union):
-        """A structure carrying an anonymous union.
+    def _emit_struct_with_union(self, name, segments):
+        """A structure carrying one or more anonymous unions.
 
-        Emitted as a nested Union class plus _anonymous_, matching the shape the
+        Emitted as nested Union classes plus _anonymous_, matching the shape the
         hand-written D3D11_RENDER_TARGET_VIEW_DESC uses - so generated and
         hand-written modules read the same way.
+
+        The segments arrive as an ordered list rather than a before/union/after
+        triple because a structure may carry more than one: D3D11_BUFFER_SRV has
+        two, back to back. Handling only the first flattened the second into
+        plain fields, and eight bytes of structure came out as twelve.
         """
-        lines = ["class %s(ctypes.Structure):" % name,
-                 "    class _U(ctypes.Union):"]
+        lines = ["class %s(ctypes.Structure):" % name]
+        total = sum(1 for kind, _f in segments if kind == "union")
+        outer, anonymous, index = [], [], 0
 
-        members = union["members"]
-        width = max([len(m[1]) for m in members] or [1])
-        rendered = []
-        for ftype, fname, bound, bits in members:
-            rendered.append("('%s',%s %s)"
-                            % (fname, " " * (width - len(fname)),
-                               self._field_type(ftype, bound)))
-        lines.append("        _fields_ = [" + rendered[0] + ",")
-        for item in rendered[1:]:
-            lines.append("                    " + item + ",")
-        lines.append("        ]")
+        for kind, fields in segments:
+            if kind == "fields":
+                outer.extend(fields)
+                continue
+            index += 1
+            cls = "_U" if total == 1 else "_U%d" % index
+            attr = "u" if total == 1 else "u%d" % index
+            lines.append("    class %s(ctypes.Union):" % cls)
+            if not fields:
+                lines.append("        _fields_ = []")
+            else:
+                width = max(len(f[1]) for f in fields)
+                rendered = ["('%s',%s %s)" % (f[1], " " * (width - len(f[1])),
+                                              self._field_type(f[0], f[2]))
+                            for f in fields]
+                lines.append("        _fields_ = [" + rendered[0] + ",")
+                for item in rendered[1:]:
+                    lines.append("                    " + item + ",")
+                lines.append("        ]")
+            outer.append(("__union__" + cls, attr, None, None))
+            anonymous.append(attr)
 
-        outer = list(union["before"]) + [("__union__", "u", None, None)] \
-            + list(union["after"])
         width = max(len(f[1]) for f in outer)
         rendered = []
         for ftype, fname, bound, bits in outer:
-            if ftype == "__union__":
-                rendered.append("('u',%s _U)" % (" " * (width - 1)))
+            if ftype.startswith("__union__"):
+                rendered.append("('%s',%s %s)"
+                                % (fname, " " * (width - len(fname)),
+                                   ftype[len("__union__"):]))
                 continue
             base = self._field_type(ftype, bound)
             if bits:
@@ -336,7 +355,8 @@ class Emitter(object):
                 rendered.append("('%s',%s %s)"
                                 % (fname, " " * (width - len(fname)), base))
 
-        lines.append("    _anonymous_ = ('u',)")
+        lines.append("    _anonymous_ = (%s)"
+                     % "".join("'%s', " % a for a in anonymous).rstrip())
         lines.append("    _fields_ = [" + rendered[0] + ",")
         for item in rendered[1:]:
             lines.append("                " + item + ",")
@@ -349,13 +369,62 @@ class Emitter(object):
             base = "%s * %s" % (base, extent)
         return base
 
+    def emit_union(self, name):
+        """A top-level `typedef union`.
+
+        D3D11_AUTHENTICATED_PROTECTION_FLAGS overlays a named struct of bitfields
+        on a plain UINT - the flags-or-value idiom. The nested struct carries a
+        name in the IDL, so it needs no _anonymous_: it is reached as .Flags.
+        """
+        spec = self.parsed["unions"][name]
+        lines = ["class %s(ctypes.Union):" % name]
+
+        entries = []
+        for fieldname, fields in spec["nested"]:
+            cls = "_" + fieldname
+            lines.append("    class %s(ctypes.Structure):" % cls)
+            if not fields:
+                lines.append("        _fields_ = []")
+                entries.append((fieldname, cls))
+                continue
+            width = max(len(f[1]) for f in fields)
+            rendered = []
+            for ftype, fname, bound, bits in fields:
+                base = self._field_type(ftype, bound)
+                pad = " " * (width - len(fname))
+                if bits:
+                    rendered.append("('%s',%s %s, %d)" % (fname, pad, base, bits))
+                else:
+                    rendered.append("('%s',%s %s)" % (fname, pad, base))
+            lines.append("        _fields_ = [" + rendered[0] + ",")
+            for item in rendered[1:]:
+                lines.append("                    " + item + ",")
+            lines.append("        ]")
+            entries.append((fieldname, cls))
+
+        members = [(f[1], self._field_type(f[0], f[2])) for f in spec["members"]]
+        members += entries
+        if not members:
+            lines.append("    _fields_ = []")
+            return NEWLINE.join(lines)
+
+        width = max(len(m[0]) for m in members)
+        rendered = ["('%s',%s %s)" % (n, " " * (width - len(n)), t)
+                    for n, t in members]
+        lines.append("    _fields_ = [" + rendered[0] + ",")
+        for item in rendered[1:]:
+            lines.append("                " + item + ",")
+        lines.append("    ]")
+        return NEWLINE.join(lines)
+
+
     def emit_struct(self, name):
         spec = self.parsed["structs"][name]
         fields = spec.get("parsed_fields", [])
         lines = ["class %s(ctypes.Structure):" % name]
 
-        if spec.get("union"):
-            return self._emit_struct_with_union(name, spec["union"])
+        if spec.get("segments"):
+            return self._emit_struct_with_union(name, spec["segments"])
 
         if spec.get("opaque"):
             lines.append("    # contains a nested struct - not yet emitted")
@@ -408,7 +477,13 @@ class Emitter(object):
         """The vtable, assigned once every class object exists."""
         spec = self.parsed["interfaces"][name]
         if not spec["methods"]:
-            return "%s._methods_ = []" % name
+            # ID3D11VertexShader and seven siblings add nothing to
+            # ID3D11DeviceChild - they exist so the type system can tell a
+            # vertex shader from a pixel shader. Emitting `_methods_ = []` for
+            # them is a no-op to comtypes but it makes them indistinguishable
+            # from an interface whose vtable went missing, which is exactly what
+            # the F-08 test watches for. Say so in a comment instead.
+            return "## %s adds no methods to %s." % (name, spec["base"])
 
         lines = ["%s._methods_ = [" % name]
         for method in spec["methods"]:
@@ -458,6 +533,33 @@ class Emitter(object):
             for name in sorted(self.parsed["enums"]):
                 parts.append("\n" + self.emit_enum(name))
 
+        # Three passes, in this order, because the references run both ways:
+        #
+        #   1. interface DECLARATIONS - class plus _iid_, nothing else
+        #   2. structures             - some carry ID3D11Resource* fields
+        #   3. interface VTABLES      - most take structures as parameters
+        #
+        # Emitting structures first breaks on D3D11_AUTHENTICATED_* and friends,
+        # which name an interface declared later. Emitting interfaces first with
+        # their vtables inline breaks the other way. Splitting the interface into
+        # declaration and vtable satisfies both, and is the same trick that makes
+        # forward references between interfaces work.
+        if self.parsed["interfaces"]:
+            parts.append("\n\n## ---------------------------------------------- "
+                         "interfaces ----")
+            parts.append(NEWLINE + "## Declarations only. Vtables are assigned at "
+                         "the end of the file, once every")
+            parts.append("## class exists, so anything may reference anything.")
+            for name in self._interface_order():
+                parts.append(NEWLINE + NEWLINE + self.emit_interface_decl(name))
+
+        if self.parsed.get("unions"):
+            parts.append(NEWLINE + NEWLINE +
+                         "## -------------------------------------------------- "
+                         "unions ----")
+            for name in sorted(self.parsed["unions"]):
+                parts.append(NEWLINE + NEWLINE + self.emit_union(name))
+
         if self.parsed["structs"]:
             parts.append("\n\n## ---------------------------------------------- "
                          "structures ----")
@@ -469,10 +571,6 @@ class Emitter(object):
                 parts.append(NEWLINE + NEWLINE + trailing)
 
         if self.parsed["interfaces"]:
-            parts.append("\n\n## ---------------------------------------------- "
-                         "interfaces ----")
-            for name in self._interface_order():
-                parts.append(NEWLINE + NEWLINE + self.emit_interface_decl(name))
             parts.append(NEWLINE + NEWLINE +
                          "## ------------------------- vtables, assigned once "
                          "every class exists ----")
