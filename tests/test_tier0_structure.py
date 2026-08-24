@@ -90,7 +90,32 @@ EMPTY_BY_DESIGN = {
     "ID3D11VertexShader", "ID3D11HullShader", "ID3D11DomainShader",
     "ID3D11GeometryShader", "ID3D11PixelShader", "ID3D11ComputeShader",
     "ID3D11InputLayout", "ID3D11Predicate",
+    # d3d11_1.idl: `interface ID3DDeviceContextState : ID3D11DeviceChild {};`
+    # A handle you pass to SwapDeviceContextState, nothing more.
+    "ID3DDeviceContextState",
 }
+
+
+def _deferred_methods(tree):
+    """Interfaces given their vtable at module level: `IFoo._methods_ = [...]`.
+
+    Generated modules assign vtables after every class exists, because an
+    interface can name another declared later in the same file - IDXGIOutput
+    takes an IDXGISurface*, and IDXGISurface comes after it. Assigning inline
+    raises NameError; that is the general form of F-56.
+
+    So "declares a vtable" has two valid shapes, and this test has to know both.
+    """
+    out = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Assign):
+            continue
+        for target in node.targets:
+            if (isinstance(target, ast.Attribute)
+                    and target.attr == "_methods_"
+                    and isinstance(target.value, ast.Name)):
+                out.add(target.value.id)
+    return out
 
 
 def test_every_com_class_declares_methods():
@@ -98,11 +123,13 @@ def test_every_com_class_declares_methods():
     unless the SDK genuinely declares it empty."""
     found, where = set(), {}
     for path, tree in _modules():
+        deferred = _deferred_methods(tree)
         for node in ast.walk(tree):
             if not isinstance(node, ast.ClassDef):
                 continue
             attrs = _class_attrs(node)
-            if "_iid_" in attrs and "_methods_" not in attrs:
+            if ("_iid_" in attrs and "_methods_" not in attrs
+                    and node.name not in deferred):
                 found.add(node.name)
                 where[node.name] = "%s:%d" % (os.path.basename(path), node.lineno)
 

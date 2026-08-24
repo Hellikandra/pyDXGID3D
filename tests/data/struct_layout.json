@@ -236,6 +236,14 @@
    },
    "size": 264
   },
+  "D3D11_BLEND_DESC1": {
+   "fields": {
+    "AlphaToCoverageEnable": 0,
+    "IndependentBlendEnable": 4,
+    "RenderTarget": 8
+   },
+   "size": 328
+  },
   "D3D11_BOX": {
    "fields": {
     "back": 20,
@@ -422,6 +430,12 @@
    },
    "size": 4
   },
+  "D3D11_FEATURE_DATA_D3D11_OPTIONS4": {
+   "fields": {
+    "ExtendedNV12SharedTextureSupported": 0
+   },
+   "size": 4
+  },
   "D3D11_FEATURE_DATA_D3D11_OPTIONS5": {
    "fields": {
     "SharedResourceTier": 0
@@ -521,6 +535,15 @@
    },
    "size": 8
   },
+  "D3D11_FEATURE_DATA_VIDEO_DECODER_HISTOGRAM": {
+   "fields": {
+    "BinCount": 32,
+    "Components": 28,
+    "CounterBitDepth": 36,
+    "DecoderDesc": 0
+   },
+   "size": 40
+  },
   "D3D11_INFO_QUEUE_FILTER": {
    "fields": {
     "AllowList": 0,
@@ -551,6 +574,32 @@
    },
    "size": 32
   },
+  "D3D11_KEY_EXCHANGE_HW_PROTECTION_DATA": {
+   "fields": {
+    "HWProtectionFunctionID": 0,
+    "Status": 24
+   },
+   "size": 32
+  },
+  "D3D11_KEY_EXCHANGE_HW_PROTECTION_INPUT_DATA": {
+   "fields": {
+    "HWProtectionDataSize": 4,
+    "PrivateDataSize": 0,
+    "pbInput": 8
+   },
+   "size": 12
+  },
+  "D3D11_KEY_EXCHANGE_HW_PROTECTION_OUTPUT_DATA": {
+   "fields": {
+    "ExecutionTime": 24,
+    "HWProtectionDataSize": 8,
+    "MaxHWProtectionDataSize": 4,
+    "PrivateDataSize": 0,
+    "TransportTime": 16,
+    "pbOutput": 32
+   },
+   "size": 40
+  },
   "D3D11_MAPPED_SUBRESOURCE": {
    "fields": {
     "DepthPitch": 12,
@@ -573,6 +622,15 @@
     "Omac": 0
    },
    "size": 16
+  },
+  "D3D11_PACKED_MIP_DESC": {
+   "fields": {
+    "NumPackedMips": 1,
+    "NumStandardMips": 0,
+    "NumTilesForPackedMips": 4,
+    "StartTileIndexInOverallResource": 8
+   },
+   "size": 12
   },
   "D3D11_QUERY_DATA_PIPELINE_STATISTICS": {
    "fields": {
@@ -611,6 +669,14 @@
    },
    "size": 8
   },
+  "D3D11_QUERY_DESC1": {
+   "fields": {
+    "ContextType": 8,
+    "MiscFlags": 4,
+    "Query": 0
+   },
+   "size": 12
+  },
   "D3D11_RASTERIZER_DESC": {
    "fields": {
     "AntialiasedLineEnable": 36,
@@ -626,6 +692,39 @@
    },
    "size": 40
   },
+  "D3D11_RASTERIZER_DESC1": {
+   "fields": {
+    "AntialiasedLineEnable": 36,
+    "CullMode": 4,
+    "DepthBias": 12,
+    "DepthBiasClamp": 16,
+    "DepthClipEnable": 24,
+    "FillMode": 0,
+    "ForcedSampleCount": 40,
+    "FrontCounterClockwise": 8,
+    "MultisampleEnable": 32,
+    "ScissorEnable": 28,
+    "SlopeScaledDepthBias": 20
+   },
+   "size": 44
+  },
+  "D3D11_RASTERIZER_DESC2": {
+   "fields": {
+    "AntialiasedLineEnable": 36,
+    "ConservativeRaster": 44,
+    "CullMode": 4,
+    "DepthBias": 12,
+    "DepthBiasClamp": 16,
+    "DepthClipEnable": 24,
+    "FillMode": 0,
+    "ForcedSampleCount": 40,
+    "FrontCounterClockwise": 8,
+    "MultisampleEnable": 32,
+    "ScissorEnable": 28,
+    "SlopeScaledDepthBias": 20
+   },
+   "size": 48
+  },
   "D3D11_RENDER_TARGET_BLEND_DESC": {
    "fields": {
     "BlendEnable": 0,
@@ -639,9 +738,28 @@
    },
    "size": 32
   },
+  "D3D11_RENDER_TARGET_BLEND_DESC1": {
+   "fields": {
+    "BlendEnable": 0,
+    "BlendOp": 16,
+    "BlendOpAlpha": 28,
+    "DestBlend": 12,
+    "DestBlendAlpha": 24,
+    "LogicOp": 32,
+    "LogicOpEnable": 4,
+    "RenderTargetWriteMask": 36,
+    "SrcBlend": 8,
+    "SrcBlendAlpha": 20
+   },
+   "size": 40
+  },
   "D3D11_RENDER_TARGET_VIEW_DESC": {
    "fields": {},
    "size": 20
+  },
+  "D3D11_RENDER_TARGET_VIEW_DESC1": {
+   "fields": {},
+   "size": 24
   },
   "D3D11_SAMPLER_DESC": {
    "fields": {
@@ -662,6 +780,10 @@
    "fields": {},
    "size": 24
   },
+  "D3D11_SHADER_RESOURCE_VIEW_DESC1": {
+   "fields": {},
+   "size": 28
+  },
   "D3D11_SO_DECLARATION_ENTRY": {
    "fields": {
     "ComponentCount": 21,
@@ -679,6 +801,15 @@
     "SysMemSlicePitch": 12
    },
    "size": 16
+  },
+  "D3D11_SUBRESOURCE_TILING": {
+   "fields": {
+    "DepthInTiles": 6,
+    "HeightInTiles": 4,
+    "StartTileIndexInOverallResource": 8,
+    "WidthInTiles": 0
+   },
+   "size": 12
   },
   "D3D11_TEX1D_ARRAY_DSV": {
    "fields": {
@@ -793,6 +924,15 @@
    },
    "size": 12
   },
+  "D3D11_TEX2D_ARRAY_RTV1": {
+   "fields": {
+    "ArraySize": 8,
+    "FirstArraySlice": 4,
+    "MipSlice": 0,
+    "PlaneSlice": 12
+   },
+   "size": 16
+  },
   "D3D11_TEX2D_ARRAY_SRV": {
    "fields": {
     "ArraySize": 12,
@@ -802,6 +942,16 @@
    },
    "size": 16
   },
+  "D3D11_TEX2D_ARRAY_SRV1": {
+   "fields": {
+    "ArraySize": 12,
+    "FirstArraySlice": 8,
+    "MipLevels": 4,
+    "MostDetailedMip": 0,
+    "PlaneSlice": 16
+   },
+   "size": 20
+  },
   "D3D11_TEX2D_ARRAY_UAV": {
    "fields": {
     "ArraySize": 8,
@@ -809,6 +959,15 @@
     "MipSlice": 0
    },
    "size": 12
+  },
+  "D3D11_TEX2D_ARRAY_UAV1": {
+   "fields": {
+    "ArraySize": 8,
+    "FirstArraySlice": 4,
+    "MipSlice": 0,
+    "PlaneSlice": 12
+   },
+   "size": 16
   },
   "D3D11_TEX2D_ARRAY_VPOV": {
    "fields": {
@@ -830,6 +989,13 @@
    },
    "size": 4
   },
+  "D3D11_TEX2D_RTV1": {
+   "fields": {
+    "MipSlice": 0,
+    "PlaneSlice": 4
+   },
+   "size": 8
+  },
   "D3D11_TEX2D_SRV": {
    "fields": {
     "MipLevels": 4,
@@ -837,11 +1003,26 @@
    },
    "size": 8
   },
+  "D3D11_TEX2D_SRV1": {
+   "fields": {
+    "MipLevels": 4,
+    "MostDetailedMip": 0,
+    "PlaneSlice": 8
+   },
+   "size": 12
+  },
   "D3D11_TEX2D_UAV": {
    "fields": {
     "MipSlice": 0
    },
    "size": 4
+  },
+  "D3D11_TEX2D_UAV1": {
+   "fields": {
+    "MipSlice": 0,
+    "PlaneSlice": 4
+   },
+   "size": 8
   },
   "D3D11_TEX2D_VDOV": {
    "fields": {
@@ -929,6 +1110,22 @@
    },
    "size": 44
   },
+  "D3D11_TEXTURE2D_DESC1": {
+   "fields": {
+    "ArraySize": 12,
+    "BindFlags": 32,
+    "CPUAccessFlags": 36,
+    "Format": 16,
+    "Height": 4,
+    "MipLevels": 8,
+    "MiscFlags": 40,
+    "SampleDesc": 20,
+    "TextureLayout": 44,
+    "Usage": 28,
+    "Width": 0
+   },
+   "size": 48
+  },
   "D3D11_TEXTURE3D_DESC": {
    "fields": {
     "BindFlags": 24,
@@ -943,9 +1140,55 @@
    },
    "size": 36
   },
+  "D3D11_TEXTURE3D_DESC1": {
+   "fields": {
+    "BindFlags": 24,
+    "CPUAccessFlags": 28,
+    "Depth": 8,
+    "Format": 16,
+    "Height": 4,
+    "MipLevels": 12,
+    "MiscFlags": 32,
+    "TextureLayout": 36,
+    "Usage": 20,
+    "Width": 0
+   },
+   "size": 40
+  },
+  "D3D11_TILED_RESOURCE_COORDINATE": {
+   "fields": {
+    "Subresource": 12,
+    "X": 0,
+    "Y": 4,
+    "Z": 8
+   },
+   "size": 16
+  },
+  "D3D11_TILE_REGION_SIZE": {
+   "fields": {
+    "Depth": 14,
+    "Height": 12,
+    "NumTiles": 0,
+    "Width": 8,
+    "bUseBox": 4
+   },
+   "size": 16
+  },
+  "D3D11_TILE_SHAPE": {
+   "fields": {
+    "DepthInTexels": 8,
+    "HeightInTexels": 4,
+    "WidthInTexels": 0
+   },
+   "size": 12
+  },
   "D3D11_UNORDERED_ACCESS_VIEW_DESC": {
    "fields": {},
    "size": 20
+  },
+  "D3D11_UNORDERED_ACCESS_VIEW_DESC1": {
+   "fields": {},
+   "size": 24
   },
   "D3D11_VIDEO_COLOR": {
    "fields": {},
@@ -978,6 +1221,17 @@
    },
    "size": 24
   },
+  "D3D11_VIDEO_DECODER_BEGIN_FRAME_CRYPTO_SESSION": {
+   "fields": {
+    "BlobSize": 8,
+    "PrivateDataSize": 32,
+    "pBlob": 16,
+    "pCryptoSession": 0,
+    "pKeyInfoId": 24,
+    "pPrivateData": 40
+   },
+   "size": 48
+  },
   "D3D11_VIDEO_DECODER_BUFFER_DESC": {
    "fields": {
     "BufferIndex": 4,
@@ -996,6 +1250,32 @@
     "pIV": 40
    },
    "size": 72
+  },
+  "D3D11_VIDEO_DECODER_BUFFER_DESC1": {
+   "fields": {
+    "BufferType": 0,
+    "DataOffset": 4,
+    "DataSize": 8,
+    "IVSize": 24,
+    "SubSampleMappingCount": 40,
+    "pIV": 16,
+    "pSubSampleMappingBlock": 32
+   },
+   "size": 48
+  },
+  "D3D11_VIDEO_DECODER_BUFFER_DESC2": {
+   "fields": {
+    "BufferType": 0,
+    "DataOffset": 4,
+    "DataSize": 8,
+    "IVSize": 24,
+    "SubSampleMappingCount": 40,
+    "cBlocksStripeClear": 48,
+    "cBlocksStripeEncrypted": 44,
+    "pIV": 16,
+    "pSubSampleMappingBlock": 32
+   },
+   "size": 56
   },
   "D3D11_VIDEO_DECODER_CONFIG": {
    "fields": {
@@ -1043,6 +1323,13 @@
   "D3D11_VIDEO_DECODER_OUTPUT_VIEW_DESC": {
    "fields": {},
    "size": 24
+  },
+  "D3D11_VIDEO_DECODER_SUB_SAMPLE_MAPPING_BLOCK": {
+   "fields": {
+    "ClearSize": 0,
+    "EncryptedSize": 4
+   },
+   "size": 8
   },
   "D3D11_VIDEO_PROCESSOR_CAPS": {
    "fields": {
@@ -1121,6 +1408,24 @@
    },
    "size": 72
   },
+  "D3D11_VIDEO_PROCESSOR_STREAM_BEHAVIOR_HINT": {
+   "fields": {
+    "Enable": 0,
+    "Format": 12,
+    "Height": 8,
+    "Width": 4
+   },
+   "size": 16
+  },
+  "D3D11_VIDEO_SAMPLE_DESC": {
+   "fields": {
+    "ColorSpace": 12,
+    "Format": 8,
+    "Height": 4,
+    "Width": 0
+   },
+   "size": 16
+  },
   "D3D11_VIEWPORT": {
    "fields": {
     "Height": 12,
@@ -1194,6 +1499,29 @@
    },
    "size": 320
   },
+  "DXGI_ADAPTER_DESC3": {
+   "fields": {
+    "AdapterLuid": 296,
+    "ComputePreemptionGranularity": 312,
+    "DedicatedSystemMemory": 280,
+    "DedicatedVideoMemory": 272,
+    "Description": 0,
+    "DeviceId": 260,
+    "Flags": 304,
+    "GraphicsPreemptionGranularity": 308,
+    "Revision": 268,
+    "SharedSystemMemory": 288,
+    "SubSysId": 264,
+    "VendorId": 256
+   },
+   "size": 320
+  },
+  "DXGI_DECODE_SWAP_CHAIN_DESC": {
+   "fields": {
+    "Flags": 0
+   },
+   "size": 4
+  },
   "DXGI_DISPLAY_COLOR_SPACE": {
    "fields": {},
    "size": 192
@@ -1207,6 +1535,18 @@
     "SyncRefreshCount": 8
    },
    "size": 32
+  },
+  "DXGI_FRAME_STATISTICS_MEDIA": {
+   "fields": {
+    "ApprovedPresentDuration": 36,
+    "CompositionMode": 32,
+    "PresentCount": 0,
+    "PresentRefreshCount": 4,
+    "SyncGPUTime": 24,
+    "SyncQPCTime": 16,
+    "SyncRefreshCount": 8
+   },
+   "size": 40
   },
   "DXGI_GAMMA_CONTROL": {
    "fields": {
@@ -1225,6 +1565,25 @@
     "ScaleAndOffsetSupported": 0
    },
    "size": 4116
+  },
+  "DXGI_HDR_METADATA_HDR10": {
+   "fields": {
+    "BluePrimary": 8,
+    "GreenPrimary": 4,
+    "MaxContentLightLevel": 24,
+    "MaxFrameAverageLightLevel": 26,
+    "MaxMasteringLuminance": 16,
+    "MinMasteringLuminance": 20,
+    "RedPrimary": 0,
+    "WhitePoint": 12
+   },
+   "size": 28
+  },
+  "DXGI_HDR_METADATA_HDR10PLUS": {
+   "fields": {
+    "Data": 0
+   },
+   "size": 72
   },
   "DXGI_JPEG_AC_HUFFMAN_TABLE": {
    "fields": {
@@ -1252,6 +1611,17 @@
     "pBits": 8
    },
    "size": 16
+  },
+  "DXGI_MATRIX_3X2_F": {
+   "fields": {
+    "_11": 0,
+    "_12": 4,
+    "_21": 8,
+    "_22": 12,
+    "_31": 16,
+    "_32": 20
+   },
+   "size": 24
   },
   "DXGI_MODE_DESC": {
    "fields": {
@@ -1331,12 +1701,40 @@
    },
    "size": 96
   },
+  "DXGI_OUTPUT_DESC1": {
+   "fields": {
+    "AttachedToDesktop": 80,
+    "BitsPerColor": 96,
+    "BluePrimary": 120,
+    "ColorSpace": 100,
+    "DesktopCoordinates": 64,
+    "DeviceName": 0,
+    "GreenPrimary": 112,
+    "MaxFullFrameLuminance": 144,
+    "MaxLuminance": 140,
+    "MinLuminance": 136,
+    "Monitor": 88,
+    "RedPrimary": 104,
+    "Rotation": 84,
+    "WhitePoint": 128
+   },
+   "size": 152
+  },
   "DXGI_PRESENT_PARAMETERS": {
    "fields": {
     "DirtyRectsCount": 0,
     "pDirtyRects": 8,
     "pScrollOffset": 24,
     "pScrollRect": 16
+   },
+   "size": 32
+  },
+  "DXGI_QUERY_VIDEO_MEMORY_INFO": {
+   "fields": {
+    "AvailableForReservation": 16,
+    "Budget": 0,
+    "CurrentReservation": 24,
+    "CurrentUsage": 8
    },
    "size": 32
   },

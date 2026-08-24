@@ -20,6 +20,7 @@ Usage:
     python tools/idl.py                 summary of every targeted IDL
     python tools/idl.py dxgi1_2.idl     detail for one
 """
+import io
 import os
 import re
 import sys
@@ -155,11 +156,61 @@ def parse_interfaces(text):
             seen.add(method)
             methods.append(method)
 
-        out[name] = {"base": base, "uuid": uuid, "methods": methods}
+        out[name] = {"base": base, "uuid": uuid, "methods": methods,
+                     "signatures": parse_signatures(body)}
     return out
 
 
 _TYPEDEF_NAME_RE = re.compile(r"\s*([A-Za-z_][A-Za-z0-9_]*)\s*[,;]")
+
+_UNION_RE = re.compile(
+    r"typedef\s+union\s+([A-Za-z_][A-Za-z0-9_]*)\s*\n?\s*\{", re.M)
+_NAMED_STRUCT_RE = re.compile(r"\bstruct\b[^{]*\{")
+
+
+def parse_unions(text):
+    """Top-level `typedef union` declarations.
+
+    Rare - one in d3d11.idl and one in d3d12.idl across the whole target set -
+    but D3D11_AUTHENTICATED_PROTECTION_FLAGS is referenced by several structures,
+    so missing it makes the generated module fail to import rather than merely
+    lose a type.
+
+    It is also the most nested construct in the set: a union containing a NAMED
+    struct of bitfields alongside a plain UINT, which is the classic
+    flags-or-value overlay.
+
+        {name: {'members': [(type, fname, bounds, bits), ...],
+                'nested':  [(fieldname, [(type, fname, bounds, bits), ...])]}}
+    """
+    text = strip_comments(text)
+    out = {}
+    for match in _UNION_RE.finditer(text):
+        tag = match.group(1)
+        open_index = text.index("{", match.start())
+        body, close_index = _balanced_body(text, open_index)
+
+        trailing = _TYPEDEF_NAME_RE.match(text, close_index + 1)
+        name = trailing.group(1) if trailing else tag
+
+        nested, remainder = [], body
+        while True:
+            inner = _NAMED_STRUCT_RE.search(remainder)
+            if not inner:
+                break
+            brace = remainder.index("{", inner.start())
+            fields_text, end = _balanced_body(remainder, brace)
+            after = remainder[end + 1:]
+            label = _TYPEDEF_NAME_RE.match(after)
+            nested.append((label.group(1) if label else "s%d" % len(nested),
+                           parse_struct_fields(fields_text)))
+            remainder = (remainder[:inner.start()]
+                         + after[label.end():] if label else after)
+
+        out[name] = {"tag": tag,
+                     "members": parse_struct_fields(remainder),
+                     "nested": nested}
+    return out
 
 
 def parse_structs(text):
@@ -192,13 +243,62 @@ def parse_structs(text):
         name = trailing.group(1) if trailing else tag
 
         opaque = bool(re.search(r"\bunion\b|\bstruct\b", body))
+
+        segments = None
+        if opaque and re.search(r"\bunion\b", body) \
+                and not re.search(r"\bstruct\b", body):
+            # Anonymous unions inside a structure. The SDK writes
+            #     union { D3D11_BUFFER_RTV Buffer; ... } ;
+            # and ctypes expresses it as a nested class plus _anonymous_ - the
+            # shape the hand-written D3D11_RENDER_TARGET_VIEW_DESC already uses.
+            #
+            # The body is cut into ordered segments so field ORDER survives,
+            # which matters because every offset after a union depends on where
+            # it sits. There can be more than one: D3D11_BUFFER_SRV carries two
+            # back to back, and handling only the first silently flattened the
+            # second into plain fields - eight bytes of structure emitted as
+            # twelve.
+            segments, rest = [], body
+            while True:
+                found = re.search(r"\bunion\b", rest)
+                if not found:
+                    break
+                open_u = rest.index("{", found.start())
+                inner, close_u = _balanced_body(rest, open_u)
+                segments.append(("fields", parse_struct_fields(rest[:found.start()])))
+                segments.append(("union", parse_struct_fields(inner)))
+                rest = rest[close_u + 1:]
+            segments.append(("fields", parse_struct_fields(rest)))
+            opaque = False
+
         fields = []
-        if not opaque:
+        if not opaque and segments is None:
             for found in _FIELD_RE.finditer(body):
                 ftype, fname, bound = found.groups()
                 fields.append((ftype.replace(" ", ""), fname, bound))
-        out[name] = {"tag": tag, "fields": fields, "opaque": opaque}
+        out[name] = {"tag": tag, "fields": fields, "opaque": opaque,
+                     "segments": segments,
+                     "parsed_fields": ([] if (opaque or segments)
+                                       else parse_struct_fields(body))}
     return out
+
+
+def _split_params(text):
+    """Top-level comma split, so size_is(a, b) does not split a parameter."""
+    parts, depth, current = [], 0, []
+    for char in text:
+        if char in "([":
+            depth += 1
+        elif char in ")]":
+            depth -= 1
+        if char == "," and depth == 0:
+            parts.append("".join(current))
+            current = []
+        else:
+            current.append(char)
+    if "".join(current).strip():
+        parts.append("".join(current))
+    return parts
 
 
 _METHOD_SIG_RE = re.compile(
@@ -234,15 +334,11 @@ def parse_param_counts(text):
             if params in ("", "void"):
                 out[key] = 0
                 continue
-            depth, count = 0, 1
-            for char in params:
-                if char == "(":
-                    depth += 1
-                elif char == ")":
-                    depth -= 1
-                elif char == "," and depth == 0:
-                    count += 1
-            out[key] = count
+            # Must be bracket-aware, not just paren-aware: every parameter
+            # carries a MIDL attribute block like [in, annotation("_In_")], and
+            # the comma inside it is not a parameter separator. Counting on
+            # paren depth alone inflated SetPrivateData from 3 to 5.
+            out[key] = len(_split_params(params))
     return out
 
 
@@ -254,6 +350,240 @@ def load(sdk, name):
     with open(path, encoding="utf-8", errors="replace") as handle:
         text = handle.read()
     return parse_interfaces(text), parse_structs(text)
+
+
+# ---------------------------------------------------- method signatures ----
+_SIG_RE = re.compile(
+    r"(?:^|\n)[ \t]*(?:\[[^\]]*\][ \t]*)?"
+    r"([A-Za-z_][A-Za-z0-9_]*(?:[ \t]*\*+)?)[ \t]+"     # return type
+    r"([A-Za-z_][A-Za-z0-9_]*)[ \t]*"                     # method name
+    r"\(([^;]*?)\)[ \t]*;", re.S)
+
+
+_PARAM_RE = re.compile(
+    r"^\s*(?:\[[^\]]*\]\s*)*"                     # MIDL / SAL annotations
+    r"([A-Za-z_][A-Za-z0-9_]*(?:\s*\*)*)\s*"      # type plus any pointer depth
+    r"([A-Za-z_][A-Za-z0-9_]*)?"                  # name, sometimes absent
+    r"(?:\s*\[\s*[0-9A-Za-z_]*\s*\])?\s*$", re.S)
+
+
+def parse_signatures(body):
+    """{method: (return_type, [(param_type, param_name), ...])} for one body."""
+    out = {}
+    for match in _SIG_RE.finditer(body):
+        restype, method, params = match.groups()
+        if method in _SKIP_METHOD_NAMES or method.startswith("_"):
+            continue
+        if method in out:
+            continue
+        restype = re.sub(r"\s+", "", restype)
+
+        collected = []
+        cleaned = params.strip()
+        if cleaned and cleaned != "void":
+            for chunk in _split_params(cleaned):
+                chunk = chunk.replace("\n", " ")
+                # `const` can sit anywhere in a pointer declarator - the SDK
+                # writes `IDXGIResource *const *ppResources` for an array of
+                # interface pointers. It carries no ctypes meaning, and leaving
+                # it in made 54 signatures parse one parameter short.
+                chunk = re.sub(r"\bconst\b", " ", chunk)
+                found = _PARAM_RE.match(chunk)
+                if not found:
+                    continue
+                ptype = re.sub(r"\s+", "", found.group(1))
+                pname = found.group(2) or "arg%d" % (len(collected) + 1)
+                collected.append((ptype, pname))
+        out[method] = (restype, collected)
+    return out
+
+
+# ---------------------------------------------------------------- enums ----
+_ENUM_RE = re.compile(
+    r"typedef\s*\n?\s*enum\s+([A-Za-z_][A-Za-z0-9_]*)\s*\n?\s*\{", re.M)
+_ENUM_MEMBER_RE = re.compile(
+    r"^\s*([A-Za-z_][A-Za-z0-9_]*)\s*(?:=\s*([^,\n]+?))?\s*(?:,|$)", re.M)
+
+
+def parse_enums(text):
+    """{name: {'tag', 'members': [(name, value_expression_or_None), ...]}}.
+
+    `name` is the typedef, matching parse_structs. Values are kept as the source
+    expression rather than evaluated: the SDK writes things like ( 1 << 4 ) and
+    0xffffffff, and an emitter can pass those straight through to Python, which
+    reads them identically.
+    """
+    text = strip_comments(text)
+    out = {}
+    for match in _ENUM_RE.finditer(text):
+        tag = match.group(1)
+        open_index = text.index("{", match.start())
+        body, close_index = _balanced_body(text, open_index)
+
+        trailing = _TYPEDEF_NAME_RE.match(text, close_index + 1)
+        name = trailing.group(1) if trailing else tag
+
+        members, seen = [], set()
+        # Split on top-level commas rather than matching line by line: a value
+        # can span lines. D3D11_COLOR_WRITE_ENABLE_ALL is written as
+        #     ( D3D11_COLOR_WRITE_ENABLE_RED | ...GREEN |
+        #       ...BLUE | ...ALPHA )
+        # and a line-anchored pattern truncates it mid-expression, which emits
+        # syntactically invalid Python.
+        for chunk in _split_params(body):
+            chunk = " ".join(chunk.split())
+            if not chunk:
+                continue
+            name_part, _, value_part = chunk.partition("=")
+            member = name_part.strip()
+            if not re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", member) or member in seen:
+                continue
+            seen.add(member)
+            members.append((member, value_part.strip() or None))
+        out[name] = {"tag": tag, "members": members}
+    return out
+
+
+# -------------------------------------------------------------- defines ----
+_DEFINE_RE = re.compile(
+    r'cpp_quote\(\s*"\s*#define\s+([A-Za-z_][A-Za-z0-9_]*)\s+(.+?)\s*"\s*\)')
+
+
+#: `const UINT D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT = 8;` - MIDL's own way of
+#: declaring a constant, as opposed to the preprocessor's. d3d11.idl writes 340
+#: of them and d3d12.idl 392, and they are used as array bounds, so they are not
+#: optional: without them the generated module fails to import.
+_CONST_RE = re.compile(
+    r"^[ \t]*const[ \t]+[A-Za-z_][A-Za-z0-9_]*[ \t]+"
+    r"([A-Za-z_][A-Za-z0-9_]*)[ \t]*=[ \t]*"
+    r"([^;]+);",
+    re.M)
+
+
+_BARE_DEFINE_RE = re.compile(
+    "^[ 	]*#define[ 	]+"
+    "([A-Za-z_][A-Za-z0-9_]*)[ 	]+"
+    "([^\\n/]+?)[ 	]*$",
+    re.M)
+
+
+def parse_defines(text):
+    """[(name, value_expression), ...] from cpp_quote blocks, in file order.
+
+    Only `#define NAME value` is collected. d3d11.idl carries 1,599 cpp_quote
+    lines of which just 59 are defines - the rest are the C++ CD3D11_* helper
+    classes, which have no Python meaning and are deliberately skipped.
+    """
+    out, seen = [], set()
+
+    def take(name, value):
+        if name in seen or "(" in name:
+            return
+        seen.add(name)
+        out.append((name, value.strip()))
+
+    for match in _DEFINE_RE.finditer(text):
+        take(match.group(1), match.group(2))
+
+    # Not every constant hides in a cpp_quote. d3d11.idl writes some as a bare
+    # preprocessor line - `#define D3D11_OMAC_SIZE 16` - and D3D11_OMAC uses it
+    # as an array bound, so missing them makes the generated module fail to
+    # import rather than merely lose a constant.
+    for match in _BARE_DEFINE_RE.finditer(text):
+        take(match.group(1), match.group(2))
+
+    # MIDL `const` declarations. Emitted after the defines but collected in file
+    # order among themselves, because they refer to each other:
+    # `const UINT _FACD3D11DEBUG = _FACD3D11 + 1;`.
+    for match in _CONST_RE.finditer(text):
+        take(match.group(1), match.group(2))
+    return out
+
+
+# ------------------------------------------------------- richer structs ----
+_FIELD_FULL_RE = re.compile(
+    r"^[ \t]*(?:\[[^\]]*\][ \t]*)?"          # MIDL / SAL annotation
+    r"(?:const[ \t]+)?"
+    r"([A-Za-z_][A-Za-z0-9_]*)"                        # type
+    # The asterisks bind to the NAME in this SDK - `void *pData`,
+    # `ID3D11VideoProcessorInputView **ppPastSurfaces` - so requiring
+    # whitespace after them dropped every pointer field on the floor. Silently:
+    # D3D11_MAPPED_SUBRESOURCE came out 8 bytes instead of 16, which is the
+    # structure Desktop Duplication reads every frame through.
+    r"(?:[ \t]*(\*+)[ \t]*|[ \t]+)"                    # pointer depth, or a gap
+    r"([A-Za-z_][A-Za-z0-9_]*)"                        # name
+    r"((?:[ \t]*\[[ \t]*[0-9A-Za-z_]+[ \t]*\])*)"      # [N], or [N][M]
+    r"(?:[ \t]*:[ \t]*([0-9]+))?"                      # : bits
+    r"[ \t]*;", re.M)
+
+
+def parse_struct_fields(body):
+    """[(type, name, array_len, bit_width), ...] for one struct body.
+
+    array_len and bit_width are None when absent. Pointer depth is carried in
+    the type string as trailing asterisks, which the emitter unwraps.
+    """
+    fields = []
+    for found in _FIELD_FULL_RE.finditer(body):
+        ftype, stars, fname, bound, bits = found.groups()
+        ftype = ftype + (stars or "")
+        # A field can carry more than one dimension: DXGI_DISPLAY_COLOR_SPACE
+        # declares FLOAT PrimaryCoordinates[8][2]. Bounds travel as a list so
+        # the emitter can compose them in the right order.
+        bounds = re.findall(r"\[\s*([0-9A-Za-z_]+)\s*\]", bound or "")
+        fields.append((re.sub(r"\s+", "", ftype), fname,
+                       bounds or None, int(bits) if bits else None))
+    return fields
+
+
+# ------------------------------------------------------ scalar typedefs ----
+_TYPEDEF_SCALAR_RE = re.compile(
+    r"^[ 	]*typedef[ 	]+(?!struct|enum|union|interface)"
+    r"([A-Za-z_][A-Za-z0-9_]*(?:[ 	]*\*)*)[ 	]+"
+    r"([A-Za-z_][A-Za-z0-9_]*)[ 	]*;", re.M)
+
+
+def parse_typedefs(text):
+    """[(alias, underlying_type), ...] for plain scalar typedefs.
+
+    `typedef UINT DXGI_USAGE;` is neither a struct, an enum nor a define, so it
+    fell through every other parser and DXGI_USAGE came out undefined. Small
+    construct, and the generated dxgi.py would not import without it.
+    """
+    text = strip_comments(text)
+    out, seen = [], set()
+    for match in _TYPEDEF_SCALAR_RE.finditer(text):
+        underlying, alias = match.group(1), match.group(2)
+        if alias in seen:
+            continue
+        seen.add(alias)
+        out.append((alias, re.sub(r"\s+", "", underlying)))
+    return out
+
+
+def module_constructs(sdk, name):
+    """Everything an emitter needs for one IDL, in one call.
+
+    Returns a dict with interfaces, structs, enums, defines and imports.
+    """
+    path = idl_path(sdk, name)
+    if not path:
+        return None
+    raw = io.open(path, encoding="utf-8", errors="replace").read()
+    stripped = strip_comments(raw)
+    return {
+        "idl": name,
+        "interfaces": parse_interfaces(raw),
+        "structs": parse_structs(raw),
+        "unions": parse_unions(raw),
+        "enums": parse_enums(raw),
+        "defines": parse_defines(raw),
+        "typedefs": parse_typedefs(raw),
+        "imports": [i for i in re.findall(r'^\s*import\s+"([^"]+)"',
+                                          stripped, re.M)
+                    if i not in ("oaidl.idl", "ocidl.idl", "unknwn.idl",
+                                 "wtypes.idl", "objidl.idl")],
+    }
 
 
 def main():
