@@ -410,7 +410,7 @@ class D3D11_INPUT_ELEMENT_DESC(ctypes.Structure):
                 ('InputSlot',           wintypes.UINT),
                 ('AlignedByteOffset',   wintypes.UINT),
                 ('InputSlotClass',      D3D11_INPUT_CLASSIFICATION),
-                ('InstanceDataSetRate', wintypes.UINT),
+                ('InstanceDataStepRate', wintypes.UINT),
     ]
 
 ## Keep FILL_MODE values in sync with earlier DX versions (HW consumes values directly).
@@ -505,17 +505,17 @@ D3D11_USAGE_IMMUTABLE = D3D11_USAGE(1)
 D3D11_USAGE_DYNAMIC   = D3D11_USAGE(2)
 D3D11_USAGE_STAGING   = D3D11_USAGE(3)
 
-D3D11_BING_FLAG = ctypes.c_uint
-D3D11_BIND_VERTEX_BUFFER    = D3D11_BING_FLAG(0x00000001)
-D3D11_BIND_INDEX_BUFFER     = D3D11_BING_FLAG(0x00000002)
-D3D11_BIND_CONSTANT_BUFFER  = D3D11_BING_FLAG(0x00000004)
-D3D11_BIND_SHADER_RESOURCE  = D3D11_BING_FLAG(0x00000008)
-D3D11_BIND_STREAM_OUTPUT    = D3D11_BING_FLAG(0x00000010)
-D3D11_BIND_RENDER_TARGET    = D3D11_BING_FLAG(0x00000020)
-D3D11_BIND_DEPTH_STENCIL    = D3D11_BING_FLAG(0x00000040)
-D3D11_BIND_UNORDERED_ACCESS = D3D11_BING_FLAG(0x00000080)
-D3D11_BIND_DECODER          = D3D11_BING_FLAG(0x00000200)
-D3D11_BIND_VIDEO_ENCODER    = D3D11_BING_FLAG(0x00000400)
+D3D11_BIND_FLAG = ctypes.c_uint
+D3D11_BIND_VERTEX_BUFFER    = D3D11_BIND_FLAG(0x00000001)
+D3D11_BIND_INDEX_BUFFER     = D3D11_BIND_FLAG(0x00000002)
+D3D11_BIND_CONSTANT_BUFFER  = D3D11_BIND_FLAG(0x00000004)
+D3D11_BIND_SHADER_RESOURCE  = D3D11_BIND_FLAG(0x00000008)
+D3D11_BIND_STREAM_OUTPUT    = D3D11_BIND_FLAG(0x00000010)
+D3D11_BIND_RENDER_TARGET    = D3D11_BIND_FLAG(0x00000020)
+D3D11_BIND_DEPTH_STENCIL    = D3D11_BIND_FLAG(0x00000040)
+D3D11_BIND_UNORDERED_ACCESS = D3D11_BIND_FLAG(0x00000080)
+D3D11_BIND_DECODER          = D3D11_BIND_FLAG(0x00000200)
+D3D11_BIND_VIDEO_ENCODER    = D3D11_BIND_FLAG(0x00000400)
 
 
 D3D11_CPU_ACCESS_FLAG = ctypes.c_uint
@@ -635,7 +635,7 @@ D3D11_STENCIL_OP_DECR     = D3D11_STENCIL_OP(8)
 
 class D3D11_DEPTH_STENCILOP_DESC(ctypes.Structure):
     _fields_ = [('StencilFailOp',     D3D11_STENCIL_OP),
-                ('StenilDepthFailOp', D3D11_STENCIL_OP),
+                ('StencilDepthFailOp', D3D11_STENCIL_OP),
                 ('StencilPassOp',     D3D11_STENCIL_OP),
                 ('StencilFunc',       D3D11_COMPARISON_FUNC),
     ]
@@ -3121,8 +3121,10 @@ class ID3D11VideoContext(ID3D11DeviceChild):
         comtypes.STDMETHOD(None, "VideoProcessorSetStreamAlpha", []),
         comtypes.STDMETHOD(None, "VideoProcessorSetStreamPalette", []),
         comtypes.STDMETHOD(None, "VideoProcessorSetStreamPixelAspectRatio", []),
+        comtypes.STDMETHOD(None, "VideoProcessorSetStreamLumaKey", []),
         comtypes.STDMETHOD(None, "VideoProcessorSetStreamStereoFormat", []),
         comtypes.STDMETHOD(None, "VideoProcessorSetStreamAutoProcessingMode", []),
+        comtypes.STDMETHOD(None, "VideoProcessorSetStreamFilter", []),
         comtypes.STDMETHOD(APP_DEPRECATED_HRESULT, "VideoProcessorSetStreamExtension", []),
         comtypes.STDMETHOD(None, "VideoProcessorGetStreamFrameFormat", []),
         comtypes.STDMETHOD(None, "VideoProcessorGetStreamColorSpace", []),

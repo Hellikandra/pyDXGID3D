@@ -396,7 +396,7 @@ class OutputManager:
         tmp[0].InputSlot           = 0
         tmp[0].AlignedByteOffset   = 0
         tmp[0].InputSlotClass      = D3D11_INPUT_PER_VERTEX_DATA
-        tmp[0].InstanceDataSetRate = 0
+        tmp[0].InstanceDataStepRate = 0
 
         tmp[1].SemanticName        = ctypes.c_char_p("TEXCOORD".encode('utf-8'))
         tmp[1].SemanticIndex       = 0
@@ -404,7 +404,7 @@ class OutputManager:
         tmp[1].InputSlot           = 0
         tmp[1].AlignedByteOffset   = 12
         tmp[1].InputSlotClass      = D3D11_INPUT_PER_VERTEX_DATA
-        tmp[1].InstanceDataSetRate = 0
+        tmp[1].InstanceDataStepRate = 0
         Layout = tmp
 
         hr = self.m_Device.CreateInputLayout(Layout, len(Layout), g_VS_t, len(g_VS), self.m_InputLayout)
