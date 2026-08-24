@@ -27,6 +27,7 @@ MODULES = [
     "Direct3D.PyIdl.d3d11_3",
     "Direct3D.PyIdl.d3d11_4",
     "Direct3D.PyIdl.d3d11sdklayers",
+    "Direct3D.Capture",
 ]
 
 

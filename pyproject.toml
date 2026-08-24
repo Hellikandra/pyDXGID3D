@@ -8,7 +8,7 @@ license = "MIT"
 repository = "https://github.com/Hellikandra/pyDXGID3D"
 keywords = ["DXGI", "Direct3D", "Direct3D11", "ctypes", "comtypes", "Windows"]
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
@@ -36,8 +36,17 @@ python = ">=3.8"
 # 2007 distribution and declaring it makes the project uninstallable.
 comtypes = ">=1.2,<2"
 
+# frame.array, frame.copy() and frame.copy_into() need numpy; frame.memoryview
+# and every piece of metadata do not. Keeping it optional means the bindings
+# stay installable for anyone who only wants the interfaces.
+numpy = { version = ">=1.20", optional = true }
+
+[tool.poetry.extras]
+numpy = ["numpy"]
+
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.0"
+numpy = ">=1.20"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

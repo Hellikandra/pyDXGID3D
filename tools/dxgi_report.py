@@ -19,6 +19,7 @@ works here, end to end, through these bindings.
     python tools/dxgi_report.py --frames 60      time a sustained run
     python tools/dxgi_report.py --save shot.ppm  write the frame to a file
     python tools/dxgi_report.py --benchmark      run flat out, time each stage
+    python tools/dxgi_report.py --benchmark --deliver copy   include the pixel copy
     python tools/dxgi_report.py --sweep          readback cost vs capture size
     python tools/dxgi_report.py --benchmark --no-readback   GPU copy only
 
@@ -272,7 +273,34 @@ def _open_duplication(adapter, output):
     return device, context, duplication
 
 
-def benchmark(adapter, output, odesc, seconds, readback=True):
+def _deliver_touch(mapped, width, height):
+    """One byte. Proves the mapping worked; moves no pixels."""
+    buf = ctypes.cast(mapped.pData, ctypes.POINTER(ctypes.c_ubyte))
+    return buf[mapped.RowPitch * (height - 1) + width * 4 - 1]
+
+
+def _deliver_copy(mapped, width, height):
+    """Every byte, into a freshly allocated buffer - what frame.copy() does."""
+    packed = width * height * 4
+    owned = (ctypes.c_ubyte * packed)()
+    if mapped.RowPitch == width * 4:
+        ctypes.memmove(owned, mapped.pData, packed)
+    else:
+        source, target = mapped.pData, ctypes.addressof(owned)
+        for _row in range(height):
+            ctypes.memmove(target, source, width * 4)
+            source += mapped.RowPitch
+            target += width * 4
+    return owned
+
+
+#: What --deliver selects. The distinction matters more than it looks: 'touch'
+#: reports about 366 fps of capacity on the development machine and 'copy'
+#: about 128, and for a long time only the first number was being reported.
+DELIVERIES = {"touch": _deliver_touch, "copy": _deliver_copy}
+
+
+def benchmark(adapter, output, odesc, seconds, readback=True, deliver="touch"):
     """Run flat out and report where the time actually goes.
 
     Desktop Duplication caps NEW frames at the display refresh rate, so raw fps
@@ -290,8 +318,9 @@ def benchmark(adapter, output, odesc, seconds, readback=True):
     device, context, duplication = _open_duplication(adapter, output)
     staging_res = _staging(device, width, height).QueryInterface(ID3D11Resource)
 
-    rule("Benchmark: %d s at %dx%d, readback %s"
-         % (seconds, width, height, "on" if readback else "off"))
+    rule("Benchmark: %d s at %dx%d, readback %s, deliver %s"
+         % (seconds, width, height, "on" if readback else "off", deliver))
+    hand_over = DELIVERIES[deliver]
 
     t_wait = t_copy = t_map = t_release = 0.0
     frames = skipped = timeouts = 0
@@ -330,8 +359,7 @@ def benchmark(adapter, output, odesc, seconds, readback=True):
             mapped = D3D11_MAPPED_SUBRESOURCE()
             context.Map(staging_res, 0, _v(D3D11_MAP_READ), 0,
                         ctypes.byref(mapped))
-            buf = ctypes.cast(mapped.pData, ctypes.POINTER(ctypes.c_ubyte))
-            _ = buf[mapped.RowPitch * (height - 1) + width * 4 - 1]
+            hand_over(mapped, width, height)
             context.Unmap(staging_res, 0)
             t_map += time.perf_counter() - mark
 
@@ -367,7 +395,15 @@ def benchmark(adapter, output, odesc, seconds, readback=True):
     capacity = (1.0 / work) if work else 0.0
     print("  PIPELINE CAPACITY      : %6.0f fps   (1 / %.2f ms of real work)"
           % (capacity, 1000.0 * work))
-    print("  readback bandwidth     : %6.0f MB/s" % (megabytes / elapsed))
+    # Two different numbers, and calling either one "bandwidth" on its own is
+    # how C-34 happened. The first is bytes per second of WALL CLOCK, which the
+    # display caps; the second is bytes per second of time actually spent in
+    # Map/read/Unmap, which is the transfer rate.
+    print("  frame bytes delivered  : %6.0f MB/s  (wall clock, display-capped)"
+          % (megabytes / elapsed))
+    if readback and t_map:
+        print("  readback rate          : %6.0f MB/s  (while mapped, deliver=%s)"
+              % (megabytes / t_map, deliver))
     print("")
     print("  The loop spends %.0f%% of its time waiting for the display."
           % (100.0 * t_wait / elapsed))
@@ -441,9 +477,16 @@ def sweep(adapter, output, odesc, seconds):
               % (label, mb, ms, mb / (total / frames)))
 
     print("")
-    print("  This is constraint C-5 measured. Cropping before the staging copy is")
-    print("  the difference between shipping the whole desktop across the bus")
-    print("  every frame and shipping only the part that matters.")
+    print("  Constraint C-5, measured - and smaller than it was claimed to be.")
+    print("  The cost fits roughly  ms = 1.0 + 0.145 x MB  on this machine: a")
+    print("  fixed ~1 ms per Map/Unmap cycle plus about 6.9 GB/s of marginal")
+    print("  bandwidth. Cropping a full frame to 256x256 removes 35x the bytes")
+    print("  and only about 2.2x the time, because below roughly 1 MB the fixed")
+    print("  cost is most of the total. Worth doing at 4K or on a high-refresh")
+    print("  panel; not the three orders of magnitude C-5 originally claimed.")
+    print("")
+    print("  Note this crops with CopySubresourceRegion and no shader at all,")
+    print("  so the 2.2x above IS the crop-on-copy figure.")
     return True
 
 
@@ -494,8 +537,14 @@ def main():
     if "--sweep" in argv:
         ok = sweep(adapter, output, odesc, opt("--seconds", 3, int))
     elif "--benchmark" in argv:
+        deliver = opt("--deliver", "touch")
+        if deliver not in DELIVERIES:
+            print()
+            print("  --deliver must be one of: %s"
+                  % ", ".join(sorted(DELIVERIES)))
+            return 1
         ok = benchmark(adapter, output, odesc, opt("--seconds", 5, int),
-                       readback="--no-readback" not in argv)
+                       readback="--no-readback" not in argv, deliver=deliver)
     else:
         ok = capture(adapter, output, odesc,
                      opt("--frames", 1, int), opt("--save"))
