@@ -184,7 +184,16 @@ class Emitter(object):
         deps = {}
         for name, spec in structs.items():
             refs = set()
-            for ftype, _fname, _bound, _bits in spec.get("parsed_fields", []):
+            candidates = list(spec.get("parsed_fields", []))
+            union = spec.get("union")
+            if union:
+                # A union-carrying structure has no parsed_fields, so its
+                # dependencies live in the union members and the fields either
+                # side of it. Missing these ordered D3D11_DEPTH_STENCIL_VIEW_DESC
+                # before D3D11_TEX1D_DSV, which it contains.
+                candidates += (list(union["members"]) + list(union["before"])
+                               + list(union["after"]))
+            for ftype, _fname, _bound, _bits in candidates:
                 base = ftype.rstrip("*")
                 if base in structs and base != name:
                     refs.add(base)
@@ -277,19 +286,79 @@ class Emitter(object):
         lines = ["%s = ctypes.c_uint" % name]
         width = max([len(m) for m, _v in spec["members"]] or [1])
         for member, value in spec["members"]:
+            # `.value` on purpose, matching the hand-written modules: a flag
+            # enum is meant to be composed, and ORing two ctypes instances
+            # raises TypeError. Members are therefore plain ints, while the
+            # source still records which enum they belong to.
             if value is None:
-                lines.append("%-*s = %s()" % (width, member, name))
+                lines.append("%-*s = %s().value" % (width, member, name))
             else:
-                lines.append("%-*s = %s(%s)"
+                lines.append("%-*s = %s(%s).value"
                              % (width, member, name, self.c_literal(value)))
         return "\n".join(lines)
+
+
+    def _emit_struct_with_union(self, name, union):
+        """A structure carrying an anonymous union.
+
+        Emitted as a nested Union class plus _anonymous_, matching the shape the
+        hand-written D3D11_RENDER_TARGET_VIEW_DESC uses - so generated and
+        hand-written modules read the same way.
+        """
+        lines = ["class %s(ctypes.Structure):" % name,
+                 "    class _U(ctypes.Union):"]
+
+        members = union["members"]
+        width = max([len(m[1]) for m in members] or [1])
+        rendered = []
+        for ftype, fname, bound, bits in members:
+            rendered.append("('%s',%s %s)"
+                            % (fname, " " * (width - len(fname)),
+                               self._field_type(ftype, bound)))
+        lines.append("        _fields_ = [" + rendered[0] + ",")
+        for item in rendered[1:]:
+            lines.append("                    " + item + ",")
+        lines.append("        ]")
+
+        outer = list(union["before"]) + [("__union__", "u", None, None)] \
+            + list(union["after"])
+        width = max(len(f[1]) for f in outer)
+        rendered = []
+        for ftype, fname, bound, bits in outer:
+            if ftype == "__union__":
+                rendered.append("('u',%s _U)" % (" " * (width - 1)))
+                continue
+            base = self._field_type(ftype, bound)
+            if bits:
+                rendered.append("('%s',%s %s, %d)"
+                                % (fname, " " * (width - len(fname)), base, bits))
+            else:
+                rendered.append("('%s',%s %s)"
+                                % (fname, " " * (width - len(fname)), base))
+
+        lines.append("    _anonymous_ = ('u',)")
+        lines.append("    _fields_ = [" + rendered[0] + ",")
+        for item in rendered[1:]:
+            lines.append("                " + item + ",")
+        lines.append("    ]")
+        return NEWLINE.join(lines)
+
+    def _field_type(self, ftype, bound):
+        base = self.ctype(ftype) or "ctypes.c_void_p"
+        for extent in reversed(bound or []):
+            base = "%s * %s" % (base, extent)
+        return base
 
     def emit_struct(self, name):
         spec = self.parsed["structs"][name]
         fields = spec.get("parsed_fields", [])
         lines = ["class %s(ctypes.Structure):" % name]
+
+        if spec.get("union"):
+            return self._emit_struct_with_union(name, spec["union"])
+
         if spec.get("opaque"):
-            lines.append("    # contains an anonymous union - not yet emitted")
+            lines.append("    # contains a nested struct - not yet emitted")
             lines.append("    _fields_ = []")
             return "\n".join(lines)
         if not fields:
@@ -301,7 +370,11 @@ class Emitter(object):
         for ftype, fname, bound, bits in fields:
             base = self.ctype(ftype) or "ctypes.c_void_p"
             if bound:
-                base = "%s * %s" % (base, bound)
+                # C declares the outermost dimension first: FLOAT x[8][2] is
+                # eight pairs. ctypes composes the other way round, so the
+                # bounds are applied innermost-first.
+                for extent in reversed(bound):
+                    base = "%s * %s" % (base, extent)
             if bits:
                 rendered.append("('%s',%s %s, %d)"
                                 % (fname, " " * (width - len(fname)), base, bits))

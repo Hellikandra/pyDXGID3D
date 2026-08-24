@@ -194,13 +194,33 @@ def parse_structs(text):
         name = trailing.group(1) if trailing else tag
 
         opaque = bool(re.search(r"\bunion\b|\bstruct\b", body))
+
+        union = None
+        if opaque and "union" in body and not re.search(r"\bstruct\b", body):
+            # An anonymous union inside a structure. The SDK writes
+            #     union { D3D11_BUFFER_RTV Buffer; ... } ;
+            # and ctypes expresses it as a nested class plus _anonymous_ - the
+            # shape the hand-written D3D11_RENDER_TARGET_VIEW_DESC already uses.
+            # The body is split at the union so field ORDER survives, which
+            # matters because every offset after it depends on the position.
+            head = body.index("union")
+            open_u = body.index("{", head)
+            inner, close_u = _balanced_body(body, open_u)
+            union = {
+                "members": parse_struct_fields(inner),
+                "before": parse_struct_fields(body[:head]),
+                "after": parse_struct_fields(body[close_u + 1:]),
+            }
+            opaque = False
+
         fields = []
-        if not opaque:
+        if not opaque and union is None:
             for found in _FIELD_RE.finditer(body):
                 ftype, fname, bound = found.groups()
                 fields.append((ftype.replace(" ", ""), fname, bound))
         out[name] = {"tag": tag, "fields": fields, "opaque": opaque,
-                     "parsed_fields": ([] if opaque
+                     "union": union,
+                     "parsed_fields": ([] if (opaque or union)
                                        else parse_struct_fields(body))}
     return out
 
@@ -346,12 +366,22 @@ def parse_enums(text):
         name = trailing.group(1) if trailing else tag
 
         members, seen = [], set()
-        for found in _ENUM_MEMBER_RE.finditer(body):
-            member, value = found.group(1), found.group(2)
-            if member in seen:
+        # Split on top-level commas rather than matching line by line: a value
+        # can span lines. D3D11_COLOR_WRITE_ENABLE_ALL is written as
+        #     ( D3D11_COLOR_WRITE_ENABLE_RED | ...GREEN |
+        #       ...BLUE | ...ALPHA )
+        # and a line-anchored pattern truncates it mid-expression, which emits
+        # syntactically invalid Python.
+        for chunk in _split_params(body):
+            chunk = " ".join(chunk.split())
+            if not chunk:
+                continue
+            name_part, _, value_part = chunk.partition("=")
+            member = name_part.strip()
+            if not re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", member) or member in seen:
                 continue
             seen.add(member)
-            members.append((member, value.strip() if value else None))
+            members.append((member, value_part.strip() or None))
         out[name] = {"tag": tag, "members": members}
     return out
 
@@ -359,6 +389,13 @@ def parse_enums(text):
 # -------------------------------------------------------------- defines ----
 _DEFINE_RE = re.compile(
     r'cpp_quote\(\s*"\s*#define\s+([A-Za-z_][A-Za-z0-9_]*)\s+(.+?)\s*"\s*\)')
+
+
+_BARE_DEFINE_RE = re.compile(
+    "^[ 	]*#define[ 	]+"
+    "([A-Za-z_][A-Za-z0-9_]*)[ 	]+"
+    "([^\\n/]+?)[ 	]*$",
+    re.M)
 
 
 def parse_defines(text):
@@ -369,12 +406,22 @@ def parse_defines(text):
     classes, which have no Python meaning and are deliberately skipped.
     """
     out, seen = [], set()
-    for match in _DEFINE_RE.finditer(text):
-        name, value = match.group(1), match.group(2).strip()
+
+    def take(name, value):
         if name in seen or "(" in name:
-            continue
+            return
         seen.add(name)
-        out.append((name, value))
+        out.append((name, value.strip()))
+
+    for match in _DEFINE_RE.finditer(text):
+        take(match.group(1), match.group(2))
+
+    # Not every constant hides in a cpp_quote. d3d11.idl writes some as a bare
+    # preprocessor line - `#define D3D11_OMAC_SIZE 16` - and D3D11_OMAC uses it
+    # as an array bound, so missing them makes the generated module fail to
+    # import rather than merely lose a constant.
+    for match in _BARE_DEFINE_RE.finditer(text):
+        take(match.group(1), match.group(2))
     return out
 
 
@@ -384,7 +431,7 @@ _FIELD_FULL_RE = re.compile(
     r"(?:const[ \t]+)?"
     r"([A-Za-z_][A-Za-z0-9_]*(?:[ \t]*\*+)?)[ \t]+"   # type, maybe pointer
     r"([A-Za-z_][A-Za-z0-9_]*)"                          # name
-    r"(?:[ \t]*\[[ \t]*([0-9A-Za-z_]+)[ \t]*\])?"   # [N]
+    r"((?:[ \t]*\[[ \t]*[0-9A-Za-z_]+[ \t]*\])*)"      # [N], or [N][M]
     r"(?:[ \t]*:[ \t]*([0-9]+))?"                      # : bits
     r"[ \t]*;", re.M)
 
@@ -398,8 +445,12 @@ def parse_struct_fields(body):
     fields = []
     for found in _FIELD_FULL_RE.finditer(body):
         ftype, fname, bound, bits = found.groups()
-        fields.append((re.sub(r"\s+", "", ftype), fname, bound,
-                       int(bits) if bits else None))
+        # A field can carry more than one dimension: DXGI_DISPLAY_COLOR_SPACE
+        # declares FLOAT PrimaryCoordinates[8][2]. Bounds travel as a list so
+        # the emitter can compose them in the right order.
+        bounds = re.findall(r"\[\s*([0-9A-Za-z_]+)\s*\]", bound or "")
+        fields.append((re.sub(r"\s+", "", ftype), fname,
+                       bounds or None, int(bits) if bits else None))
     return fields
 
 
