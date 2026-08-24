@@ -1,5 +1,66 @@
-/__pycache__/
-/Direct3D/__pycache__/
+# ---------------------------------------------------------------- Python --
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# ------------------------------------------------------- Build artefacts --
+build/
+dist/
+sdist/
+wheels/
+*.egg-info/
+.eggs/
+MANIFEST
+
+# ------------------------------------------------------------ Test tools --
+.pytest_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# NOTE: the previous /Test/ rule was removed on purpose. The integration plan
+# adds a test suite under tests/, and the old rule would have silently kept it
+# out of version control.
+
+# ------------------------------------------------------- Virtualenvs, env --
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# ------------------------------------------------------------------ IDEs --
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.sln.docstates
+
+# --------------------------------------------------------------- Windows --
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ------------------------------------------------------- Project-specific --
+# Scratch space for SDK headers / IDLs pulled in for translation reference.
 /Direct3D/_temp/
-/Direct3D/PyIdl/__pycache__/
-/Test/
+
+# Output of the struct-layout probe. Regenerate with tools/layout_probe.
+*.obj
+*.exe
+*.pdb
+*.ilk
+/tools/layout_probe/build/
+
+# Generated bindings are COMMITTED on purpose - they are meant to be reviewed.
+# Do not add Direct3D/PyIdl/*.py here.
+
+# NOTE: .claude/ is tracked on purpose. The analysis and session history live
+# with the project rather than in the user profile. Uncomment to opt out:
+# .claude/
