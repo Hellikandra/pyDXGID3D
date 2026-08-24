@@ -563,7 +563,7 @@ D3D11_CLEAR_STENCIL = D3D11_CLEAR_FLAG(0x02)
 D3D11_RECT = wintypes.RECT
 
 class D3D11_BOX(ctypes.Structure):
-    _flags_ = [('left',   wintypes.UINT),
+    _fields_ = [('left',   wintypes.UINT),
                ('top',    wintypes.UINT),
                ('front',  wintypes.UINT),
                ('right',  wintypes.UINT),
@@ -1208,6 +1208,11 @@ class D3D11_UNORDERED_ACCESS_VIEW_DESC(ctypes.Structure):
                     ('Texture2DArray', D3D11_TEX2D_ARRAY_UAV),
                     ('Texture3D',      D3D11_TEX3D_UAV),
         ]
+    _anonymous_ = ('i1',)
+    _fields_ = [('Format',        DXGI_FORMAT),
+                ('ViewDimension', D3D11_UAV_DIMENSION),
+                ('i1',_I1),
+    ]
 
 class ID3D11UnorderedAccessView(ID3D11View):
     _iid_ = comtypes.GUID("{28acf509-7f5c-48f6-8611-f316010a6380}")
@@ -1489,7 +1494,7 @@ class ID3D11Predicate(ID3D11Query):
 
 class D3D11_QUERY_DATA_TIMESTAMP_DISJOINT(ctypes.Structure):
     _fields_ = [('Frequency', ctypes.c_ulonglong),
-                ('Disjoint', ctypes.c_bool),
+                ('Disjoint', wintypes.BOOL),
     ]
 
 class D3D11_QUERY_DATA_PIPELINE_STATISTICS(ctypes.Structure):
@@ -1898,7 +1903,7 @@ class ID3D11DeviceContext(ID3D11DeviceChild):
             ]),
         comtypes.STDMETHOD(None, "SetPredication", [
             ctypes.POINTER(ID3D11Predicate),
-            ctypes.c_bool,
+            wintypes.BOOL,
             ]),
         comtypes.STDMETHOD(None, "GSSetShaderResources", [
             ctypes.c_uint,
@@ -2032,7 +2037,7 @@ class ID3D11DeviceContext(ID3D11DeviceChild):
             ]),
         comtypes.STDMETHOD(None, "ExecuteCommandList", [
             ctypes.POINTER(ID3D11CommandList),
-            ctypes.c_bool,
+            wintypes.BOOL,
             ]),
         comtypes.STDMETHOD(None, "HSSetShaderResources", [
             ctypes.c_uint,
@@ -2172,7 +2177,7 @@ class ID3D11DeviceContext(ID3D11DeviceChild):
             ]),
         comtypes.STDMETHOD(None, "GetPredication", [
             ctypes.POINTER(ctypes.POINTER(ID3D11Predicate)),
-            ctypes.c_bool,
+            ctypes.POINTER(wintypes.BOOL),
             ]),
         comtypes.STDMETHOD(None, "GSGetShaderResources", [
             ctypes.c_uint,
@@ -2298,7 +2303,7 @@ class ID3D11DeviceContext(ID3D11DeviceChild):
         comtypes.STDMETHOD(wintypes.UINT, "GetContextFlags", [
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "FinishCommandList", [
-            ctypes.c_bool,
+            wintypes.BOOL,
             ctypes.POINTER(ctypes.POINTER(ID3D11CommandList)),
             ]),
         ## !!! END LOW-FREQUENCY !!!
@@ -2728,7 +2733,7 @@ D3D11_VIDEO_PROCESSOR_ROTATION_180           = D3D11_VIDEO_PROCESSOR_ROTATION(2)
 D3D11_VIDEO_PROCESSOR_ROTATION_270           = D3D11_VIDEO_PROCESSOR_ROTATION(3)
 
 class D3D11_VIDEO_PROCESSOR_STREAM(ctypes.Structure):
-    _fields_ = [('Enable', ctypes.c_bool), 
+    _fields_ = [('Enable', wintypes.BOOL), 
                 ('OutputIndex', wintypes.UINT),
                 ('InputFrameOrField', wintypes.UINT),
                 ('PastFrames', wintypes.UINT),
@@ -2898,8 +2903,8 @@ D3D11_BUS_IMPL_MODIFIER_NON_STANDARD                     = D3D11_BUS_TYPE(0x8000
 class D3D11_AUTHENTICATED_QUERY_ACESSIBILITY_OUTPUT(ctypes.Structure):
     _fields_ = [('Output', D3D11_AUTHENTICATED_QUERY_OUTPUT),
                 ('BusType', D3D11_BUS_TYPE),
-                ('AccessibleInContiguousBlocks', ctypes.c_bool),
-                ('AccessibleInNonContiguousBlocks', ctypes.c_bool),
+                ('AccessibleInContiguousBlocks', wintypes.BOOL),
+                ('AccessibleInNonContiguousBlocks', wintypes.BOOL),
     ]
 
 class D3D11_AUTHENTICATED_QUERY_ACCESSIBILITY_ENCRYPTION_GUID_COUNT_OUTPUT(ctypes.Structure):
@@ -2960,7 +2965,7 @@ class D3D11_AUTHENTICATED_CONFIGURE_SHARED_RESOURCE_INPUT(ctypes.Structure):
     _fields_ = [('Parameters', D3D11_AUTHENTICATED_CONFIGURE_INPUT),
                 ('ProcessType', D3D11_AUTHENTICATED_PROCESS_IDENTIFIER_TYPE),
                 ('ProcessHandle', wintypes.HANDLE),
-                ('AllowAccess', ctypes.c_bool),
+                ('AllowAccess', wintypes.BOOL),
     ]
 
 class D3D11_AUTHENTICATED_CONFIGURE_ACCESSIBLE_ENCRYPTION_INPUT(ctypes.Structure):
