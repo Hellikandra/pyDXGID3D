@@ -1194,6 +1194,29 @@
    },
    "size": 320
   },
+  "DXGI_ADAPTER_DESC3": {
+   "fields": {
+    "AdapterLuid": 296,
+    "ComputePreemptionGranularity": 312,
+    "DedicatedSystemMemory": 280,
+    "DedicatedVideoMemory": 272,
+    "Description": 0,
+    "DeviceId": 260,
+    "Flags": 304,
+    "GraphicsPreemptionGranularity": 308,
+    "Revision": 268,
+    "SharedSystemMemory": 288,
+    "SubSysId": 264,
+    "VendorId": 256
+   },
+   "size": 320
+  },
+  "DXGI_DECODE_SWAP_CHAIN_DESC": {
+   "fields": {
+    "Flags": 0
+   },
+   "size": 4
+  },
   "DXGI_DISPLAY_COLOR_SPACE": {
    "fields": {},
    "size": 192
@@ -1207,6 +1230,18 @@
     "SyncRefreshCount": 8
    },
    "size": 32
+  },
+  "DXGI_FRAME_STATISTICS_MEDIA": {
+   "fields": {
+    "ApprovedPresentDuration": 36,
+    "CompositionMode": 32,
+    "PresentCount": 0,
+    "PresentRefreshCount": 4,
+    "SyncGPUTime": 24,
+    "SyncQPCTime": 16,
+    "SyncRefreshCount": 8
+   },
+   "size": 40
   },
   "DXGI_GAMMA_CONTROL": {
    "fields": {
@@ -1225,6 +1260,25 @@
     "ScaleAndOffsetSupported": 0
    },
    "size": 4116
+  },
+  "DXGI_HDR_METADATA_HDR10": {
+   "fields": {
+    "BluePrimary": 8,
+    "GreenPrimary": 4,
+    "MaxContentLightLevel": 24,
+    "MaxFrameAverageLightLevel": 26,
+    "MaxMasteringLuminance": 16,
+    "MinMasteringLuminance": 20,
+    "RedPrimary": 0,
+    "WhitePoint": 12
+   },
+   "size": 28
+  },
+  "DXGI_HDR_METADATA_HDR10PLUS": {
+   "fields": {
+    "Data": 0
+   },
+   "size": 72
   },
   "DXGI_JPEG_AC_HUFFMAN_TABLE": {
    "fields": {
@@ -1252,6 +1306,17 @@
     "pBits": 8
    },
    "size": 16
+  },
+  "DXGI_MATRIX_3X2_F": {
+   "fields": {
+    "_11": 0,
+    "_12": 4,
+    "_21": 8,
+    "_22": 12,
+    "_31": 16,
+    "_32": 20
+   },
+   "size": 24
   },
   "DXGI_MODE_DESC": {
    "fields": {
@@ -1331,12 +1396,40 @@
    },
    "size": 96
   },
+  "DXGI_OUTPUT_DESC1": {
+   "fields": {
+    "AttachedToDesktop": 80,
+    "BitsPerColor": 96,
+    "BluePrimary": 120,
+    "ColorSpace": 100,
+    "DesktopCoordinates": 64,
+    "DeviceName": 0,
+    "GreenPrimary": 112,
+    "MaxFullFrameLuminance": 144,
+    "MaxLuminance": 140,
+    "MinLuminance": 136,
+    "Monitor": 88,
+    "RedPrimary": 104,
+    "Rotation": 84,
+    "WhitePoint": 128
+   },
+   "size": 152
+  },
   "DXGI_PRESENT_PARAMETERS": {
    "fields": {
     "DirtyRectsCount": 0,
     "pDirtyRects": 8,
     "pScrollOffset": 24,
     "pScrollRect": 16
+   },
+   "size": 32
+  },
+  "DXGI_QUERY_VIDEO_MEMORY_INFO": {
+   "fields": {
+    "AvailableForReservation": 16,
+    "Budget": 0,
+    "CurrentReservation": 24,
+    "CurrentUsage": 8
    },
    "size": 32
   },

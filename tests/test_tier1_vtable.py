@@ -30,6 +30,10 @@ import idl  # noqa: E402
 MODULE_IDL = {
     "dxgi": "dxgi.idl",
     "dxgi1_2": "dxgi1_2.idl",
+    "dxgi1_3": "dxgi1_3.idl",
+    "dxgi1_4": "dxgi1_4.idl",
+    "dxgi1_5": "dxgi1_5.idl",
+    "dxgi1_6": "dxgi1_6.idl",
     "d3d11": "d3d11.idl",
     "d3d11sdklayers": "d3d11sdklayers.idl",
     "d3dcommon": "d3dcommon.idl",
@@ -65,11 +69,35 @@ def _method_spec(element):
     return None, None
 
 
+def _method_names(list_node):
+    names = []
+    for element in list_node.elts:
+        if isinstance(element, ast.Call):
+            name, _count = _method_spec(element)
+            if name:
+                names.append(name)
+    return names
+
+
 def _python_methods(module):
-    """{interface: [method names in declared order]} from the binding source."""
+    """{interface: [method names in declared order]} from the binding source.
+
+    Two shapes are valid and both appear in the tree:
+
+        class IFoo(IBar):            hand-written
+            _methods_ = [...]
+
+        class IFoo(IBar): ...        generated
+        IFoo._methods_ = [...]       assigned once every class exists
+
+    Reading only the first shape made this test pass VACUOUSLY on the generated
+    modules - it found no methods, so it compared nothing and reported success.
+    A test that silently checks nothing is worse than one that fails.
+    """
     path = os.path.join(REPO_ROOT, "Direct3D", "PyIdl", module + ".py")
     tree = ast.parse(io.open(path, encoding="utf-8").read())
     out = {}
+
     for node in ast.walk(tree):
         if not isinstance(node, ast.ClassDef):
             continue
@@ -79,13 +107,16 @@ def _python_methods(module):
             if "_methods_" not in [t.id for t in stmt.targets
                                    if isinstance(t, ast.Name)]:
                 continue
-            names = []
-            for element in stmt.value.elts:
-                if isinstance(element, ast.Call):
-                    name, _count = _method_spec(element)
-                    if name:
-                        names.append(name)
-            out[node.name] = names
+            out[node.name] = _method_names(stmt.value)
+
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Assign) or not isinstance(node.value, ast.List):
+            continue
+        for target in node.targets:
+            if (isinstance(target, ast.Attribute)
+                    and target.attr == "_methods_"
+                    and isinstance(target.value, ast.Name)):
+                out[target.value.id] = _method_names(node.value)
     return out
 
 
@@ -226,6 +257,10 @@ STUB_BUDGET = {
     "d3dcommon": 1,          # ID3DDestructionNotifier
     "dxgi": 0,
     "dxgi1_2": 0,
+    "dxgi1_3": 0,
+    "dxgi1_4": 0,
+    "dxgi1_5": 0,
+    "dxgi1_6": 0,
 }
 
 

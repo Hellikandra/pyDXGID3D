@@ -20,6 +20,7 @@ Usage:
     python tools/idl.py                 summary of every targeted IDL
     python tools/idl.py dxgi1_2.idl     detail for one
 """
+import io
 import os
 import re
 import sys
@@ -155,7 +156,8 @@ def parse_interfaces(text):
             seen.add(method)
             methods.append(method)
 
-        out[name] = {"base": base, "uuid": uuid, "methods": methods}
+        out[name] = {"base": base, "uuid": uuid, "methods": methods,
+                     "signatures": parse_signatures(body)}
     return out
 
 
@@ -197,8 +199,28 @@ def parse_structs(text):
             for found in _FIELD_RE.finditer(body):
                 ftype, fname, bound = found.groups()
                 fields.append((ftype.replace(" ", ""), fname, bound))
-        out[name] = {"tag": tag, "fields": fields, "opaque": opaque}
+        out[name] = {"tag": tag, "fields": fields, "opaque": opaque,
+                     "parsed_fields": ([] if opaque
+                                       else parse_struct_fields(body))}
     return out
+
+
+def _split_params(text):
+    """Top-level comma split, so size_is(a, b) does not split a parameter."""
+    parts, depth, current = [], 0, []
+    for char in text:
+        if char in "([":
+            depth += 1
+        elif char in ")]":
+            depth -= 1
+        if char == "," and depth == 0:
+            parts.append("".join(current))
+            current = []
+        else:
+            current.append(char)
+    if "".join(current).strip():
+        parts.append("".join(current))
+    return parts
 
 
 _METHOD_SIG_RE = re.compile(
@@ -234,15 +256,11 @@ def parse_param_counts(text):
             if params in ("", "void"):
                 out[key] = 0
                 continue
-            depth, count = 0, 1
-            for char in params:
-                if char == "(":
-                    depth += 1
-                elif char == ")":
-                    depth -= 1
-                elif char == "," and depth == 0:
-                    count += 1
-            out[key] = count
+            # Must be bracket-aware, not just paren-aware: every parameter
+            # carries a MIDL attribute block like [in, annotation("_In_")], and
+            # the comma inside it is not a parameter separator. Counting on
+            # paren depth alone inflated SetPrivateData from 3 to 5.
+            out[key] = len(_split_params(params))
     return out
 
 
@@ -254,6 +272,184 @@ def load(sdk, name):
     with open(path, encoding="utf-8", errors="replace") as handle:
         text = handle.read()
     return parse_interfaces(text), parse_structs(text)
+
+
+# ---------------------------------------------------- method signatures ----
+_SIG_RE = re.compile(
+    r"(?:^|\n)[ \t]*(?:\[[^\]]*\][ \t]*)?"
+    r"([A-Za-z_][A-Za-z0-9_]*(?:[ \t]*\*+)?)[ \t]+"     # return type
+    r"([A-Za-z_][A-Za-z0-9_]*)[ \t]*"                     # method name
+    r"\(([^;]*?)\)[ \t]*;", re.S)
+
+
+_PARAM_RE = re.compile(
+    r"^\s*(?:\[[^\]]*\]\s*)*"                     # MIDL / SAL annotations
+    r"([A-Za-z_][A-Za-z0-9_]*(?:\s*\*)*)\s*"      # type plus any pointer depth
+    r"([A-Za-z_][A-Za-z0-9_]*)?"                  # name, sometimes absent
+    r"(?:\s*\[\s*[0-9A-Za-z_]*\s*\])?\s*$", re.S)
+
+
+def parse_signatures(body):
+    """{method: (return_type, [(param_type, param_name), ...])} for one body."""
+    out = {}
+    for match in _SIG_RE.finditer(body):
+        restype, method, params = match.groups()
+        if method in _SKIP_METHOD_NAMES or method.startswith("_"):
+            continue
+        if method in out:
+            continue
+        restype = re.sub(r"\s+", "", restype)
+
+        collected = []
+        cleaned = params.strip()
+        if cleaned and cleaned != "void":
+            for chunk in _split_params(cleaned):
+                chunk = chunk.replace("\n", " ")
+                # `const` can sit anywhere in a pointer declarator - the SDK
+                # writes `IDXGIResource *const *ppResources` for an array of
+                # interface pointers. It carries no ctypes meaning, and leaving
+                # it in made 54 signatures parse one parameter short.
+                chunk = re.sub(r"\bconst\b", " ", chunk)
+                found = _PARAM_RE.match(chunk)
+                if not found:
+                    continue
+                ptype = re.sub(r"\s+", "", found.group(1))
+                pname = found.group(2) or "arg%d" % (len(collected) + 1)
+                collected.append((ptype, pname))
+        out[method] = (restype, collected)
+    return out
+
+
+# ---------------------------------------------------------------- enums ----
+_ENUM_RE = re.compile(
+    r"typedef\s*\n?\s*enum\s+([A-Za-z_][A-Za-z0-9_]*)\s*\n?\s*\{", re.M)
+_ENUM_MEMBER_RE = re.compile(
+    r"^\s*([A-Za-z_][A-Za-z0-9_]*)\s*(?:=\s*([^,\n]+?))?\s*(?:,|$)", re.M)
+
+
+def parse_enums(text):
+    """{name: {'tag', 'members': [(name, value_expression_or_None), ...]}}.
+
+    `name` is the typedef, matching parse_structs. Values are kept as the source
+    expression rather than evaluated: the SDK writes things like ( 1 << 4 ) and
+    0xffffffff, and an emitter can pass those straight through to Python, which
+    reads them identically.
+    """
+    text = strip_comments(text)
+    out = {}
+    for match in _ENUM_RE.finditer(text):
+        tag = match.group(1)
+        open_index = text.index("{", match.start())
+        body, close_index = _balanced_body(text, open_index)
+
+        trailing = _TYPEDEF_NAME_RE.match(text, close_index + 1)
+        name = trailing.group(1) if trailing else tag
+
+        members, seen = [], set()
+        for found in _ENUM_MEMBER_RE.finditer(body):
+            member, value = found.group(1), found.group(2)
+            if member in seen:
+                continue
+            seen.add(member)
+            members.append((member, value.strip() if value else None))
+        out[name] = {"tag": tag, "members": members}
+    return out
+
+
+# -------------------------------------------------------------- defines ----
+_DEFINE_RE = re.compile(
+    r'cpp_quote\(\s*"\s*#define\s+([A-Za-z_][A-Za-z0-9_]*)\s+(.+?)\s*"\s*\)')
+
+
+def parse_defines(text):
+    """[(name, value_expression), ...] from cpp_quote blocks, in file order.
+
+    Only `#define NAME value` is collected. d3d11.idl carries 1,599 cpp_quote
+    lines of which just 59 are defines - the rest are the C++ CD3D11_* helper
+    classes, which have no Python meaning and are deliberately skipped.
+    """
+    out, seen = [], set()
+    for match in _DEFINE_RE.finditer(text):
+        name, value = match.group(1), match.group(2).strip()
+        if name in seen or "(" in name:
+            continue
+        seen.add(name)
+        out.append((name, value))
+    return out
+
+
+# ------------------------------------------------------- richer structs ----
+_FIELD_FULL_RE = re.compile(
+    r"^[ \t]*(?:\[[^\]]*\][ \t]*)?"          # MIDL / SAL annotation
+    r"(?:const[ \t]+)?"
+    r"([A-Za-z_][A-Za-z0-9_]*(?:[ \t]*\*+)?)[ \t]+"   # type, maybe pointer
+    r"([A-Za-z_][A-Za-z0-9_]*)"                          # name
+    r"(?:[ \t]*\[[ \t]*([0-9A-Za-z_]+)[ \t]*\])?"   # [N]
+    r"(?:[ \t]*:[ \t]*([0-9]+))?"                      # : bits
+    r"[ \t]*;", re.M)
+
+
+def parse_struct_fields(body):
+    """[(type, name, array_len, bit_width), ...] for one struct body.
+
+    array_len and bit_width are None when absent. Pointer depth is carried in
+    the type string as trailing asterisks, which the emitter unwraps.
+    """
+    fields = []
+    for found in _FIELD_FULL_RE.finditer(body):
+        ftype, fname, bound, bits = found.groups()
+        fields.append((re.sub(r"\s+", "", ftype), fname, bound,
+                       int(bits) if bits else None))
+    return fields
+
+
+# ------------------------------------------------------ scalar typedefs ----
+_TYPEDEF_SCALAR_RE = re.compile(
+    r"^[ 	]*typedef[ 	]+(?!struct|enum|union|interface)"
+    r"([A-Za-z_][A-Za-z0-9_]*(?:[ 	]*\*)*)[ 	]+"
+    r"([A-Za-z_][A-Za-z0-9_]*)[ 	]*;", re.M)
+
+
+def parse_typedefs(text):
+    """[(alias, underlying_type), ...] for plain scalar typedefs.
+
+    `typedef UINT DXGI_USAGE;` is neither a struct, an enum nor a define, so it
+    fell through every other parser and DXGI_USAGE came out undefined. Small
+    construct, and the generated dxgi.py would not import without it.
+    """
+    text = strip_comments(text)
+    out, seen = [], set()
+    for match in _TYPEDEF_SCALAR_RE.finditer(text):
+        underlying, alias = match.group(1), match.group(2)
+        if alias in seen:
+            continue
+        seen.add(alias)
+        out.append((alias, re.sub(r"\s+", "", underlying)))
+    return out
+
+
+def module_constructs(sdk, name):
+    """Everything an emitter needs for one IDL, in one call.
+
+    Returns a dict with interfaces, structs, enums, defines and imports.
+    """
+    path = idl_path(sdk, name)
+    if not path:
+        return None
+    raw = io.open(path, encoding="utf-8", errors="replace").read()
+    stripped = strip_comments(raw)
+    return {
+        "idl": name,
+        "interfaces": parse_interfaces(raw),
+        "structs": parse_structs(raw),
+        "enums": parse_enums(raw),
+        "defines": parse_defines(raw),
+        "typedefs": parse_typedefs(raw),
+        "imports": [i for i in re.findall(r'^\s*import\s+"([^"]+)"',
+                                          stripped, re.M)
+                    if i not in ("oaidl.idl", "ocidl.idl", "unknwn.idl",
+                                 "wtypes.idl", "objidl.idl")],
+    }
 
 
 def main():

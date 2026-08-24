@@ -32,6 +32,8 @@ LAYOUT_PATH = os.path.join(REPO_ROOT, "tests", "data", "struct_layout.json")
 BINDING_MODULES = [
     "Direct3D.PyIdl.dxgicommon", "Direct3D.PyIdl.dxgitype",
     "Direct3D.PyIdl.dxgi", "Direct3D.PyIdl.dxgi1_2",
+    "Direct3D.PyIdl.dxgi1_3", "Direct3D.PyIdl.dxgi1_4",
+    "Direct3D.PyIdl.dxgi1_5", "Direct3D.PyIdl.dxgi1_6",
     "Direct3D.PyIdl.d3dcommon", "Direct3D.PyIdl.d3d11",
     "Direct3D.PyIdl.d3d11sdklayers",
 ]
