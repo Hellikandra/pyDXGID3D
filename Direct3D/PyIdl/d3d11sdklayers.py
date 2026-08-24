@@ -240,5 +240,22 @@ class ID3D11InfoQueue(comtypes.IUnknown):
             D3D11_MESSAGE_SEVERITY, # _In_ D3D11_MESSAGE_SEVERITY Severity
             wintypes.BOOL,          # _In_ BOOL bEnable
             ]),
+        comtypes.STDMETHOD(comtypes.HRESULT, "SetBreakOnID", [
+            D3D11_MESSAGE_ID,       # _In_ D3D11_MESSAGE_ID ID
+            wintypes.BOOL,          # _In_ BOOL bEnable
+            ]),
+        comtypes.STDMETHOD(wintypes.BOOL, "GetBreakOnCategory", [
+            D3D11_MESSAGE_CATEGORY, # _In_ D3D11_MESSAGE_CATEGORY Category
+            ]),
+        comtypes.STDMETHOD(wintypes.BOOL, "GetBreakOnSeverity", [
+            D3D11_MESSAGE_SEVERITY, # _In_ D3D11_MESSAGE_SEVERITY Severity
+            ]),
+        comtypes.STDMETHOD(wintypes.BOOL, "GetBreakOnID", [
+            D3D11_MESSAGE_ID,       # _In_ D3D11_MESSAGE_ID ID
+            ]),
+        comtypes.STDMETHOD(None, "SetMuteDebugOutput", [
+            wintypes.BOOL,          # _In_ BOOL bMute
+            ]),
+        comtypes.STDMETHOD(wintypes.BOOL, "GetMuteDebugOutput", []),
 
     ]

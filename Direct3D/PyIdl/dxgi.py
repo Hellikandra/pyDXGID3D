@@ -472,10 +472,10 @@ class IDXGIFactory1(IDXGIFactory):
 class IDXGIDevice1(IDXGIDevice):
     _iid_ = comtypes.GUID("{77db970f-6276-48ba-ba28-070143b4392c}")
     _methods_ = [
-        comtypes.STDMETHOD(comtypes.HRESULT, "SetMaximumFrameltency", [
+        comtypes.STDMETHOD(comtypes.HRESULT, "SetMaximumFrameLatency", [
             wintypes.UINT,
             ]),
-        comtypes.STDMETHOD(comtypes.HRESULT, "GetMaximumFrameltency", [
+        comtypes.STDMETHOD(comtypes.HRESULT, "GetMaximumFrameLatency", [
             ctypes.POINTER(wintypes.UINT),
             ]),
     ]

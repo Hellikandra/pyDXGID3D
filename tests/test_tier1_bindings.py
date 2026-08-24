@@ -10,6 +10,8 @@ passes, the package cannot obtain its first COM object.
 import ctypes
 import ctypes.wintypes as wintypes
 import importlib
+import io
+import os
 
 import pytest
 
@@ -117,7 +119,6 @@ def test_factory_creation():
     from Direct3D.PyIdl.functions import CreateDXGIFactory1
     factory = CreateDXGIFactory1()
     assert factory
-    factory.Release()
 
 
 def test_warp_device_and_qi_chain(warp_device):
@@ -147,9 +148,6 @@ def test_warp_device_and_qi_chain(warp_device):
     adapter.GetParent(IDXGIFactory2._iid_, ctypes.byref(factory))
     assert factory, "GetParent returned a null factory"
 
-    factory.Release()
-    adapter.Release()
-    dxgi_device.Release()
 
 
 def test_adapter_description_is_readable(warp_device):
@@ -167,8 +165,6 @@ def test_adapter_description_is_readable(warp_device):
     description = desc.Description
     assert isinstance(description, str) and description.strip()
 
-    adapter.Release()
-    dxgi_device.Release()
 
 
 def test_staging_texture_roundtrip(warp_device):
@@ -231,10 +227,69 @@ def test_staging_texture_roundtrip(warp_device):
     finally:
         context.Unmap(staging.QueryInterface(ID3D11Resource), 0)
 
-    staging.Release()
-    source.Release()
 
 
 def _value(constant):
     """The enum constants are ctypes instances; the APIs want plain ints."""
     return constant.value if hasattr(constant, "value") else constant
+
+
+def test_explicit_release_is_a_double_free(warp_device):
+    """F-52: calling Release() on a comtypes pointer double-releases it.
+
+    In C++ every interface pointer must be Released by hand. Under comtypes it
+    must not: `_compointer_base.__del__` releases the reference comtypes owns, so
+    an explicit Release() plus the implicit one is two releases for one
+    reference. The object is destroyed by the first, and the second writes into
+    freed memory - an access violation, raised from a destructor where it cannot
+    be caught.
+
+    This is the single most dangerous habit carried over from the C++ sample.
+    `OutputManager.CleanRefs()` does it to eleven pointers, and `__del__` calls
+    CleanRefs, so it runs at interpreter shutdown when it is hardest to diagnose.
+
+    The test asserts the safe direction: a pointer that is only ever released by
+    comtypes survives repeated create/collect cycles. It deliberately does NOT
+    perform the double release - doing so corrupts the process and would take
+    the rest of the suite with it.
+    """
+    import gc
+
+    from Direct3D.PyIdl.functions import CreateDXGIFactory1
+
+    for _ in range(5):
+        factory = CreateDXGIFactory1()
+        assert factory
+        del factory
+        gc.collect()
+
+
+def test_bindings_do_not_call_release_on_com_pointers():
+    """F-52, statically: no new code should adopt the explicit-Release habit.
+
+    Scoped to the layers that are meant to be correct. OutputManager.py and
+    DesktopDuplication.py are the unported sample and are excluded until they
+    are rewritten - their Release() calls are tracked as F-52 rather than
+    silently tolerated here.
+    """
+    import ast
+    import glob
+
+    from conftest import REPO_ROOT
+
+    offenders = []
+    scoped = (glob.glob(os.path.join(REPO_ROOT, "Direct3D", "PyIdl", "*.py"))
+              + glob.glob(os.path.join(REPO_ROOT, "Direct3D", "Core", "*.py"))
+              + glob.glob(os.path.join(REPO_ROOT, "Direct3D", "Capture", "*.py")))
+    for path in scoped:
+        tree = ast.parse(io.open(path, encoding="utf-8").read())
+        for node in ast.walk(tree):
+            if (isinstance(node, ast.Call)
+                    and isinstance(node.func, ast.Attribute)
+                    and node.func.attr == "Release"
+                    and not node.args):
+                offenders.append("%s:%d" % (os.path.basename(path), node.lineno))
+
+    assert not offenders, (
+        "explicit Release() on a COM pointer - comtypes releases it too, and the "
+        "second release faults (F-52):\n  " + "\n  ".join(offenders))
