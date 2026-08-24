@@ -37,7 +37,7 @@ D3D11_RLDO_IGNORE_INTERNAL = D3D11_RLDO_FLAGS(0x4).value
 
 class ID3D11Debug(comtypes.IUnknown):
     _iid_ = comtypes.GUID("{79cf2233-7536-4948-9d36-1e4692dc5760}")
-    _mehtods_ = [
+    _methods_ = [
         comtypes.STDMETHOD(comtypes.HRESULT,"SetFeatureMask", [
             wintypes.UINT, # UNIT Mask
             ]),
@@ -65,7 +65,7 @@ class ID3D11Debug(comtypes.IUnknown):
 
 class ID3D11SwitchToRef(comtypes.IUnknown):
     _iid_ = comtypes.GUID("{1EF337E3-58E7-4F83-A692-DB221F5ED47E}")
-    _mehtods_ = [
+    _methods_ = [
         comtypes.STDMETHOD(ctypes.wintypes.BOOL,"SetUseRef", [
             wintypes.BOOL,  # BOOL UseRef
             ]),

@@ -18,7 +18,7 @@ from Direct3D.PyIdl.d3d11 import *
 class IDXGIDisplayControl(comtypes.IUnknown):
     _iid_ = comtypes.GUID("{ea9dbf1a-c88e-4486-854a-98aa0138f30c}")
     _methods_ = [
-        comtypes.STDMETHOD(ctypes.c_bool, "IsStereoEnabled",  [ ]),
+        comtypes.STDMETHOD(wintypes.BOOL, "IsStereoEnabled",  [ ]),
         comtypes.STDMETHOD(None,          "SetStereoEnabled", [
             wintypes.BOOL,
             ]), 
