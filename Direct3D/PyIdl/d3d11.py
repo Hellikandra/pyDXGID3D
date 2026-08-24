@@ -1823,7 +1823,7 @@ class ID3D11DeviceContext(ID3D11DeviceChild):
             ctypes.c_uint,
             D3D11_MAP,
             ctypes.c_uint,
-            D3D11_MAPPED_SUBRESOURCE,
+            ctypes.POINTER(D3D11_MAPPED_SUBRESOURCE),
             ]),
         comtypes.STDMETHOD(None, "Unmap", [
             ctypes.POINTER(ID3D11Resource),

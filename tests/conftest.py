@@ -73,6 +73,7 @@ def warp_device():
 
     device, level, context = D3D11CreateDevice(driver_type=D3D_DRIVER_TYPE_WARP)
     yield device, level, context
-    for obj in (context, device):
-        if obj:
-            obj.Release()
+    # No explicit Release(). comtypes owns these pointers and releases them in
+    # _compointer_base.__del__; calling Release() as well double-releases and
+    # faults on the second call. See finding F-52 - the same C++ habit that
+    # OutputManager.CleanRefs() carries.
