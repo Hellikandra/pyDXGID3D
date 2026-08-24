@@ -1,0 +1,76 @@
+# CI for pyDXGID3D.
+#
+# Replaces .travis.yml, which ran Linux images with both `install:` and `script:`
+# commented out - a no-op that always passed, for a codebase where every path
+# calls ctypes.windll. This runs on Windows and actually imports the bindings.
+
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  static:
+    # Tier 0: AST-only checks. No Windows, no comtypes, no GPU.
+    name: Tier 0 - static checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install test dependencies
+        run: python -m pip install --upgrade pip pytest
+
+      - name: Run tier 0
+        shell: bash
+        run: |
+          if [ -d tests ]; then
+            pytest -m tier0 -v
+          else
+            echo "tests/ not present yet - skipping"
+          fi
+
+  windows:
+    # Tier 1: needs Windows and comtypes. WARP means no GPU is required, so this
+    # runs on a standard hosted runner.
+    name: Tier 1 - Windows ${{ matrix.python }}
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.8", "3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install comtypes pytest
+          python -m pip install .
+
+      - name: Import smoke test
+        # Until the test suite lands this is already more than Travis ever ran:
+        # it proves every binding module imports and every COM class builds a
+        # vtable under the installed comtypes.
+        shell: bash
+        run: python .github/scripts/import_smoke.py
+
+      - name: Run tier 1
+        shell: bash
+        run: |
+          if [ -d tests ]; then
+            pytest -m tier1 -v
+          else
+            echo "tests/ not present yet - skipping"
+          fi
