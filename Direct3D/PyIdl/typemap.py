@@ -54,6 +54,7 @@ TYPES = {
     "BOOL":            wintypes.BOOL,        # 4 bytes signed. NEVER c_bool.
     "BOOLEAN":         ctypes.c_ubyte,       # 1 byte. A different type to BOOL.
     "BYTE":            ctypes.c_ubyte,
+    "UCHAR":           ctypes.c_ubyte,   # d3d12video.idl, the HEVC/H.264 headers
     "CHAR":            ctypes.c_char,
     "WCHAR":           ctypes.c_wchar,
     "INT8":            ctypes.c_int8,
@@ -79,6 +80,14 @@ TYPES = {
     "ULARGE_INTEGER":  ctypes.c_uint64,
     "SIZE_T":          ctypes.c_size_t,
     "SSIZE_T":         ctypes.c_ssize_t,
+    # LONG_PTR and its unsigned twin are pointer-sized integers, not
+    # pointers. d3d12.idl uses LONG_PTR for D3D12_MEMCPY_DEST.RowPitch,
+    # which is a byte count that has to hold a 64-bit value.
+    "LONG_PTR":        ctypes.c_ssize_t,
+    "ULONG_PTR":       ctypes.c_size_t,
+    "DWORD_PTR":       ctypes.c_size_t,
+    "INT_PTR":         ctypes.c_ssize_t,
+    "UINT_PTR":        ctypes.c_size_t,
 
     # -- floating point ---------------------------------------------------
     "FLOAT":           ctypes.c_float,
@@ -106,6 +115,7 @@ TYPES = {
     "IID":             comtypes.GUID,
     "REFIID":          comtypes.GUID,        # const IID* - passed by reference
     "REFGUID":         comtypes.GUID,
+    "REFCLSID":        comtypes.GUID,   # d3d12.idl, ID3D12Device::CreateStateObject
     "CLSID":           comtypes.GUID,
 
     # -- aggregates -------------------------------------------------------
@@ -119,6 +129,7 @@ TYPES = {
 #: The same table as generator-emittable source text.
 SOURCE = {
     "BOOL": "wintypes.BOOL", "BOOLEAN": "ctypes.c_ubyte", "BYTE": "ctypes.c_ubyte",
+    "UCHAR": "ctypes.c_ubyte",
     "CHAR": "ctypes.c_char", "WCHAR": "ctypes.c_wchar",
     "INT8": "ctypes.c_int8", "UINT8": "ctypes.c_uint8",
     "SHORT": "ctypes.c_int16", "USHORT": "ctypes.c_uint16",
@@ -131,6 +142,9 @@ SOURCE = {
     "DWORDLONG": "ctypes.c_uint64",
     "LARGE_INTEGER": "ctypes.c_int64", "ULARGE_INTEGER": "ctypes.c_uint64",
     "SIZE_T": "ctypes.c_size_t", "SSIZE_T": "ctypes.c_ssize_t",
+    "LONG_PTR": "ctypes.c_ssize_t", "ULONG_PTR": "ctypes.c_size_t",
+    "DWORD_PTR": "ctypes.c_size_t", "INT_PTR": "ctypes.c_ssize_t",
+    "UINT_PTR": "ctypes.c_size_t",
     "FLOAT": "ctypes.c_float", "DOUBLE": "ctypes.c_double",
     "LPSTR": "ctypes.c_char_p", "LPCSTR": "ctypes.c_char_p",
     "LPWSTR": "ctypes.c_wchar_p", "LPCWSTR": "ctypes.c_wchar_p",
@@ -140,6 +154,7 @@ SOURCE = {
     "void*": "ctypes.c_void_p",
     "HRESULT": "comtypes.HRESULT", "GUID": "comtypes.GUID", "IID": "comtypes.GUID",
     "REFIID": "comtypes.GUID", "REFGUID": "comtypes.GUID", "CLSID": "comtypes.GUID",
+    "REFCLSID": "comtypes.GUID",
     "RECT": "wintypes.RECT", "POINT": "wintypes.POINT", "SIZE": "wintypes.SIZE",
     "LUID": "LUID", "SECURITY_ATTRIBUTES": "SECURITY_ATTRIBUTES",
 }
@@ -147,17 +162,19 @@ SOURCE = {
 #: Expected sizes on win-amd64. Asserted by the test suite, so a wrong mapping
 #: fails loudly rather than silently shifting a structure.
 EXPECTED_SIZES = {
-    "BOOL": 4, "BOOLEAN": 1, "BYTE": 1, "CHAR": 1, "WCHAR": 2,
+    "BOOL": 4, "BOOLEAN": 1, "BYTE": 1, "UCHAR": 1, "CHAR": 1, "WCHAR": 2,
     "INT8": 1, "UINT8": 1, "SHORT": 2, "USHORT": 2, "INT16": 2, "UINT16": 2,
     "WORD": 2, "INT": 4, "INT32": 4, "LONG": 4, "UINT": 4, "UINT32": 4,
     "ULONG": 4, "DWORD": 4, "INT64": 8, "LONGLONG": 8, "UINT64": 8,
     "ULONGLONG": 8, "DWORDLONG": 8, "LARGE_INTEGER": 8, "ULARGE_INTEGER": 8,
     "FLOAT": 4, "DOUBLE": 8, "GUID": 16, "IID": 16, "REFIID": 16, "REFGUID": 16,
-    "CLSID": 16, "LUID": 8, "RECT": 16, "POINT": 8,
+    "CLSID": 16, "REFCLSID": 16, "LUID": 8, "RECT": 16, "POINT": 8,
 }
 
 #: Types whose size follows the pointer width.
-POINTER_SIZED = ("SIZE_T", "SSIZE_T", "HANDLE", "HWND", "HDC", "HMONITOR",
+POINTER_SIZED = ("SIZE_T", "SSIZE_T", "LONG_PTR", "ULONG_PTR",
+                 "DWORD_PTR", "INT_PTR", "UINT_PTR",
+                 "HANDLE", "HWND", "HDC", "HMONITOR",
                  "HMODULE", "HINSTANCE", "LPVOID", "void*",
                  "LPSTR", "LPCSTR", "LPWSTR", "LPCWSTR")
 

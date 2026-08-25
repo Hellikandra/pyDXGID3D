@@ -93,6 +93,11 @@ EMPTY_BY_DESIGN = {
     # d3d11_1.idl: `interface ID3DDeviceContextState : ID3D11DeviceChild {};`
     # A handle you pass to SwapDeviceContextState, nothing more.
     "ID3DDeviceContextState",
+    # d3d12.idl declares five the same way. ID3D12Pageable is the interesting
+    # one: it is the base of eleven other interfaces, so it must still be given
+    # `_methods_ = []` for comtypes to build any of their vtables - see C-39.
+    "ID3D12Pageable", "ID3D12RootSignature", "ID3D12QueryHeap",
+    "ID3D12CommandSignature", "ID3D12StateObject",
 }
 
 
@@ -105,10 +110,19 @@ def _deferred_methods(tree):
     raises NameError; that is the general form of F-56.
 
     So "declares a vtable" has two valid shapes, and this test has to know both.
+
+    An EMPTY list does not count. `IFoo._methods_ = []` registers no vtable
+    slots, so as far as this test is concerned it is the same as declaring
+    nothing - and it has to be written that way regardless, because comtypes
+    refuses to build a vtable for a class whose base has no `_methods_` at all.
+    Treating the empty list as a declaration would let a genuinely missing
+    vtable hide behind one.
     """
     out = set()
     for node in ast.walk(tree):
         if not isinstance(node, ast.Assign):
+            continue
+        if isinstance(node.value, ast.List) and not node.value.elts:
             continue
         for target in node.targets:
             if (isinstance(target, ast.Attribute)
@@ -146,10 +160,39 @@ def test_every_com_class_declares_methods():
         + "\n  ".join(vanished))
 
 
+def _deferred_attribute(tree, attribute):
+    """Names given `attribute` at module level: `Foo.<attribute> = [...]`.
+
+    An empty list does not count, for the same reason it does not in
+    _deferred_methods: it declares nothing.
+    """
+    out = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Assign):
+            continue
+        if isinstance(node.value, ast.List) and not node.value.elts:
+            continue
+        for target in node.targets:
+            if (isinstance(target, ast.Attribute)
+                    and target.attr == attribute
+                    and isinstance(target.value, ast.Name)):
+                out.add(target.value.id)
+    return out
+
+
 def test_every_structure_declares_fields():
-    """F-09: a Structure without _fields_ reports sizeof() == 0."""
+    """F-09: a Structure without _fields_ reports sizeof() == 0.
+
+    Two valid shapes, as with vtables. A structure that points at itself -
+    D3D12_AUTO_BREADCRUMB_NODE ends with a `pNext` to its own type - cannot name
+    its own class inside its body, so ctypes' documented form is to declare the
+    class and assign `_fields_` afterwards. Reading class bodies alone would
+    report those four as empty, which is the same false reading that made the
+    vtable test vacuous in C-27.
+    """
     bad = []
     for path, tree in _modules():
+        deferred = _deferred_attribute(tree, "_fields_")
         for node in ast.walk(tree):
             if not isinstance(node, ast.ClassDef):
                 continue
@@ -157,9 +200,10 @@ def test_every_structure_declares_fields():
                      for b in node.bases]
             if not any(b in ("Structure", "Union") for b in bases):
                 continue
-            if "_fields_" not in _class_attrs(node):
-                bad.append("%s:%d %s" % (
-                    os.path.basename(path), node.lineno, node.name))
+            if "_fields_" in _class_attrs(node) or node.name in deferred:
+                continue
+            bad.append("%s:%d %s" % (
+                os.path.basename(path), node.lineno, node.name))
     assert not bad, (
         "Structure without _fields_, so sizeof() is 0:\n  " + "\n  ".join(bad))
 

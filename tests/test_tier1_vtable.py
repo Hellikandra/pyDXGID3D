@@ -40,6 +40,11 @@ MODULE_IDL = {
     "d3d11_3": "d3d11_3.idl",
     "d3d11_4": "d3d11_4.idl",
     "d3d11sdklayers": "d3d11sdklayers.idl",
+    "d3d12": "d3d12.idl",
+    "d3d12sdklayers": "d3d12sdklayers.idl",
+    "d3d12video": "d3d12video.idl",
+    "d3d11on12": "d3d11on12.idl",
+    "d3d12compatibility": "d3d12compatibility.idl",
     "d3dcommon": "d3dcommon.idl",
 }
 
@@ -270,6 +275,11 @@ STUB_BUDGET = {
     "d3d11_3": 0,
     "d3d11_4": 0,
     "d3d11sdklayers": 9,     # ID3D11InfoQueue 8, ID3D11TracingDevice 1
+    "d3d12": 0,
+    "d3d12sdklayers": 0,
+    "d3d12video": 0,
+    "d3d11on12": 0,
+    "d3d12compatibility": 0,
     "d3dcommon": 1,          # ID3DDestructionNotifier
     "dxgi": 0,
     "dxgi1_2": 0,

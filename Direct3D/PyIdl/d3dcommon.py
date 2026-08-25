@@ -331,7 +331,16 @@ class ID3D10Blob(comtypes.IUnknown):
 		comtypes.STDMETHOD(ctypes.c_size_t,"GetBufferSize", []),
 	]
 
-# 
+
+##  d3dcommon.idl:397   typedef ID3D10Blob ID3DBlob;
+##
+##  The SDK gives one interface two names and this module carried only the
+##  older one. Nothing needed the other until ID3D12Device::CreateRootSignature,
+##  whose signature is written in terms of ID3DBlob - so d3d12 would not import
+##  without it. See F-57.
+ID3DBlob = ID3D10Blob
+
+#
 class ID3DDestructionNotifier(comtypes.IUnknown):
 	_iid_ = comtypes.GUID("{a06eb39a-50da-425b-8c31-4eecd6c270f3}")
 	_methods_ = [

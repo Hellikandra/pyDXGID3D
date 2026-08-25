@@ -15,6 +15,7 @@ import comtypes
 from Direct3D.PyIdl.typemap import LUID, SECURITY_ATTRIBUTES
 
 
+
 from Direct3D.PyIdl.dxgi1_2 import *
 from Direct3D.PyIdl.d3dcommon import *
 from Direct3D.PyIdl.d3d11 import *
@@ -518,6 +519,7 @@ ID3D11VideoProcessorEnumerator1._methods_ = [
 ]
 
 ## ID3DDeviceContextState adds no methods to ID3D11DeviceChild.
+ID3DDeviceContextState._methods_ = []
 
 ID3DUserDefinedAnnotation._methods_ = [
     comtypes.STDMETHOD(ctypes.c_int32, "BeginEvent", [

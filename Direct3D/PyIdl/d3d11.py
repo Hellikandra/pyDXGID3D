@@ -13,6 +13,7 @@ import comtypes
 # LUID and SECURITY_ATTRIBUTES live in the canonical type table, not in
 # any IDL - they are Windows types the IDLs reference without declaring.
 from Direct3D.PyIdl.typemap import LUID, SECURITY_ATTRIBUTES
+from Direct3D.PyIdl.status import MAKE_HRESULT
 
 
 from Direct3D.PyIdl.dxgi import *
@@ -25,6 +26,52 @@ D3D11_PRIMITIVE                    = D3D_PRIMITIVE
 D3D11_SRV_DIMENSION                = D3D_SRV_DIMENSION
 D3D11_RECT                         = wintypes.RECT
 APP_DEPRECATED_HRESULT             = comtypes.HRESULT
+
+
+## ------------------------------------------------ macros ----
+
+## Function-like macros from cpp_quote, as functions. Pure integer
+## arithmetic in the SDK and pure integer arithmetic here.
+
+
+def MAKE_D3D11_HRESULT(code):
+    return MAKE_HRESULT( 1, _FACD3D11, code )
+
+
+def MAKE_D3D11_STATUS(code):
+    return MAKE_HRESULT( 0, _FACD3D11, code )
+
+
+def D3D11_ENCODE_BASIC_FILTER(min, mag, mip, reduction):
+    return ( ( ( ( ( min ) & D3D11_FILTER_TYPE_MASK ) << D3D11_MIN_FILTER_SHIFT ) | ( ( ( mag ) & D3D11_FILTER_TYPE_MASK ) << D3D11_MAG_FILTER_SHIFT ) | ( ( ( mip ) & D3D11_FILTER_TYPE_MASK ) << D3D11_MIP_FILTER_SHIFT ) | ( ( ( reduction ) & D3D11_FILTER_REDUCTION_TYPE_MASK ) << D3D11_FILTER_REDUCTION_TYPE_SHIFT ) ) )
+
+
+def D3D11_ENCODE_ANISOTROPIC_FILTER(reduction):
+    return ( ( D3D11_ANISOTROPIC_FILTERING_BIT | D3D11_ENCODE_BASIC_FILTER( D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_LINEAR, reduction ) ) )
+
+
+def D3D11_DECODE_MIN_FILTER(d3d11Filter):
+    return ( ( ( ( d3d11Filter ) >> D3D11_MIN_FILTER_SHIFT ) & D3D11_FILTER_TYPE_MASK ) )
+
+
+def D3D11_DECODE_MAG_FILTER(d3d11Filter):
+    return ( ( ( ( d3d11Filter ) >> D3D11_MAG_FILTER_SHIFT ) & D3D11_FILTER_TYPE_MASK ) )
+
+
+def D3D11_DECODE_MIP_FILTER(d3d11Filter):
+    return ( ( ( ( d3d11Filter ) >> D3D11_MIP_FILTER_SHIFT ) & D3D11_FILTER_TYPE_MASK ) )
+
+
+def D3D11_DECODE_FILTER_REDUCTION(d3d11Filter):
+    return ( ( ( ( d3d11Filter ) >> D3D11_FILTER_REDUCTION_TYPE_SHIFT ) & D3D11_FILTER_REDUCTION_TYPE_MASK ) )
+
+
+def D3D11_DECODE_IS_COMPARISON_FILTER(d3d11Filter):
+    return ( D3D11_DECODE_FILTER_REDUCTION( d3d11Filter ) == D3D11_FILTER_REDUCTION_TYPE_COMPARISON )
+
+
+def D3D11_DECODE_IS_ANISOTROPIC_FILTER(d3d11Filter):
+    return ( ( ( d3d11Filter ) & D3D11_ANISOTROPIC_FILTERING_BIT ) and ( D3D11_FILTER_TYPE_LINEAR == D3D11_DECODE_MIN_FILTER( d3d11Filter ) ) and ( D3D11_FILTER_TYPE_LINEAR == D3D11_DECODE_MAG_FILTER( d3d11Filter ) ) and ( D3D11_FILTER_TYPE_LINEAR == D3D11_DECODE_MIP_FILTER( d3d11Filter ) ) )
 
 
 ## ---------------------------------------------- constants ----
@@ -3025,14 +3072,19 @@ ID3D11DeviceContext._methods_ = [
 ]
 
 ## ID3D11DomainShader adds no methods to ID3D11DeviceChild.
+ID3D11DomainShader._methods_ = []
 
 ## ID3D11GeometryShader adds no methods to ID3D11DeviceChild.
+ID3D11GeometryShader._methods_ = []
 
 ## ID3D11HullShader adds no methods to ID3D11DeviceChild.
+ID3D11HullShader._methods_ = []
 
 ## ID3D11InputLayout adds no methods to ID3D11DeviceChild.
+ID3D11InputLayout._methods_ = []
 
 ## ID3D11PixelShader adds no methods to ID3D11DeviceChild.
+ID3D11PixelShader._methods_ = []
 
 ID3D11RasterizerState._methods_ = [
     comtypes.STDMETHOD(None, "GetDesc", [
@@ -3075,6 +3127,7 @@ ID3D11Texture3D._methods_ = [
 ]
 
 ## ID3D11VertexShader adds no methods to ID3D11DeviceChild.
+ID3D11VertexShader._methods_ = []
 
 ID3D11VideoContext._methods_ = [
     comtypes.STDMETHOD(comtypes.HRESULT, "GetDecoderBuffer", [
@@ -3616,6 +3669,7 @@ ID3D11CommandList._methods_ = [
 ]
 
 ## ID3D11ComputeShader adds no methods to ID3D11DeviceChild.
+ID3D11ComputeShader._methods_ = []
 
 ID3D11Counter._methods_ = [
     comtypes.STDMETHOD(None, "GetDesc", [
@@ -3697,6 +3751,7 @@ ID3D11VideoProcessorOutputView._methods_ = [
 ]
 
 ## ID3D11Predicate adds no methods to ID3D11Query.
+ID3D11Predicate._methods_ = []
 
 
 ## -- End Of File --

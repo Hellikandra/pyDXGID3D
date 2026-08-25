@@ -44,12 +44,17 @@ PROBE_IDLS = [
     "dxgi1_3.idl", "dxgi1_4.idl", "dxgi1_5.idl", "dxgi1_6.idl",
     "d3dcommon.idl", "d3d11.idl", "d3d11_1.idl", "d3d11_2.idl",
     "d3d11_3.idl", "d3d11_4.idl", "d3d11sdklayers.idl",
+    "d3d12.idl", "d3d12sdklayers.idl", "d3d12video.idl",
+    "d3d11on12.idl", "d3d12compatibility.idl",
 ]
 
 #: Headers the probe includes. dxgi1_2.h pulls in dxgi.h, dxgitype.h and
 #: dxgicommon.h; d3d11.h pulls in d3dcommon.h.
 # d3d11_4.h pulls in d3d11_3.h, which pulls in _2 and _1 and d3d11.h.
-INCLUDES = ["windows.h", "dxgi1_6.h", "d3d11_4.h", "d3d11sdklayers.h"]
+# d3d12video.h and d3d12compatibility.h both pull in d3d12.h.
+INCLUDES = ["windows.h", "dxgi1_6.h", "d3d11_4.h", "d3d11sdklayers.h",
+            "d3d12.h", "d3d12sdklayers.h", "d3d12video.h",
+            "d3d11on12.h", "d3d12compatibility.h"]
 
 #: Structures the SDK declares but that are unavailable to a plain C build -
 #: guarded by an SDK version macro, or C++ only.

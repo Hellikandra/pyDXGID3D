@@ -193,24 +193,41 @@ def parse_unions(text):
         trailing = _TYPEDEF_NAME_RE.match(text, close_index + 1)
         name = trailing.group(1) if trailing else tag
 
-        nested, remainder = [], body
-        while True:
-            inner = _NAMED_STRUCT_RE.search(remainder)
-            if not inner:
-                break
-            brace = remainder.index("{", inner.start())
-            fields_text, end = _balanced_body(remainder, brace)
-            after = remainder[end + 1:]
-            label = _TYPEDEF_NAME_RE.match(after)
-            nested.append((label.group(1) if label else "s%d" % len(nested),
-                           parse_struct_fields(fields_text)))
-            remainder = (remainder[:inner.start()]
-                         + after[label.end():] if label else after)
-
-        out[name] = {"tag": tag,
-                     "members": parse_struct_fields(remainder),
-                     "nested": nested}
+        out[name] = dict(split_union_body(body), tag=tag)
     return out
+
+
+def split_union_body(body):
+    """A union body split into plain members and named nested structures.
+
+        {'members': [(type, name, bounds, bits), ...],
+         'nested':  [(field_name, [(type, name, bounds, bits), ...]), ...]}
+
+    Used for both shapes this SDK produces: the top-level
+    D3D11_AUTHENTICATED_PROTECTION_FLAGS, which overlays one named bitfield
+    struct on a UINT, and the anonymous union inside
+    D3D12_INDIRECT_ARGUMENT_DESC, which holds six named structs and no plain
+    members at all.
+    """
+    nested, remainder = [], body
+    while True:
+        inner = _NAMED_STRUCT_RE.search(remainder)
+        if not inner:
+            break
+        brace = remainder.index("{", inner.start())
+        fields_text, end = _balanced_body(remainder, brace)
+        after = remainder[end + 1:]
+        label = _TYPEDEF_NAME_RE.match(after)
+        nested.append((label.group(1) if label else "s%d" % len(nested),
+                       parse_struct_fields(fields_text)))
+        # Cut the nested definition out and keep scanning what surrounds it, so
+        # a plain member declared after the struct is not lost. The parentheses
+        # matter: without them the conditional swallows the concatenation and
+        # everything before an unlabelled struct is discarded.
+        remainder = (remainder[:inner.start()] + after[label.end():]) \
+            if label else (remainder[:inner.start()] + after)
+
+    return {"members": parse_struct_fields(remainder), "nested": nested}
 
 
 def parse_structs(text):
@@ -242,11 +259,17 @@ def parse_structs(text):
         trailing = _TYPEDEF_NAME_RE.match(text, close_index + 1)
         name = trailing.group(1) if trailing else tag
 
-        opaque = bool(re.search(r"\bunion\b|\bstruct\b", body))
+        # A NESTED aggregate is what makes a structure opaque - one whose field
+        # offsets cannot be read off the text. The mere word `struct` does not:
+        # `const struct D3D12_AUTO_BREADCRUMB_NODE *pNext` is an elaborated type
+        # specifier naming a type declared elsewhere, and treating it as a
+        # nested definition emitted four D3D12 structures with no fields at all.
+        # A nested aggregate is followed by a brace; a reference is not.
+        nested = re.search(r"\b(?:union|struct)\b[^;{}]*\{", body)
+        opaque = bool(nested)
 
         segments = None
-        if opaque and re.search(r"\bunion\b", body) \
-                and not re.search(r"\bstruct\b", body):
+        if opaque and re.search(r"\bunion\b[^;{}]*\{", body):
             # Anonymous unions inside a structure. The SDK writes
             #     union { D3D11_BUFFER_RTV Buffer; ... } ;
             # and ctypes expresses it as a nested class plus _anonymous_ - the
@@ -260,13 +283,17 @@ def parse_structs(text):
             # twelve.
             segments, rest = [], body
             while True:
-                found = re.search(r"\bunion\b", rest)
+                found = re.search(r"\bunion\b[^;{}]*\{", rest)
                 if not found:
                     break
                 open_u = rest.index("{", found.start())
                 inner, close_u = _balanced_body(rest, open_u)
                 segments.append(("fields", parse_struct_fields(rest[:found.start()])))
-                segments.append(("union", parse_struct_fields(inner)))
+                # The union body may itself hold NAMED structures:
+                # D3D12_INDIRECT_ARGUMENT_DESC overlays six of them. Parsed with
+                # the same helper as a top-level union, so both shapes produce
+                # one thing for the emitter to render.
+                segments.append(("union", split_union_body(inner)))
                 rest = rest[close_u + 1:]
             segments.append(("fields", parse_struct_fields(rest)))
             opaque = False
@@ -444,6 +471,102 @@ def parse_enums(text):
     return out
 
 
+# --------------------------------------------------- callback typedefs ----
+#: `typedef void (__stdcall *D3D12MessageFunc) (A a, B b, void* c);`
+#:
+#: Two exist in the whole target set - D3D12MessageFunc in d3d12sdklayers.idl
+#: and PFN_DESTRUCTION_CALLBACK in d3dcommon.idl - which is why the
+#: hand-written d3dcommon.py could get away with commenting its parameters out.
+#: d3d12sdklayers cannot: ID3D12InfoQueue1::RegisterMessageCallback takes one,
+#: and without the type the module does not import.
+_CALLBACK_TYPEDEF_RE = re.compile(
+    r"typedef\s+([A-Za-z_][A-Za-z0-9_]*(?:\s*\*+)?)\s*"
+    r"\(\s*__stdcall\s*\*\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)\s*"
+    r"\(([^;]*?)\)\s*;", re.S)
+
+
+def parse_callbacks(text):
+    """[(name, return_type, [(type, param_name), ...]), ...]
+
+    Returned separately from parse_typedefs because the emitted shape is a
+    ctypes.WINFUNCTYPE rather than an alias, and because these must be emitted
+    after the enumerations they name.
+    """
+    text = strip_comments(text)
+    out = []
+    for match in _CALLBACK_TYPEDEF_RE.finditer(text):
+        restype, name, params = match.groups()
+        collected = []
+        cleaned = params.strip()
+        if cleaned and cleaned != "void":
+            for chunk in _split_params(cleaned):
+                chunk = re.sub(r"\bconst\b", " ", chunk.replace("\n", " "))
+                found = _PARAM_RE.match(chunk)
+                if not found:
+                    continue
+                collected.append((re.sub(r"\s+", "", found.group(1)),
+                                  found.group(2) or "arg%d" % (len(collected) + 1)))
+        out.append((name, re.sub(r"\s+", "", restype), collected))
+    return out
+
+
+# ------------------------------------------------------ function macros ----
+#: The payload of each cpp_quote, in file order.
+_CPP_QUOTE_RE = re.compile(r'cpp_quote\(\s*"(.*?)"\s*\)', re.S)
+
+#: `#define NAME(a, b) body` - the parenthesis binds directly to the name, which
+#: is what tells a function-like macro from an object-like one.
+_FUNCTION_MACRO_RE = re.compile(
+    r"^\s*#define\s+([A-Za-z_][A-Za-z0-9_]*)\(([^)]*)\)\s+(.+)$")
+
+#: One or more backslashes at the end of a cpp_quote payload. The IDL writes the
+#: C line-continuation inside a C string, so it arrives here as a literal
+#: backslash (sometimes two) that has to come off before the fragments are
+#: joined.
+_TRAILING_BACKSLASH_RE = re.compile(r"\\+\s*$")
+
+
+def parse_macros(text):
+    """[(name, [parameters], body), ...] for function-like cpp_quote macros.
+
+    d3d12.idl declares fourteen and d3d11.idl ten. They are not decoration:
+    D3D12_ENCODE_BASIC_FILTER is how a D3D12_SAMPLER_DESC gets built and
+    D3D12_ENCODE_SHADER_4_COMPONENT_MAPPING is required for every SRV
+    descriptor, so without them a caller is left hand-translating bit
+    arithmetic out of a header they cannot read from Python.
+
+    They span cpp_quote lines, continued with a backslash:
+
+        cpp_quote( "#define D3D12_ENCODE_SHADER_4_COMPONENT_MAPPING(a,b,c,d) ((((a)&M)| \\\\")
+        cpp_quote( "                                     (((b)&M)<<S)| \\\\")
+
+    so the payloads are joined before anything is matched. parse_defines skips
+    these because its regex requires whitespace after the name.
+    """
+    joined, pending = [], ""
+    for payload in _CPP_QUOTE_RE.findall(text):
+        if _TRAILING_BACKSLASH_RE.search(payload):
+            pending += _TRAILING_BACKSLASH_RE.sub(" ", payload)
+            continue
+        joined.append(pending + payload)
+        pending = ""
+    if pending:
+        joined.append(pending)
+
+    out, seen = [], set()
+    for line in joined:
+        found = _FUNCTION_MACRO_RE.match(line)
+        if not found:
+            continue
+        name, params, body = found.groups()
+        if name in seen:
+            continue
+        seen.add(name)
+        parameters = [p.strip() for p in params.split(",") if p.strip()]
+        out.append((name, parameters, re.sub(r"\s+", " ", body).strip()))
+    return out
+
+
 # -------------------------------------------------------------- defines ----
 _DEFINE_RE = re.compile(
     r'cpp_quote\(\s*"\s*#define\s+([A-Za-z_][A-Za-z0-9_]*)\s+(.+?)\s*"\s*\)')
@@ -504,13 +627,25 @@ def parse_defines(text):
 _FIELD_FULL_RE = re.compile(
     r"^[ \t]*(?:\[[^\]]*\][ \t]*)?"          # MIDL / SAL annotation
     r"(?:const[ \t]+)?"
+    # An elaborated type specifier. d3d12.idl writes the self-reference in
+    # D3D12_AUTO_BREADCRUMB_NODE as `const struct D3D12_AUTO_BREADCRUMB_NODE
+    # *pNext`, and without this the keyword is read as the type and the field
+    # is dropped.
+    r"(?:(?:struct|union|enum)[ \t]+)?"
     r"([A-Za-z_][A-Za-z0-9_]*)"                        # type
     # The asterisks bind to the NAME in this SDK - `void *pData`,
     # `ID3D11VideoProcessorInputView **ppPastSurfaces` - so requiring
     # whitespace after them dropped every pointer field on the floor. Silently:
     # D3D11_MAPPED_SUBRESOURCE came out 8 bytes instead of 16, which is the
     # structure Desktop Duplication reads every frame through.
-    r"(?:[ \t]*(\*+)[ \t]*|[ \t]+)"                    # pointer depth, or a gap
+    #
+    # They need not be contiguous, and `const` can sit between them:
+    # `const D3D12_STATE_SUBOBJECT* const* ppSubobjects` is a pointer to a
+    # const pointer. Only the asterisks carry ctypes meaning, so the whole
+    # declarator is captured here and the count taken afterwards. Demanding
+    # `\*+` lost this field and D3D12_GENERIC_PROGRAM_DESC came out 32 bytes
+    # against the SDK's 40.
+    r"(?:((?:[ \t]*\*[ \t]*(?:const\b[ \t]*)?)+)|[ \t]+)"
     r"([A-Za-z_][A-Za-z0-9_]*)"                        # name
     r"((?:[ \t]*\[[ \t]*[0-9A-Za-z_]+[ \t]*\])*)"      # [N], or [N][M]
     r"(?:[ \t]*:[ \t]*([0-9]+))?"                      # : bits
@@ -526,7 +661,9 @@ def parse_struct_fields(body):
     fields = []
     for found in _FIELD_FULL_RE.finditer(body):
         ftype, stars, fname, bound, bits = found.groups()
-        ftype = ftype + (stars or "")
+        # The declarator arrives whole - "* const * " for a pointer to a const
+        # pointer. Only the asterisks mean anything to ctypes.
+        ftype = ftype + re.sub(r"[^*]", "", stars or "")
         # A field can carry more than one dimension: DXGI_DISPLAY_COLOR_SPACE
         # declares FLOAT PrimaryCoordinates[8][2]. Bounds travel as a list so
         # the emitter can compose them in the right order.
@@ -578,6 +715,8 @@ def module_constructs(sdk, name):
         "unions": parse_unions(raw),
         "enums": parse_enums(raw),
         "defines": parse_defines(raw),
+        "macros": parse_macros(raw),
+        "callbacks": parse_callbacks(raw),
         "typedefs": parse_typedefs(raw),
         "imports": [i for i in re.findall(r'^\s*import\s+"([^"]+)"',
                                           stripped, re.M)

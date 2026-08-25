@@ -38,6 +38,11 @@ BINDING_MODULES = [
     "Direct3D.PyIdl.d3d11_1", "Direct3D.PyIdl.d3d11_2",
     "Direct3D.PyIdl.d3d11_3", "Direct3D.PyIdl.d3d11_4",
     "Direct3D.PyIdl.d3d11sdklayers",
+    "Direct3D.PyIdl.d3d12",
+    "Direct3D.PyIdl.d3d12sdklayers",
+    "Direct3D.PyIdl.d3d12video",
+    "Direct3D.PyIdl.d3d11on12",
+    "Direct3D.PyIdl.d3d12compatibility",
 ]
 
 #: Structures the bindings deliberately do not declare, or declare under a
