@@ -2509,7 +2509,9 @@ ID3D12VideoDecodeCommandList3._methods_ = [
 ]
 
 ID3D12VideoDecoder._methods_ = [
-    comtypes.STDMETHOD(D3D12_VIDEO_DECODER_DESC, "GetDesc", []),
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_VIDEO_DECODER_DESC), "GetDesc", [
+        ctypes.POINTER(D3D12_VIDEO_DECODER_DESC),    # D3D12_VIDEO_DECODER_DESC, the x64 hidden return slot
+        ]),
 ]
 
 ID3D12VideoDecoder1._methods_ = [
@@ -2520,7 +2522,9 @@ ID3D12VideoDecoder1._methods_ = [
 ]
 
 ID3D12VideoDecoderHeap._methods_ = [
-    comtypes.STDMETHOD(D3D12_VIDEO_DECODER_HEAP_DESC, "GetDesc", []),
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_VIDEO_DECODER_HEAP_DESC), "GetDesc", [
+        ctypes.POINTER(D3D12_VIDEO_DECODER_HEAP_DESC), # D3D12_VIDEO_DECODER_HEAP_DESC, the x64 hidden return slot
+        ]),
 ]
 
 ID3D12VideoDecoderHeap1._methods_ = [
@@ -2755,7 +2759,9 @@ ID3D12VideoEncoderHeap._methods_ = [
 ]
 
 ID3D12VideoExtensionCommand._methods_ = [
-    comtypes.STDMETHOD(D3D12_VIDEO_EXTENSION_COMMAND_DESC, "GetDesc", []),
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_VIDEO_EXTENSION_COMMAND_DESC), "GetDesc", [
+        ctypes.POINTER(D3D12_VIDEO_EXTENSION_COMMAND_DESC), # D3D12_VIDEO_EXTENSION_COMMAND_DESC, the x64 hidden return slot
+        ]),
     comtypes.STDMETHOD(comtypes.HRESULT, "GetProtectedResourceSession", [
         comtypes.GUID,                               # REFIID riid
         ctypes.POINTER(ctypes.c_void_p),             # void** ppProtectedSession
@@ -2763,7 +2769,9 @@ ID3D12VideoExtensionCommand._methods_ = [
 ]
 
 ID3D12VideoMotionEstimator._methods_ = [
-    comtypes.STDMETHOD(D3D12_VIDEO_MOTION_ESTIMATOR_DESC, "GetDesc", []),
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_VIDEO_MOTION_ESTIMATOR_DESC), "GetDesc", [
+        ctypes.POINTER(D3D12_VIDEO_MOTION_ESTIMATOR_DESC), # D3D12_VIDEO_MOTION_ESTIMATOR_DESC, the x64 hidden return slot
+        ]),
     comtypes.STDMETHOD(comtypes.HRESULT, "GetProtectedResourceSession", [
         comtypes.GUID,                               # REFIID riid
         ctypes.POINTER(ctypes.c_void_p),             # void** ppProtectedSession
@@ -2771,7 +2779,9 @@ ID3D12VideoMotionEstimator._methods_ = [
 ]
 
 ID3D12VideoMotionVectorHeap._methods_ = [
-    comtypes.STDMETHOD(D3D12_VIDEO_MOTION_VECTOR_HEAP_DESC, "GetDesc", []),
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_VIDEO_MOTION_VECTOR_HEAP_DESC), "GetDesc", [
+        ctypes.POINTER(D3D12_VIDEO_MOTION_VECTOR_HEAP_DESC), # D3D12_VIDEO_MOTION_VECTOR_HEAP_DESC, the x64 hidden return slot
+        ]),
     comtypes.STDMETHOD(comtypes.HRESULT, "GetProtectedResourceSession", [
         comtypes.GUID,                               # REFIID riid
         ctypes.POINTER(ctypes.c_void_p),             # void** ppProtectedSession
@@ -2878,7 +2888,9 @@ ID3D12VideoProcessor._methods_ = [
         ctypes.c_uint32,                             # UINT NumInputStreamDescs
         ctypes.POINTER(D3D12_VIDEO_PROCESS_INPUT_STREAM_DESC), # D3D12_VIDEO_PROCESS_INPUT_STREAM_DESC* pInputStreamDescs
         ]),
-    comtypes.STDMETHOD(D3D12_VIDEO_PROCESS_OUTPUT_STREAM_DESC, "GetOutputStreamDesc", []),
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_VIDEO_PROCESS_OUTPUT_STREAM_DESC), "GetOutputStreamDesc", [
+        ctypes.POINTER(D3D12_VIDEO_PROCESS_OUTPUT_STREAM_DESC), # D3D12_VIDEO_PROCESS_OUTPUT_STREAM_DESC, the x64 hidden return slot
+        ]),
 ]
 
 ID3D12VideoProcessor1._methods_ = [

@@ -327,7 +327,12 @@ class D3D_SHADER_MACRO(ctypes.Structure):
 class ID3D10Blob(comtypes.IUnknown):
 	_iid_ = comtypes.GUID("{8BA5FB08-5195-40e2-AC58-0D989C3A0102}")
 	_methods_ = [
-		comtypes.STDMETHOD(None,"GetBufferPointer", []),
+		## d3dcommon.idl:391  LPVOID GetBufferPointer();
+		## Declared as void here until P6, so it returned None and the bytes
+		## of every blob were unreachable - and a blob is how the root
+		## signature serialiser and every shader compiler hand back their
+		## output. See F-59.
+		comtypes.STDMETHOD(ctypes.c_void_p,"GetBufferPointer", []),
 		comtypes.STDMETHOD(ctypes.c_size_t,"GetBufferSize", []),
 	]
 
