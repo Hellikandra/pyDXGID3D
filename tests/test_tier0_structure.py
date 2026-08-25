@@ -308,3 +308,37 @@ def test_no_test_module_imports_the_bindings_at_module_scope():
         "comtypes nor a Windows DLL to load:\n  " + "\n  ".join(offenders)
         + "\n\nMove the import inside the test function. Run "
           "`python tools/tier0_sandbox.py -m tier0 -q` to check locally.")
+
+
+def test_the_import_smoke_test_covers_every_binding_module():
+    """The CI smoke test must not fall behind the package.
+
+    It silently omitted dxgi1_3 through dxgi1_6 from the moment those modules
+    were generated in P3 until P5 - two milestones during which four modules
+    were never import-checked on a clean runner, and the only symptom was an
+    interface count sixteen short of the coverage tool's, which nobody was
+    comparing.
+
+    Parsed rather than imported, so this runs at tier 0 alongside everything
+    else.
+    """
+    smoke = os.path.join(REPO_ROOT, ".github", "scripts", "import_smoke.py")
+    if not os.path.isfile(smoke):
+        pytest.skip("no import smoke test in this checkout")
+
+    tree = ast.parse(io.open(smoke, encoding="utf-8").read())
+    listed = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            if node.value.startswith("Direct3D."):
+                listed.add(node.value)
+
+    expected = {"Direct3D.PyIdl." + os.path.basename(p)[:-3]
+                for p in BINDINGS
+                if os.path.basename(p) not in ("__init__.py", "typemap.py",
+                                               "status.py", "functions.py")}
+    missing = sorted(expected - listed)
+    assert not missing, (
+        "these binding modules are never import-checked by CI:\n  "
+        + "\n  ".join(missing)
+        + "\n\nAdd them to MODULES in .github/scripts/import_smoke.py.")
