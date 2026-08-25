@@ -5727,7 +5727,7 @@ ID3D12GraphicsCommandList._methods_ = [
         ctypes.POINTER(D3D12_RECT),                  # D3D12_RECT* pRects
         ]),
     comtypes.STDMETHOD(None, "OMSetBlendFactor", [
-        ctypes.c_float,                              # FLOAT BlendFactor
+        ctypes.POINTER(ctypes.c_float),              # FLOAT* BlendFactor
         ]),
     comtypes.STDMETHOD(None, "OMSetStencilRef", [
         ctypes.c_uint32,                             # UINT StencilRef
@@ -5835,7 +5835,7 @@ ID3D12GraphicsCommandList._methods_ = [
         ]),
     comtypes.STDMETHOD(None, "ClearRenderTargetView", [
         D3D12_CPU_DESCRIPTOR_HANDLE,                 # D3D12_CPU_DESCRIPTOR_HANDLE RenderTargetView
-        ctypes.c_float,                              # FLOAT ColorRGBA
+        ctypes.POINTER(ctypes.c_float),              # FLOAT* ColorRGBA
         ctypes.c_uint32,                             # UINT NumRects
         ctypes.POINTER(D3D12_RECT),                  # D3D12_RECT* pRects
         ]),
@@ -5843,7 +5843,7 @@ ID3D12GraphicsCommandList._methods_ = [
         D3D12_GPU_DESCRIPTOR_HANDLE,                 # D3D12_GPU_DESCRIPTOR_HANDLE ViewGPUHandleInCurrentHeap
         D3D12_CPU_DESCRIPTOR_HANDLE,                 # D3D12_CPU_DESCRIPTOR_HANDLE ViewCPUHandle
         ctypes.POINTER(ID3D12Resource),              # ID3D12Resource* pResource
-        ctypes.c_uint32,                             # UINT Values
+        ctypes.POINTER(ctypes.c_uint32),             # UINT* Values
         ctypes.c_uint32,                             # UINT NumRects
         ctypes.POINTER(D3D12_RECT),                  # D3D12_RECT* pRects
         ]),
@@ -5851,7 +5851,7 @@ ID3D12GraphicsCommandList._methods_ = [
         D3D12_GPU_DESCRIPTOR_HANDLE,                 # D3D12_GPU_DESCRIPTOR_HANDLE ViewGPUHandleInCurrentHeap
         D3D12_CPU_DESCRIPTOR_HANDLE,                 # D3D12_CPU_DESCRIPTOR_HANDLE ViewCPUHandle
         ctypes.POINTER(ID3D12Resource),              # ID3D12Resource* pResource
-        ctypes.c_float,                              # FLOAT Values
+        ctypes.POINTER(ctypes.c_float),              # FLOAT* Values
         ctypes.c_uint32,                             # UINT NumRects
         ctypes.POINTER(D3D12_RECT),                  # D3D12_RECT* pRects
         ]),

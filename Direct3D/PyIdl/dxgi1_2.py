@@ -284,9 +284,13 @@ class IDXGIFactory2(IDXGIFactory1):
             ctypes.POINTER(IDXGIOutput),
             ctypes.POINTER(ctypes.POINTER(IDXGISwapChain1)),
             ]),
+        ## dxgi1_2.idl: HRESULT GetSharedResourceAdapterLuid(HANDLE, [out] LUID *pLuid);
+        ## pLuid is an OUT parameter and was declared by value here, so the
+        ## caller's LUID was never written - the same shape as F-53, where
+        ## ID3D11DeviceContext::Map did it on the capture path. See F-63.
         comtypes.STDMETHOD(comtypes.HRESULT, "GetSharedResourceAdapterLuid", [
             wintypes.HANDLE,
-            LUID,
+            ctypes.POINTER(LUID),
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "RegisterStereoStatusWindow", [
             wintypes.HWND,

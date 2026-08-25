@@ -391,7 +391,12 @@ _PARAM_RE = re.compile(
     r"^\s*(?:\[[^\]]*\]\s*)*"                     # MIDL / SAL annotations
     r"([A-Za-z_][A-Za-z0-9_]*(?:\s*\*)*)\s*"      # type plus any pointer depth
     r"([A-Za-z_][A-Za-z0-9_]*)?"                  # name, sometimes absent
-    r"(?:\s*\[\s*[0-9A-Za-z_]*\s*\])?\s*$", re.S)
+    # An array bound. CAPTURED, because in C a parameter declared as an array
+    # decays to a pointer and the binding has to say so: `const FLOAT
+    # ColorRGBA[4]` is a FLOAT*, not a FLOAT. Discarding it declared
+    # ClearRenderTargetView as taking one float instead of four, which made the
+    # method impossible to call at all - F-60, and ten parameters like it.
+    r"(\s*\[\s*[0-9A-Za-z_]*\s*\])?\s*$", re.S)
 
 
 def parse_signatures(body):
@@ -419,6 +424,9 @@ def parse_signatures(body):
                 if not found:
                     continue
                 ptype = re.sub(r"\s+", "", found.group(1))
+                if found.group(3):
+                    # `FLOAT ColorRGBA[4]` is a FLOAT* at the ABI. F-60.
+                    ptype += "*"
                 pname = found.group(2) or "arg%d" % (len(collected) + 1)
                 collected.append((ptype, pname))
         out[method] = (restype, collected)
@@ -504,7 +512,10 @@ def parse_callbacks(text):
                 found = _PARAM_RE.match(chunk)
                 if not found:
                     continue
-                collected.append((re.sub(r"\s+", "", found.group(1)),
+                ptype = re.sub(r"\s+", "", found.group(1))
+                if found.group(3):
+                    ptype += "*"                      # array decays, F-60
+                collected.append((ptype,
                                   found.group(2) or "arg%d" % (len(collected) + 1)))
         out.append((name, re.sub(r"\s+", "", restype), collected))
     return out

@@ -2704,7 +2704,7 @@ ID3D11DeviceContext._methods_ = [
         ]),
     comtypes.STDMETHOD(None, "OMSetBlendState", [
         ctypes.POINTER(ID3D11BlendState),            # ID3D11BlendState* pBlendState
-        ctypes.c_float,                              # FLOAT BlendFactor
+        ctypes.POINTER(ctypes.c_float),              # FLOAT* BlendFactor
         ctypes.c_uint32,                             # UINT SampleMask
         ]),
     comtypes.STDMETHOD(None, "OMSetDepthStencilState", [
@@ -2774,15 +2774,15 @@ ID3D11DeviceContext._methods_ = [
         ]),
     comtypes.STDMETHOD(None, "ClearRenderTargetView", [
         ctypes.POINTER(ID3D11RenderTargetView),      # ID3D11RenderTargetView* pRenderTargetView
-        ctypes.c_float,                              # FLOAT ColorRGBA
+        ctypes.POINTER(ctypes.c_float),              # FLOAT* ColorRGBA
         ]),
     comtypes.STDMETHOD(None, "ClearUnorderedAccessViewUint", [
         ctypes.POINTER(ID3D11UnorderedAccessView),   # ID3D11UnorderedAccessView* pUnorderedAccessView
-        ctypes.c_uint32,                             # UINT Values
+        ctypes.POINTER(ctypes.c_uint32),             # UINT* Values
         ]),
     comtypes.STDMETHOD(None, "ClearUnorderedAccessViewFloat", [
         ctypes.POINTER(ID3D11UnorderedAccessView),   # ID3D11UnorderedAccessView* pUnorderedAccessView
-        ctypes.c_float,                              # FLOAT Values
+        ctypes.POINTER(ctypes.c_float),              # FLOAT* Values
         ]),
     comtypes.STDMETHOD(None, "ClearDepthStencilView", [
         ctypes.POINTER(ID3D11DepthStencilView),      # ID3D11DepthStencilView* pDepthStencilView
@@ -2974,7 +2974,7 @@ ID3D11DeviceContext._methods_ = [
         ]),
     comtypes.STDMETHOD(None, "OMGetBlendState", [
         ctypes.POINTER(ctypes.POINTER(ID3D11BlendState)), # ID3D11BlendState** ppBlendState
-        ctypes.c_float,                              # FLOAT BlendFactor
+        ctypes.POINTER(ctypes.c_float),              # FLOAT* BlendFactor
         ctypes.POINTER(ctypes.c_uint32),             # UINT* pSampleMask
         ]),
     comtypes.STDMETHOD(None, "OMGetDepthStencilState", [

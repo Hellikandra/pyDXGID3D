@@ -123,10 +123,17 @@ class Frame(object):
 
         ``height * pitch`` bytes: rows are ``pitch`` apart and only the first
         ``width * 4`` bytes of each are pixels.
+
+        Cast to ``'B'`` on the way out. A memoryview over a ctypes array carries
+        the format ``'<B'``, and Python refuses to INDEX that - ``view[0]``
+        raises NotImplementedError - while slicing it works fine. So the
+        no-numpy path, which is the whole reason this property exists, was half
+        broken in a way that only showed when someone read a single pixel.
+        See F-61.
         """
         self._check("frame.memoryview")
         buffer_type = ctypes.c_ubyte * (self.pitch * self.height)
-        return memoryview(buffer_type.from_address(self._pointer))
+        return memoryview(buffer_type.from_address(self._pointer)).cast("B")
 
     @property
     def array(self):
