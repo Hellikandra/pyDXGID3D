@@ -18,29 +18,35 @@ Measured against the `.idl` files in Windows SDK 10.0.26100.0, by
 
 | Area | Interfaces | Methods | Status |
 | --- | --- | --- | --- |
-| DXGI 1.0 (`dxgi.idl`) | 14 / 14 | 56 / 56 | complete |
-| DXGI 1.2 (`dxgi1_2.idl`) | 9 / 9 | 43 / 43 | complete |
-| DXGI 1.3 (`dxgi1_3.idl`) | 8 / 8 | 25 / 25 | complete |
-| DXGI 1.4 (`dxgi1_4.idl`) | 4 / 4 | 13 / 13 | complete |
-| DXGI 1.5 (`dxgi1_5.idl`) | 4 / 4 | 5 / 5 | complete |
-| DXGI 1.6 (`dxgi1_6.idl`) | 4 / 4 | 6 / 6 | complete |
+| DXGI 1.0 – 1.6 | 43 / 43 | 148 / 148 | complete |
 | DXGI debug (`dxgidebug.h`) | 3 / 3 | — | complete |
-| Direct3D 11.0 (`d3d11.idl`) | 41 / 41 | 274 / 274 | complete |
-| Direct3D 11.1 (`d3d11_1.idl`) | 9 / 9 | 51 / 51 | complete |
-| Direct3D 11.2 (`d3d11_2.idl`) | 2 / 2 | 14 / 14 | complete |
-| Direct3D 11.3 (`d3d11_3.idl`) | 11 / 11 | 26 / 26 | complete |
-| Direct3D 11.4 (`d3d11_4.idl`) | 6 / 6 | 16 / 16 | complete |
-| D3D11 SDK layers | 6 / 6 | 50 / 50 | complete |
-| D3D common (`d3dcommon.idl`) | 2 / 2 | 4 / 4 | complete |
-| **Total** | **120** | **583** | |
+| Direct3D 11.0 – 11.4 | 69 / 69 | 381 / 381 | complete |
+| D3D11 SDK layers + common | 8 / 8 | 54 / 54 | complete |
+| Direct3D 12 | 100 / 100 | 350 / 350 | declared |
+| D3D12 video | 27 / 27 | 101 / 101 | declared |
+| Interop (`d3d11on12`, `d3d12compatibility`) | 4 / 4 | 9 / 9 | declared |
+| **Total** | **251 / 251** | **1043 / 1043** | |
+
+**Every interface in the target set is translated.** There is nothing left to port.
 
 Every implemented interface carries a verified IID, and every method sits at the vtable slot
 the SDK gives it — asserted, not assumed.
 
 **Structure layout is checked against a compiled measurement.** `tools/layout_probe.py`
 builds a C program that includes the SDK headers and prints `sizeof` and `offsetof` for
-every structure; the result is committed as `tests/data/struct_layout.json`. All **207
-structures and 797 field offsets** match.
+every structure; the result is committed as `tests/data/struct_layout.json`. All **649
+structures and 2480 field offsets** match.
+
+### "Complete" means two different things in that table
+
+**DXGI and Direct3D 11 are complete and exercised.** `Direct3D.Capture` drives them against
+real hardware, and the test suite captures frames from an actual display.
+
+**Direct3D 12 is complete and declared.** Every interface, method signature, structure and
+enumeration matches the SDK — checked by the same instruments — but *no D3D12 code in this
+repository has ever been executed*. Nothing here creates a D3D12 device. Treat it as a
+correct transcription rather than as a tested binding, and expect to be the first person to
+call any given method.
 
 ### The bindings, checked end to end
 
@@ -65,8 +71,7 @@ return into named exceptions.
 
 ### Generated, not hand-written
 
-`Direct3D/PyIdl/d3d11.py`, `d3d11_1.py` … `d3d11_4.py` and `dxgi1_3.py` … `dxgi1_6.py` are
-generated from the SDK `.idl` files by `tools/generate.py`. Regenerate any of them with:
+Fourteen of the binding modules are generated from the SDK `.idl` files by `tools/generate.py`. Regenerate any of them with:
 
 ```bash
 python tools/generate.py d3d11.idl -o Direct3D/PyIdl/d3d11.py
@@ -162,7 +167,7 @@ pip install pytest comtypes
 python -m pytest tests -q
 ```
 
-132 tests in four tiers:
+168 tests in four tiers:
 
 - **Tier 0** — abstract-syntax checks on the binding modules. Runs on any OS, no comtypes.
 - **Tier 1** — bindings against the SDK: vtable order, method signatures, structure sizes
@@ -189,8 +194,8 @@ python -m pytest tests -q
 
 In priority order:
 
-- Direct3D 12 — `d3d12`, `d3d12sdklayers`, `d3d12video`, `d3d12compatibility`
-  (127 interfaces, 451 methods)
+- A worked Direct3D 12 example — create a device, clear a render target — so the D3D12
+  bindings are executed and not merely declared
 
 **Direct3D 10 and Direct3D 9 are deliberately out of scope.**
 
@@ -230,6 +235,11 @@ Direct3D/PyIdl/     Translated interface definitions, one module per .idl
   d3d11_2.py          d3d11_2.idl        - generated
   d3d11_3.py          d3d11_3.idl        - generated
   d3d11_4.py          d3d11_4.idl        - generated
+  d3d12.py            d3d12.idl          - generated
+  d3d12sdklayers.py   d3d12sdklayers.idl - generated
+  d3d12video.py       d3d12video.idl     - generated
+  d3d11on12.py        d3d11on12.idl      - generated
+  d3d12compatibility.py                  - generated
   d3d11sdklayers.py   d3d11sdklayers.idl
   d3dcommon.py        d3dcommon.idl
   functions.py        DLL entry points

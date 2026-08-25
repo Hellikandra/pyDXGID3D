@@ -15,6 +15,7 @@ import comtypes
 from Direct3D.PyIdl.typemap import LUID, SECURITY_ATTRIBUTES
 
 
+
 from Direct3D.PyIdl.dxgi1_5 import *
 
 

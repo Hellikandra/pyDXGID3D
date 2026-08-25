@@ -19,6 +19,10 @@ MODULES = [
     "Direct3D.PyIdl.dxgitype",
     "Direct3D.PyIdl.dxgi",
     "Direct3D.PyIdl.dxgi1_2",
+    "Direct3D.PyIdl.dxgi1_3",
+    "Direct3D.PyIdl.dxgi1_4",
+    "Direct3D.PyIdl.dxgi1_5",
+    "Direct3D.PyIdl.dxgi1_6",
     "Direct3D.PyIdl.dxgidebug",
     "Direct3D.PyIdl.d3dcommon",
     "Direct3D.PyIdl.d3d11",
@@ -27,6 +31,11 @@ MODULES = [
     "Direct3D.PyIdl.d3d11_3",
     "Direct3D.PyIdl.d3d11_4",
     "Direct3D.PyIdl.d3d11sdklayers",
+    "Direct3D.PyIdl.d3d12",
+    "Direct3D.PyIdl.d3d12sdklayers",
+    "Direct3D.PyIdl.d3d12video",
+    "Direct3D.PyIdl.d3d11on12",
+    "Direct3D.PyIdl.d3d12compatibility",
     "Direct3D.Capture",
 ]
 

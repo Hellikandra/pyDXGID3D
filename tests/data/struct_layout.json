@@ -761,6 +761,15 @@
    "fields": {},
    "size": 24
   },
+  "D3D11_RESOURCE_FLAGS": {
+   "fields": {
+    "BindFlags": 0,
+    "CPUAccessFlags": 8,
+    "MiscFlags": 4,
+    "StructureByteStride": 12
+   },
+   "size": 16
+  },
   "D3D11_SAMPLER_DESC": {
    "fields": {
     "AddressU": 4,
@@ -1436,6 +1445,3849 @@
     "Width": 8
    },
    "size": 24
+  },
+  "D3D12_AUTO_BREADCRUMB_NODE": {
+   "fields": {},
+   "size": 80
+  },
+  "D3D12_AUTO_BREADCRUMB_NODE1": {
+   "fields": {},
+   "size": 96
+  },
+  "D3D12_BARRIER_GROUP": {
+   "fields": {},
+   "size": 16
+  },
+  "D3D12_BARRIER_SUBRESOURCE_RANGE": {
+   "fields": {
+    "FirstArraySlice": 8,
+    "FirstPlane": 16,
+    "IndexOrFirstMipLevel": 0,
+    "NumArraySlices": 12,
+    "NumMipLevels": 4,
+    "NumPlanes": 20
+   },
+   "size": 24
+  },
+  "D3D12_BLEND_DESC": {
+   "fields": {
+    "AlphaToCoverageEnable": 0,
+    "IndependentBlendEnable": 4,
+    "RenderTarget": 8
+   },
+   "size": 328
+  },
+  "D3D12_BOX": {
+   "fields": {
+    "back": 20,
+    "bottom": 16,
+    "front": 8,
+    "left": 0,
+    "right": 12,
+    "top": 4
+   },
+   "size": 24
+  },
+  "D3D12_BROADCASTING_LAUNCH_OVERRIDES": {
+   "fields": {
+    "NumOutputOverrides": 48,
+    "pDispatchGrid": 32,
+    "pLocalRootArgumentsTableIndex": 0,
+    "pMaxDispatchGrid": 40,
+    "pNewName": 16,
+    "pOutputOverrides": 56,
+    "pProgramEntry": 8,
+    "pShareInputOf": 24
+   },
+   "size": 64
+  },
+  "D3D12_BUFFER_BARRIER": {
+   "fields": {
+    "AccessAfter": 12,
+    "AccessBefore": 8,
+    "Offset": 24,
+    "Size": 32,
+    "SyncAfter": 4,
+    "SyncBefore": 0
+   },
+   "size": 40
+  },
+  "D3D12_BUFFER_RTV": {
+   "fields": {
+    "FirstElement": 0,
+    "NumElements": 8
+   },
+   "size": 16
+  },
+  "D3D12_BUFFER_SRV": {
+   "fields": {
+    "FirstElement": 0,
+    "Flags": 16,
+    "NumElements": 8,
+    "StructureByteStride": 12
+   },
+   "size": 24
+  },
+  "D3D12_BUFFER_UAV": {
+   "fields": {
+    "CounterOffsetInBytes": 16,
+    "FirstElement": 0,
+    "Flags": 24,
+    "NumElements": 8,
+    "StructureByteStride": 12
+   },
+   "size": 32
+  },
+  "D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC": {
+   "fields": {
+    "DestAccelerationStructureData": 0,
+    "Inputs": 8,
+    "ScratchAccelerationStructureData": 40,
+    "SourceAccelerationStructureData": 32
+   },
+   "size": 48
+  },
+  "D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS": {
+   "fields": {},
+   "size": 24
+  },
+  "D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_TOOLS_VISUALIZATION_HEADER": {
+   "fields": {
+    "NumDescs": 4,
+    "Type": 0
+   },
+   "size": 8
+  },
+  "D3D12_CACHED_PIPELINE_STATE": {
+   "fields": {
+    "CachedBlobSizeInBytes": 8,
+    "pCachedBlob": 0
+   },
+   "size": 16
+  },
+  "D3D12_CLEAR_VALUE": {
+   "fields": {},
+   "size": 20
+  },
+  "D3D12_COALESCING_LAUNCH_OVERRIDES": {
+   "fields": {
+    "NumOutputOverrides": 32,
+    "pLocalRootArgumentsTableIndex": 0,
+    "pNewName": 16,
+    "pOutputOverrides": 40,
+    "pProgramEntry": 8,
+    "pShareInputOf": 24
+   },
+   "size": 48
+  },
+  "D3D12_COMMAND_QUEUE_DESC": {
+   "fields": {
+    "Flags": 8,
+    "NodeMask": 12,
+    "Priority": 4,
+    "Type": 0
+   },
+   "size": 16
+  },
+  "D3D12_COMMAND_SIGNATURE_DESC": {
+   "fields": {
+    "ByteStride": 0,
+    "NodeMask": 16,
+    "NumArgumentDescs": 4,
+    "pArgumentDescs": 8
+   },
+   "size": 24
+  },
+  "D3D12_COMMON_COMPUTE_NODE_OVERRIDES": {
+   "fields": {
+    "NumOutputOverrides": 32,
+    "pLocalRootArgumentsTableIndex": 0,
+    "pNewName": 16,
+    "pOutputOverrides": 40,
+    "pProgramEntry": 8,
+    "pShareInputOf": 24
+   },
+   "size": 48
+  },
+  "D3D12_COMPUTE_PIPELINE_STATE_DESC": {
+   "fields": {
+    "CS": 8,
+    "CachedPSO": 32,
+    "Flags": 48,
+    "NodeMask": 24,
+    "pRootSignature": 0
+   },
+   "size": 56
+  },
+  "D3D12_CONSTANT_BUFFER_VIEW_DESC": {
+   "fields": {
+    "BufferLocation": 0,
+    "SizeInBytes": 8
+   },
+   "size": 16
+  },
+  "D3D12_CPU_DESCRIPTOR_HANDLE": {
+   "fields": {
+    "ptr": 0
+   },
+   "size": 8
+  },
+  "D3D12_DEBUG_COMMAND_LIST_GPU_BASED_VALIDATION_SETTINGS": {
+   "fields": {
+    "ShaderPatchMode": 0
+   },
+   "size": 4
+  },
+  "D3D12_DEBUG_DEVICE_GPU_BASED_VALIDATION_SETTINGS": {
+   "fields": {
+    "DefaultShaderPatchMode": 4,
+    "MaxMessagesPerCommandList": 0,
+    "PipelineStateCreateFlags": 8
+   },
+   "size": 12
+  },
+  "D3D12_DEBUG_DEVICE_GPU_SLOWDOWN_PERFORMANCE_FACTOR": {
+   "fields": {
+    "SlowdownFactor": 0
+   },
+   "size": 4
+  },
+  "D3D12_DEPTH_STENCILOP_DESC": {
+   "fields": {
+    "StencilDepthFailOp": 4,
+    "StencilFailOp": 0,
+    "StencilFunc": 12,
+    "StencilPassOp": 8
+   },
+   "size": 16
+  },
+  "D3D12_DEPTH_STENCILOP_DESC1": {
+   "fields": {
+    "StencilDepthFailOp": 4,
+    "StencilFailOp": 0,
+    "StencilFunc": 12,
+    "StencilPassOp": 8,
+    "StencilReadMask": 16,
+    "StencilWriteMask": 17
+   },
+   "size": 20
+  },
+  "D3D12_DEPTH_STENCIL_DESC": {
+   "fields": {
+    "BackFace": 36,
+    "DepthEnable": 0,
+    "DepthFunc": 8,
+    "DepthWriteMask": 4,
+    "FrontFace": 20,
+    "StencilEnable": 12,
+    "StencilReadMask": 16,
+    "StencilWriteMask": 17
+   },
+   "size": 52
+  },
+  "D3D12_DEPTH_STENCIL_DESC1": {
+   "fields": {
+    "BackFace": 36,
+    "DepthBoundsTestEnable": 52,
+    "DepthEnable": 0,
+    "DepthFunc": 8,
+    "DepthWriteMask": 4,
+    "FrontFace": 20,
+    "StencilEnable": 12,
+    "StencilReadMask": 16,
+    "StencilWriteMask": 17
+   },
+   "size": 56
+  },
+  "D3D12_DEPTH_STENCIL_DESC2": {
+   "fields": {
+    "BackFace": 36,
+    "DepthBoundsTestEnable": 56,
+    "DepthEnable": 0,
+    "DepthFunc": 8,
+    "DepthWriteMask": 4,
+    "FrontFace": 16,
+    "StencilEnable": 12
+   },
+   "size": 60
+  },
+  "D3D12_DEPTH_STENCIL_FORMAT": {
+   "fields": {
+    "DepthStencilFormat": 0
+   },
+   "size": 4
+  },
+  "D3D12_DEPTH_STENCIL_VALUE": {
+   "fields": {
+    "Depth": 0,
+    "Stencil": 4
+   },
+   "size": 8
+  },
+  "D3D12_DEPTH_STENCIL_VIEW_DESC": {
+   "fields": {},
+   "size": 24
+  },
+  "D3D12_DESCRIPTOR_HEAP_DESC": {
+   "fields": {
+    "Flags": 8,
+    "NodeMask": 12,
+    "NumDescriptors": 4,
+    "Type": 0
+   },
+   "size": 16
+  },
+  "D3D12_DESCRIPTOR_RANGE": {
+   "fields": {
+    "BaseShaderRegister": 8,
+    "NumDescriptors": 4,
+    "OffsetInDescriptorsFromTableStart": 16,
+    "RangeType": 0,
+    "RegisterSpace": 12
+   },
+   "size": 20
+  },
+  "D3D12_DESCRIPTOR_RANGE1": {
+   "fields": {
+    "BaseShaderRegister": 8,
+    "Flags": 16,
+    "NumDescriptors": 4,
+    "OffsetInDescriptorsFromTableStart": 20,
+    "RangeType": 0,
+    "RegisterSpace": 12
+   },
+   "size": 24
+  },
+  "D3D12_DEVICE_CONFIGURATION_DESC": {
+   "fields": {
+    "Flags": 0,
+    "GpuBasedValidationFlags": 4,
+    "NumEnabledExperimentalFeatures": 12,
+    "SDKVersion": 8
+   },
+   "size": 16
+  },
+  "D3D12_DEVICE_REMOVED_EXTENDED_DATA": {
+   "fields": {
+    "Flags": 0
+   },
+   "size": 16
+  },
+  "D3D12_DEVICE_REMOVED_EXTENDED_DATA1": {
+   "fields": {
+    "AutoBreadcrumbsOutput": 8,
+    "DeviceRemovedReason": 0,
+    "PageFaultOutput": 16
+   },
+   "size": 40
+  },
+  "D3D12_DEVICE_REMOVED_EXTENDED_DATA2": {
+   "fields": {
+    "AutoBreadcrumbsOutput": 8,
+    "DeviceRemovedReason": 0,
+    "PageFaultOutput": 16
+   },
+   "size": 40
+  },
+  "D3D12_DEVICE_REMOVED_EXTENDED_DATA3": {
+   "fields": {
+    "AutoBreadcrumbsOutput": 8,
+    "DeviceRemovedReason": 0,
+    "DeviceState": 48,
+    "PageFaultOutput": 16
+   },
+   "size": 56
+  },
+  "D3D12_DISCARD_REGION": {
+   "fields": {
+    "FirstSubresource": 16,
+    "NumRects": 0,
+    "NumSubresources": 20,
+    "pRects": 8
+   },
+   "size": 24
+  },
+  "D3D12_DISPATCH_ARGUMENTS": {
+   "fields": {
+    "ThreadGroupCountX": 0,
+    "ThreadGroupCountY": 4,
+    "ThreadGroupCountZ": 8
+   },
+   "size": 12
+  },
+  "D3D12_DISPATCH_GRAPH_DESC": {
+   "fields": {},
+   "size": 32
+  },
+  "D3D12_DISPATCH_MESH_ARGUMENTS": {
+   "fields": {
+    "ThreadGroupCountX": 0,
+    "ThreadGroupCountY": 4,
+    "ThreadGroupCountZ": 8
+   },
+   "size": 12
+  },
+  "D3D12_DISPATCH_RAYS_DESC": {
+   "fields": {
+    "CallableShaderTable": 64,
+    "Depth": 96,
+    "Height": 92,
+    "HitGroupTable": 40,
+    "MissShaderTable": 16,
+    "RayGenerationShaderRecord": 0,
+    "Width": 88
+   },
+   "size": 104
+  },
+  "D3D12_DRAW_ARGUMENTS": {
+   "fields": {
+    "InstanceCount": 4,
+    "StartInstanceLocation": 12,
+    "StartVertexLocation": 8,
+    "VertexCountPerInstance": 0
+   },
+   "size": 16
+  },
+  "D3D12_DRAW_INDEXED_ARGUMENTS": {
+   "fields": {
+    "BaseVertexLocation": 12,
+    "IndexCountPerInstance": 0,
+    "InstanceCount": 4,
+    "StartIndexLocation": 8,
+    "StartInstanceLocation": 16
+   },
+   "size": 20
+  },
+  "D3D12_DRED_ALLOCATION_NODE": {
+   "fields": {},
+   "size": 32
+  },
+  "D3D12_DRED_ALLOCATION_NODE1": {
+   "fields": {},
+   "size": 40
+  },
+  "D3D12_DRED_AUTO_BREADCRUMBS_OUTPUT": {
+   "fields": {},
+   "size": 8
+  },
+  "D3D12_DRED_AUTO_BREADCRUMBS_OUTPUT1": {
+   "fields": {},
+   "size": 8
+  },
+  "D3D12_DRED_BREADCRUMB_CONTEXT": {
+   "fields": {
+    "BreadcrumbIndex": 0
+   },
+   "size": 16
+  },
+  "D3D12_DRED_PAGE_FAULT_OUTPUT": {
+   "fields": {
+    "PageFaultVA": 0
+   },
+   "size": 24
+  },
+  "D3D12_DRED_PAGE_FAULT_OUTPUT1": {
+   "fields": {
+    "PageFaultVA": 0
+   },
+   "size": 24
+  },
+  "D3D12_DRED_PAGE_FAULT_OUTPUT2": {
+   "fields": {
+    "PageFaultFlags": 24,
+    "PageFaultVA": 0
+   },
+   "size": 32
+  },
+  "D3D12_DXIL_LIBRARY_DESC": {
+   "fields": {
+    "DXILLibrary": 0,
+    "NumExports": 16,
+    "pExports": 24
+   },
+   "size": 32
+  },
+  "D3D12_DXIL_SUBOBJECT_TO_EXPORTS_ASSOCIATION": {
+   "fields": {
+    "NumExports": 8,
+    "SubobjectToAssociate": 0,
+    "pExports": 16
+   },
+   "size": 24
+  },
+  "D3D12_EXISTING_COLLECTION_DESC": {
+   "fields": {
+    "NumExports": 8,
+    "pExistingCollection": 0,
+    "pExports": 16
+   },
+   "size": 24
+  },
+  "D3D12_EXPORT_DESC": {
+   "fields": {
+    "ExportToRename": 8,
+    "Flags": 16,
+    "Name": 0
+   },
+   "size": 24
+  },
+  "D3D12_FEATURE_DATA_APPLICATION_SPECIFIC_DRIVER_STATE": {
+   "fields": {
+    "Supported": 0
+   },
+   "size": 4
+  },
+  "D3D12_FEATURE_DATA_ARCHITECTURE": {
+   "fields": {
+    "CacheCoherentUMA": 12,
+    "NodeIndex": 0,
+    "TileBasedRenderer": 4,
+    "UMA": 8
+   },
+   "size": 16
+  },
+  "D3D12_FEATURE_DATA_ARCHITECTURE1": {
+   "fields": {
+    "CacheCoherentUMA": 12,
+    "IsolatedMMU": 16,
+    "NodeIndex": 0,
+    "TileBasedRenderer": 4,
+    "UMA": 8
+   },
+   "size": 20
+  },
+  "D3D12_FEATURE_DATA_BYTECODE_BYPASS_HASH_SUPPORTED": {
+   "fields": {
+    "Supported": 0
+   },
+   "size": 4
+  },
+  "D3D12_FEATURE_DATA_COMMAND_QUEUE_PRIORITY": {
+   "fields": {
+    "CommandListType": 0,
+    "Priority": 4,
+    "PriorityForTypeIsSupported": 8
+   },
+   "size": 12
+  },
+  "D3D12_FEATURE_DATA_CROSS_NODE": {
+   "fields": {
+    "AtomicShaderInstructions": 4,
+    "SharingTier": 0
+   },
+   "size": 8
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS": {
+   "fields": {
+    "ConservativeRasterizationTier": 32,
+    "CrossAdapterRowMajorTextureSupported": 48,
+    "CrossNodeSharingTier": 44,
+    "DoublePrecisionFloatShaderOps": 0,
+    "MaxGPUVirtualAddressBitsPerResource": 36,
+    "MinPrecisionSupport": 8,
+    "OutputMergerLogicOp": 4,
+    "PSSpecifiedStencilRefSupported": 20,
+    "ROVsSupported": 28,
+    "ResourceBindingTier": 16,
+    "ResourceHeapTier": 56,
+    "StandardSwizzle64KBSupported": 40,
+    "TiledResourcesTier": 12,
+    "TypedUAVLoadAdditionalFormats": 24,
+    "VPAndRTArrayIndexFromAnyShaderFeedingRasterizerSupportedWithoutGSEmulation": 52
+   },
+   "size": 60
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS1": {
+   "fields": {
+    "ExpandedComputeResourceStates": 16,
+    "Int64ShaderOps": 20,
+    "TotalLaneCount": 12,
+    "WaveLaneCountMax": 8,
+    "WaveLaneCountMin": 4,
+    "WaveOps": 0
+   },
+   "size": 24
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS10": {
+   "fields": {
+    "MeshShaderPerPrimitiveShadingRateSupported": 4,
+    "VariableRateShadingSumCombinerSupported": 0
+   },
+   "size": 8
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS11": {
+   "fields": {
+    "AtomicInt64OnDescriptorHeapResourceSupported": 0
+   },
+   "size": 4
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS12": {
+   "fields": {
+    "EnhancedBarriersSupported": 4,
+    "MSPrimitivesPipelineStatisticIncludesCulledPrimitives": 0,
+    "RelaxedFormatCastingSupported": 8
+   },
+   "size": 12
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS13": {
+   "fields": {
+    "AlphaBlendFactorSupported": 20,
+    "InvertedViewportDepthFlipsZSupported": 12,
+    "InvertedViewportHeightFlipsYSupported": 8,
+    "TextureCopyBetweenDimensionsSupported": 16,
+    "UnrestrictedBufferTextureCopyPitchSupported": 0,
+    "UnrestrictedVertexElementAlignmentSupported": 4
+   },
+   "size": 24
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS14": {
+   "fields": {
+    "AdvancedTextureOpsSupported": 0,
+    "IndependentFrontAndBackStencilRefMaskSupported": 8,
+    "WriteableMSAATexturesSupported": 4
+   },
+   "size": 12
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS15": {
+   "fields": {
+    "DynamicIndexBufferStripCutSupported": 4,
+    "TriangleFanSupported": 0
+   },
+   "size": 8
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS16": {
+   "fields": {
+    "DynamicDepthBiasSupported": 0,
+    "GPUUploadHeapSupported": 4
+   },
+   "size": 8
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS17": {
+   "fields": {
+    "ManualWriteTrackingResourceSupported": 4,
+    "NonNormalizedCoordinateSamplersSupported": 0
+   },
+   "size": 8
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS18": {
+   "fields": {
+    "RenderPassesValid": 0
+   },
+   "size": 4
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS19": {
+   "fields": {
+    "AnisoFilterWithPointMipSupported": 20,
+    "ComputeOnlyCustomHeapSupported": 36,
+    "MaxSamplerDescriptorHeapSize": 24,
+    "MaxSamplerDescriptorHeapSizeWithStaticSamplers": 28,
+    "MaxViewDescriptorHeapSize": 32,
+    "MismatchingOutputDimensionsSupported": 0,
+    "NarrowQuadrilateralLinesSupported": 16,
+    "PointSamplingAddressesNeverRoundUp": 8,
+    "RasterizerDesc2Supported": 12,
+    "SupportedSampleCountsWithNoOutputs": 4
+   },
+   "size": 40
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS2": {
+   "fields": {
+    "DepthBoundsTestSupported": 0,
+    "ProgrammableSamplePositionsTier": 4
+   },
+   "size": 8
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS20": {
+   "fields": {
+    "ComputeOnlyWriteWatchSupported": 0,
+    "RecreateAtTier": 4
+   },
+   "size": 8
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS21": {
+   "fields": {
+    "ExecuteIndirectTier": 4,
+    "ExtendedCommandInfoSupported": 12,
+    "SampleCmpGradientAndBiasSupported": 8,
+    "WorkGraphsTier": 0
+   },
+   "size": 16
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS3": {
+   "fields": {
+    "BarycentricsSupported": 16,
+    "CastingFullyTypedFormatSupported": 4,
+    "CopyQueueTimestampQueriesSupported": 0,
+    "ViewInstancingTier": 12,
+    "WriteBufferImmediateSupportFlags": 8
+   },
+   "size": 20
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS4": {
+   "fields": {
+    "MSAA64KBAlignedTextureSupported": 0,
+    "Native16BitShaderOpsSupported": 8,
+    "SharedResourceCompatibilityTier": 4
+   },
+   "size": 12
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS5": {
+   "fields": {
+    "RaytracingTier": 8,
+    "RenderPassesTier": 4,
+    "SRVOnlyTiledResourceTier3": 0
+   },
+   "size": 12
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS6": {
+   "fields": {
+    "AdditionalShadingRatesSupported": 0,
+    "BackgroundProcessingSupported": 16,
+    "PerPrimitiveShadingRateSupportedWithViewportIndexing": 4,
+    "ShadingRateImageTileSize": 12,
+    "VariableShadingRateTier": 8
+   },
+   "size": 20
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS7": {
+   "fields": {
+    "MeshShaderTier": 0,
+    "SamplerFeedbackTier": 4
+   },
+   "size": 8
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS8": {
+   "fields": {
+    "UnalignedBlockTexturesSupported": 0
+   },
+   "size": 4
+  },
+  "D3D12_FEATURE_DATA_D3D12_OPTIONS9": {
+   "fields": {
+    "AtomicInt64OnGroupSharedSupported": 12,
+    "AtomicInt64OnTypedResourceSupported": 8,
+    "DerivativesInMeshAndAmplificationShadersSupported": 16,
+    "MeshShaderPipelineStatsSupported": 0,
+    "MeshShaderSupportsFullRangeRenderTargetArrayIndex": 4,
+    "WaveMMATier": 20
+   },
+   "size": 24
+  },
+  "D3D12_FEATURE_DATA_DISPLAYABLE": {
+   "fields": {
+    "DisplayableTexture": 0,
+    "SharedResourceCompatibilityTier": 4
+   },
+   "size": 8
+  },
+  "D3D12_FEATURE_DATA_EXISTING_HEAPS": {
+   "fields": {
+    "Supported": 0
+   },
+   "size": 4
+  },
+  "D3D12_FEATURE_DATA_FEATURE_LEVELS": {
+   "fields": {
+    "MaxSupportedFeatureLevel": 16,
+    "NumFeatureLevels": 0,
+    "pFeatureLevelsRequested": 8
+   },
+   "size": 24
+  },
+  "D3D12_FEATURE_DATA_FORMAT_INFO": {
+   "fields": {
+    "Format": 0,
+    "PlaneCount": 4
+   },
+   "size": 8
+  },
+  "D3D12_FEATURE_DATA_FORMAT_SUPPORT": {
+   "fields": {
+    "Format": 0,
+    "Support1": 4,
+    "Support2": 8
+   },
+   "size": 12
+  },
+  "D3D12_FEATURE_DATA_GPU_VIRTUAL_ADDRESS_SUPPORT": {
+   "fields": {
+    "MaxGPUVirtualAddressBitsPerProcess": 4,
+    "MaxGPUVirtualAddressBitsPerResource": 0
+   },
+   "size": 8
+  },
+  "D3D12_FEATURE_DATA_HARDWARE_COPY": {
+   "fields": {
+    "Supported": 0
+   },
+   "size": 4
+  },
+  "D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS": {
+   "fields": {
+    "Flags": 8,
+    "Format": 0,
+    "NumQualityLevels": 12,
+    "SampleCount": 4
+   },
+   "size": 16
+  },
+  "D3D12_FEATURE_DATA_PLACED_RESOURCE_SUPPORT_INFO": {
+   "fields": {
+    "DestHeapProperties": 8,
+    "Dimension": 4,
+    "Format": 0,
+    "Supported": 28
+   },
+   "size": 32
+  },
+  "D3D12_FEATURE_DATA_PREDICATION": {
+   "fields": {
+    "Supported": 0
+   },
+   "size": 4
+  },
+  "D3D12_FEATURE_DATA_PROTECTED_RESOURCE_SESSION_SUPPORT": {
+   "fields": {
+    "NodeIndex": 0,
+    "Support": 4
+   },
+   "size": 8
+  },
+  "D3D12_FEATURE_DATA_PROTECTED_RESOURCE_SESSION_TYPES": {
+   "fields": {
+    "Count": 4,
+    "NodeIndex": 0,
+    "pTypes": 8
+   },
+   "size": 16
+  },
+  "D3D12_FEATURE_DATA_PROTECTED_RESOURCE_SESSION_TYPE_COUNT": {
+   "fields": {
+    "Count": 4,
+    "NodeIndex": 0
+   },
+   "size": 8
+  },
+  "D3D12_FEATURE_DATA_QUERY_META_COMMAND": {
+   "fields": {
+    "CommandId": 0,
+    "NodeMask": 16,
+    "QueryInputDataSizeInBytes": 32,
+    "QueryOutputDataSizeInBytes": 48,
+    "pQueryInputData": 24,
+    "pQueryOutputData": 40
+   },
+   "size": 56
+  },
+  "D3D12_FEATURE_DATA_ROOT_SIGNATURE": {
+   "fields": {
+    "HighestVersion": 0
+   },
+   "size": 4
+  },
+  "D3D12_FEATURE_DATA_SERIALIZATION": {
+   "fields": {
+    "HeapSerializationTier": 4,
+    "NodeIndex": 0
+   },
+   "size": 8
+  },
+  "D3D12_FEATURE_DATA_SHADERCACHE_ABI_SUPPORT": {
+   "fields": {
+    "ApplicationProfileVersion": 280,
+    "CompilerVersion": 272,
+    "MaximumABISupportVersion": 264,
+    "MinimumABISupportVersion": 256,
+    "szAdapterFamily": 0
+   },
+   "size": 288
+  },
+  "D3D12_FEATURE_DATA_SHADER_CACHE": {
+   "fields": {
+    "SupportFlags": 0
+   },
+   "size": 4
+  },
+  "D3D12_FEATURE_DATA_SHADER_MODEL": {
+   "fields": {
+    "HighestShaderModel": 0
+   },
+   "size": 4
+  },
+  "D3D12_FEATURE_DATA_VIDEO_ARCHITECTURE": {
+   "fields": {
+    "IOCoherent": 0
+   },
+   "size": 4
+  },
+  "D3D12_FEATURE_DATA_VIDEO_DECODER_HEAP_SIZE": {
+   "fields": {
+    "MemoryPoolL0Size": 56,
+    "MemoryPoolL1Size": 64,
+    "VideoDecoderHeapDesc": 0
+   },
+   "size": 72
+  },
+  "D3D12_FEATURE_DATA_VIDEO_DECODER_HEAP_SIZE1": {
+   "fields": {
+    "MemoryPoolL0Size": 64,
+    "MemoryPoolL1Size": 72,
+    "Protected": 56,
+    "VideoDecoderHeapDesc": 0
+   },
+   "size": 80
+  },
+  "D3D12_FEATURE_DATA_VIDEO_DECODE_CONVERSION_SUPPORT": {
+   "fields": {
+    "BitRate": 60,
+    "Configuration": 4,
+    "DecodeSample": 28,
+    "FrameRate": 52,
+    "NodeIndex": 0,
+    "OutputFormat": 44,
+    "ScaleSupport": 68,
+    "SupportFlags": 64
+   },
+   "size": 88
+  },
+  "D3D12_FEATURE_DATA_VIDEO_DECODE_FORMATS": {
+   "fields": {
+    "Configuration": 4,
+    "FormatCount": 28,
+    "NodeIndex": 0
+   },
+   "size": 40
+  },
+  "D3D12_FEATURE_DATA_VIDEO_DECODE_FORMAT_COUNT": {
+   "fields": {
+    "Configuration": 4,
+    "FormatCount": 28,
+    "NodeIndex": 0
+   },
+   "size": 32
+  },
+  "D3D12_FEATURE_DATA_VIDEO_DECODE_HISTOGRAM": {
+   "fields": {
+    "BinCount": 36,
+    "Components": 32,
+    "CounterBitDepth": 40,
+    "DecodeFormat": 28,
+    "DecodeProfile": 4,
+    "Height": 24,
+    "NodeIndex": 0,
+    "Width": 20
+   },
+   "size": 44
+  },
+  "D3D12_FEATURE_DATA_VIDEO_DECODE_PROFILES": {
+   "fields": {
+    "NodeIndex": 0,
+    "ProfileCount": 4
+   },
+   "size": 16
+  },
+  "D3D12_FEATURE_DATA_VIDEO_DECODE_PROFILE_COUNT": {
+   "fields": {
+    "NodeIndex": 0,
+    "ProfileCount": 4
+   },
+   "size": 8
+  },
+  "D3D12_FEATURE_DATA_VIDEO_DECODE_PROTECTED_RESOURCES": {
+   "fields": {
+    "Configuration": 4,
+    "NodeIndex": 0,
+    "SupportFlags": 28
+   },
+   "size": 32
+  },
+  "D3D12_FEATURE_DATA_VIDEO_DECODE_SUPPORT": {
+   "fields": {
+    "BitRate": 48,
+    "Configuration": 4,
+    "ConfigurationFlags": 56,
+    "DecodeFormat": 36,
+    "DecodeTier": 60,
+    "FrameRate": 40,
+    "Height": 32,
+    "NodeIndex": 0,
+    "SupportFlags": 52,
+    "Width": 28
+   },
+   "size": 64
+  },
+  "D3D12_FEATURE_DATA_VIDEO_ENCODER_CODEC": {
+   "fields": {
+    "Codec": 4,
+    "IsSupported": 8,
+    "NodeIndex": 0
+   },
+   "size": 12
+  },
+  "D3D12_FEATURE_DATA_VIDEO_ENCODER_CODEC_CONFIGURATION_SUPPORT": {
+   "fields": {
+    "Codec": 4,
+    "CodecSupportLimits": 32,
+    "IsSupported": 24,
+    "NodeIndex": 0,
+    "Profile": 8
+   },
+   "size": 48
+  },
+  "D3D12_FEATURE_DATA_VIDEO_ENCODER_CODEC_PICTURE_CONTROL_SUPPORT": {
+   "fields": {
+    "Codec": 4,
+    "IsSupported": 24,
+    "NodeIndex": 0,
+    "PictureSupport": 32,
+    "Profile": 8
+   },
+   "size": 48
+  },
+  "D3D12_FEATURE_DATA_VIDEO_ENCODER_FRAME_SUBREGION_LAYOUT_CONFIG": {
+   "fields": {
+    "Codec": 4,
+    "CodecSupport": 56,
+    "FrameResolution": 44,
+    "IsSupported": 72,
+    "Level": 24,
+    "NodeIndex": 0,
+    "Profile": 8,
+    "SubregionMode": 40
+   },
+   "size": 80
+  },
+  "D3D12_FEATURE_DATA_VIDEO_ENCODER_FRAME_SUBREGION_LAYOUT_MODE": {
+   "fields": {
+    "Codec": 4,
+    "IsSupported": 44,
+    "Level": 24,
+    "NodeIndex": 0,
+    "Profile": 8,
+    "SubregionMode": 40
+   },
+   "size": 48
+  },
+  "D3D12_FEATURE_DATA_VIDEO_ENCODER_HEAP_SIZE": {
+   "fields": {
+    "HeapDesc": 0,
+    "IsSupported": 64,
+    "MemoryPoolL0Size": 72,
+    "MemoryPoolL1Size": 80
+   },
+   "size": 88
+  },
+  "D3D12_FEATURE_DATA_VIDEO_ENCODER_INPUT_FORMAT": {
+   "fields": {
+    "Codec": 4,
+    "Format": 24,
+    "IsSupported": 28,
+    "NodeIndex": 0,
+    "Profile": 8
+   },
+   "size": 32
+  },
+  "D3D12_FEATURE_DATA_VIDEO_ENCODER_INTRA_REFRESH_MODE": {
+   "fields": {
+    "Codec": 4,
+    "IntraRefreshMode": 40,
+    "IsSupported": 44,
+    "Level": 24,
+    "NodeIndex": 0,
+    "Profile": 8
+   },
+   "size": 48
+  },
+  "D3D12_FEATURE_DATA_VIDEO_ENCODER_OUTPUT_RESOLUTION": {
+   "fields": {
+    "Codec": 4,
+    "IsSupported": 12,
+    "MaxResolutionSupported": 24,
+    "MinResolutionSupported": 16,
+    "NodeIndex": 0,
+    "ResolutionHeightMultipleRequirement": 36,
+    "ResolutionRatiosCount": 8,
+    "ResolutionWidthMultipleRequirement": 32,
+    "pResolutionRatios": 40
+   },
+   "size": 48
+  },
+  "D3D12_FEATURE_DATA_VIDEO_ENCODER_OUTPUT_RESOLUTION_RATIOS_COUNT": {
+   "fields": {
+    "Codec": 4,
+    "NodeIndex": 0,
+    "ResolutionRatiosCount": 8
+   },
+   "size": 12
+  },
+  "D3D12_FEATURE_DATA_VIDEO_ENCODER_PROFILE_LEVEL": {
+   "fields": {
+    "Codec": 4,
+    "IsSupported": 24,
+    "MaxSupportedLevel": 48,
+    "MinSupportedLevel": 32,
+    "NodeIndex": 0,
+    "Profile": 8
+   },
+   "size": 64
+  },
+  "D3D12_FEATURE_DATA_VIDEO_ENCODER_RATE_CONTROL_MODE": {
+   "fields": {
+    "Codec": 4,
+    "IsSupported": 12,
+    "NodeIndex": 0,
+    "RateControlMode": 8
+   },
+   "size": 16
+  },
+  "D3D12_FEATURE_DATA_VIDEO_ENCODER_RESOLUTION_SUPPORT_LIMITS": {
+   "fields": {
+    "MaxIntraRefreshFrameDuration": 4,
+    "MaxSubregionsNumber": 0,
+    "QPMapRegionPixelsSize": 12,
+    "SubregionBlockPixelsSize": 8
+   },
+   "size": 16
+  },
+  "D3D12_FEATURE_DATA_VIDEO_ENCODER_RESOURCE_REQUIREMENTS": {
+   "fields": {
+    "Codec": 4,
+    "CompressedBitstreamBufferAccessAlignment": 40,
+    "EncoderMetadataBufferAccessAlignment": 44,
+    "InputFormat": 24,
+    "IsSupported": 36,
+    "MaxEncoderOutputMetadataBufferSize": 48,
+    "NodeIndex": 0,
+    "PictureTargetResolution": 28,
+    "Profile": 8
+   },
+   "size": 56
+  },
+  "D3D12_FEATURE_DATA_VIDEO_ENCODER_SUPPORT": {
+   "fields": {
+    "Codec": 4,
+    "CodecConfiguration": 16,
+    "CodecGopSequence": 32,
+    "InputFormat": 8,
+    "IntraRefresh": 80,
+    "MaxReferenceFramesInDPB": 104,
+    "NodeIndex": 0,
+    "RateControl": 48,
+    "ResolutionsListCount": 88,
+    "SubregionFrameEncoding": 84,
+    "SuggestedLevel": 136,
+    "SuggestedProfile": 120,
+    "SupportFlags": 112,
+    "ValidationFlags": 108,
+    "pResolutionDependentSupport": 152,
+    "pResolutionList": 96
+   },
+   "size": 160
+  },
+  "D3D12_FEATURE_DATA_VIDEO_ENCODER_SUPPORT1": {
+   "fields": {
+    "Codec": 4,
+    "CodecConfiguration": 16,
+    "CodecGopSequence": 32,
+    "InputFormat": 8,
+    "IntraRefresh": 80,
+    "MaxQualityVsSpeed": 176,
+    "MaxReferenceFramesInDPB": 104,
+    "NodeIndex": 0,
+    "RateControl": 48,
+    "ResolutionsListCount": 88,
+    "SubregionFrameEncoding": 84,
+    "SubregionFrameEncodingData": 160,
+    "SuggestedLevel": 136,
+    "SuggestedProfile": 120,
+    "SupportFlags": 112,
+    "ValidationFlags": 108,
+    "pResolutionDependentSupport": 152,
+    "pResolutionList": 96
+   },
+   "size": 184
+  },
+  "D3D12_FEATURE_DATA_VIDEO_EXTENSION_COMMANDS": {
+   "fields": {
+    "CommandCount": 4,
+    "NodeIndex": 0,
+    "pCommandInfos": 8
+   },
+   "size": 16
+  },
+  "D3D12_FEATURE_DATA_VIDEO_EXTENSION_COMMAND_COUNT": {
+   "fields": {
+    "CommandCount": 4,
+    "NodeIndex": 0
+   },
+   "size": 8
+  },
+  "D3D12_FEATURE_DATA_VIDEO_EXTENSION_COMMAND_PARAMETERS": {
+   "fields": {
+    "CommandId": 0,
+    "ParameterCount": 20,
+    "Stage": 16,
+    "pParameterInfos": 24
+   },
+   "size": 32
+  },
+  "D3D12_FEATURE_DATA_VIDEO_EXTENSION_COMMAND_PARAMETER_COUNT": {
+   "fields": {
+    "CommandId": 0,
+    "ParameterCount": 20,
+    "ParameterPacking": 24,
+    "Stage": 16
+   },
+   "size": 28
+  },
+  "D3D12_FEATURE_DATA_VIDEO_EXTENSION_COMMAND_SIZE": {
+   "fields": {
+    "CommandId": 4,
+    "CreationParametersSizeInBytes": 32,
+    "MemoryPoolL0Size": 40,
+    "MemoryPoolL1Size": 48,
+    "NodeIndex": 0,
+    "pCreationParameters": 24
+   },
+   "size": 56
+  },
+  "D3D12_FEATURE_DATA_VIDEO_EXTENSION_COMMAND_SUPPORT": {
+   "fields": {
+    "CommandId": 4,
+    "InputDataSizeInBytes": 32,
+    "NodeIndex": 0,
+    "OutputDataSizeInBytes": 48
+   },
+   "size": 56
+  },
+  "D3D12_FEATURE_DATA_VIDEO_FEATURE_AREA_SUPPORT": {
+   "fields": {
+    "NodeIndex": 0,
+    "VideoDecodeSupport": 4,
+    "VideoEncodeSupport": 12,
+    "VideoProcessSupport": 8
+   },
+   "size": 16
+  },
+  "D3D12_FEATURE_DATA_VIDEO_MOTION_ESTIMATOR": {
+   "fields": {
+    "BlockSizeFlags": 8,
+    "InputFormat": 4,
+    "NodeIndex": 0,
+    "PrecisionFlags": 12,
+    "SizeRange": 16
+   },
+   "size": 32
+  },
+  "D3D12_FEATURE_DATA_VIDEO_MOTION_ESTIMATOR_PROTECTED_RESOURCES": {
+   "fields": {
+    "NodeIndex": 0,
+    "SupportFlags": 4
+   },
+   "size": 8
+  },
+  "D3D12_FEATURE_DATA_VIDEO_MOTION_ESTIMATOR_SIZE": {
+   "fields": {
+    "BlockSize": 8,
+    "InputFormat": 4,
+    "MotionEstimatorMemoryPoolL0Size": 56,
+    "MotionEstimatorMemoryPoolL1Size": 64,
+    "MotionVectorHeapMemoryPoolL0Size": 40,
+    "MotionVectorHeapMemoryPoolL1Size": 48,
+    "NodeIndex": 0,
+    "Precision": 12,
+    "Protected": 32,
+    "SizeRange": 16
+   },
+   "size": 72
+  },
+  "D3D12_FEATURE_DATA_VIDEO_PROCESSOR_SIZE": {
+   "fields": {
+    "MemoryPoolL0Size": 32,
+    "MemoryPoolL1Size": 40,
+    "NodeMask": 0,
+    "NumInputStreamDescs": 16,
+    "pOutputStreamDesc": 8
+   },
+   "size": 48
+  },
+  "D3D12_FEATURE_DATA_VIDEO_PROCESSOR_SIZE1": {
+   "fields": {
+    "MemoryPoolL0Size": 40,
+    "MemoryPoolL1Size": 48,
+    "NodeMask": 0,
+    "NumInputStreamDescs": 16,
+    "Protected": 32,
+    "pOutputStreamDesc": 8
+   },
+   "size": 56
+  },
+  "D3D12_FEATURE_DATA_VIDEO_PROCESS_MAX_INPUT_STREAMS": {
+   "fields": {
+    "MaxInputStreams": 4,
+    "NodeIndex": 0
+   },
+   "size": 8
+  },
+  "D3D12_FEATURE_DATA_VIDEO_PROCESS_PROTECTED_RESOURCES": {
+   "fields": {
+    "NodeIndex": 0,
+    "SupportFlags": 4
+   },
+   "size": 8
+  },
+  "D3D12_FEATURE_DATA_VIDEO_PROCESS_REFERENCE_INFO": {
+   "fields": {
+    "DeinterlaceMode": 4,
+    "EnableAutoProcessing": 32,
+    "FeatureSupport": 12,
+    "Filters": 8,
+    "FutureFrames": 40,
+    "InputFrameRate": 16,
+    "NodeIndex": 0,
+    "OutputFrameRate": 24,
+    "PastFrames": 36
+   },
+   "size": 44
+  },
+  "D3D12_FEATURE_DATA_VIDEO_PROCESS_SUPPORT": {
+   "fields": {
+    "AutoProcessingSupport": 88,
+    "DeinterlaceSupport": 84,
+    "FeatureSupport": 80,
+    "FilterRangeSupport": 96,
+    "FilterSupport": 92,
+    "InputFieldType": 20,
+    "InputFrameRate": 28,
+    "InputSample": 4,
+    "InputStereoFormat": 24,
+    "NodeIndex": 0,
+    "OutputFormat": 36,
+    "OutputFrameRate": 48,
+    "OutputStereoFormat": 44,
+    "ScaleSupport": 60,
+    "SupportFlags": 56
+   },
+   "size": 608
+  },
+  "D3D12_GENERIC_PROGRAM_DESC": {
+   "fields": {
+    "NumExports": 8,
+    "NumSubobjects": 24,
+    "ProgramName": 0,
+    "pExports": 16
+   },
+   "size": 40
+  },
+  "D3D12_GLOBAL_BARRIER": {
+   "fields": {
+    "AccessAfter": 12,
+    "AccessBefore": 8,
+    "SyncAfter": 4,
+    "SyncBefore": 0
+   },
+   "size": 16
+  },
+  "D3D12_GLOBAL_ROOT_SIGNATURE": {
+   "fields": {
+    "pGlobalRootSignature": 0
+   },
+   "size": 8
+  },
+  "D3D12_GPU_DESCRIPTOR_HANDLE": {
+   "fields": {
+    "ptr": 0
+   },
+   "size": 8
+  },
+  "D3D12_GPU_VIRTUAL_ADDRESS_AND_STRIDE": {
+   "fields": {
+    "StartAddress": 0,
+    "StrideInBytes": 8
+   },
+   "size": 16
+  },
+  "D3D12_GPU_VIRTUAL_ADDRESS_RANGE": {
+   "fields": {
+    "SizeInBytes": 8,
+    "StartAddress": 0
+   },
+   "size": 16
+  },
+  "D3D12_GPU_VIRTUAL_ADDRESS_RANGE_AND_STRIDE": {
+   "fields": {
+    "SizeInBytes": 8,
+    "StartAddress": 0,
+    "StrideInBytes": 16
+   },
+   "size": 24
+  },
+  "D3D12_GRAPHICS_PIPELINE_STATE_DESC": {
+   "fields": {
+    "BlendState": 120,
+    "CachedPSO": 632,
+    "DS": 40,
+    "DSVFormat": 612,
+    "DepthStencilState": 496,
+    "Flags": 648,
+    "GS": 72,
+    "HS": 56,
+    "IBStripCutValue": 568,
+    "InputLayout": 552,
+    "NodeMask": 624,
+    "NumRenderTargets": 576,
+    "PS": 24,
+    "PrimitiveTopologyType": 572,
+    "RTVFormats": 580,
+    "RasterizerState": 452,
+    "SampleDesc": 616,
+    "SampleMask": 448,
+    "StreamOutput": 88,
+    "VS": 8,
+    "pRootSignature": 0
+   },
+   "size": 656
+  },
+  "D3D12_HEAP_DESC": {
+   "fields": {
+    "Alignment": 32,
+    "Flags": 40,
+    "Properties": 8,
+    "SizeInBytes": 0
+   },
+   "size": 48
+  },
+  "D3D12_HEAP_PROPERTIES": {
+   "fields": {
+    "CPUPageProperty": 4,
+    "CreationNodeMask": 12,
+    "MemoryPoolPreference": 8,
+    "Type": 0,
+    "VisibleNodeMask": 16
+   },
+   "size": 20
+  },
+  "D3D12_HIT_GROUP_DESC": {
+   "fields": {
+    "AnyHitShaderImport": 16,
+    "ClosestHitShaderImport": 24,
+    "HitGroupExport": 0,
+    "IntersectionShaderImport": 32,
+    "Type": 8
+   },
+   "size": 40
+  },
+  "D3D12_IB_STRIP_CUT_VALUE": {
+   "fields": {
+    "IndexBufferStripCutValue": 0
+   },
+   "size": 4
+  },
+  "D3D12_INDEX_BUFFER_VIEW": {
+   "fields": {
+    "BufferLocation": 0,
+    "Format": 12,
+    "SizeInBytes": 8
+   },
+   "size": 16
+  },
+  "D3D12_INDIRECT_ARGUMENT_DESC": {
+   "fields": {},
+   "size": 16
+  },
+  "D3D12_INFO_QUEUE_FILTER": {
+   "fields": {
+    "AllowList": 0,
+    "DenyList": 48
+   },
+   "size": 96
+  },
+  "D3D12_INFO_QUEUE_FILTER_DESC": {
+   "fields": {
+    "NumCategories": 0,
+    "NumIDs": 32,
+    "NumSeverities": 16,
+    "pCategoryList": 8,
+    "pIDList": 40,
+    "pSeverityList": 24
+   },
+   "size": 48
+  },
+  "D3D12_INPUT_ELEMENT_DESC": {
+   "fields": {
+    "AlignedByteOffset": 20,
+    "Format": 12,
+    "InputSlot": 16,
+    "InputSlotClass": 24,
+    "InstanceDataStepRate": 28,
+    "SemanticIndex": 8,
+    "SemanticName": 0
+   },
+   "size": 32
+  },
+  "D3D12_INPUT_LAYOUT_DESC": {
+   "fields": {
+    "NumElements": 8,
+    "pInputElementDescs": 0
+   },
+   "size": 16
+  },
+  "D3D12_LOCAL_ROOT_SIGNATURE": {
+   "fields": {
+    "pLocalRootSignature": 0
+   },
+   "size": 8
+  },
+  "D3D12_MEMCPY_DEST": {
+   "fields": {
+    "RowPitch": 8,
+    "SlicePitch": 16,
+    "pData": 0
+   },
+   "size": 24
+  },
+  "D3D12_MESSAGE": {
+   "fields": {
+    "Category": 0,
+    "DescriptionByteLength": 24,
+    "ID": 8,
+    "Severity": 4,
+    "pDescription": 16
+   },
+   "size": 32
+  },
+  "D3D12_META_COMMAND_DESC": {
+   "fields": {
+    "ExecutionDirtyState": 28,
+    "Id": 0,
+    "InitializationDirtyState": 24,
+    "Name": 16
+   },
+   "size": 32
+  },
+  "D3D12_META_COMMAND_PARAMETER_DESC": {
+   "fields": {
+    "Flags": 12,
+    "Name": 0,
+    "RequiredResourceState": 16,
+    "StructureOffset": 20,
+    "Type": 8
+   },
+   "size": 24
+  },
+  "D3D12_MIP_REGION": {
+   "fields": {
+    "Depth": 8,
+    "Height": 4,
+    "Width": 0
+   },
+   "size": 12
+  },
+  "D3D12_MULTI_NODE_CPU_INPUT": {
+   "fields": {
+    "NodeInputStrideInBytes": 16,
+    "NumNodeInputs": 0,
+    "pNodeInputs": 8
+   },
+   "size": 24
+  },
+  "D3D12_MULTI_NODE_GPU_INPUT": {
+   "fields": {
+    "NodeInputs": 8,
+    "NumNodeInputs": 0
+   },
+   "size": 24
+  },
+  "D3D12_NODE": {
+   "fields": {},
+   "size": 32
+  },
+  "D3D12_NODE_CPU_INPUT": {
+   "fields": {
+    "EntrypointIndex": 0,
+    "NumRecords": 4,
+    "RecordStrideInBytes": 16,
+    "pRecords": 8
+   },
+   "size": 24
+  },
+  "D3D12_NODE_GPU_INPUT": {
+   "fields": {
+    "EntrypointIndex": 0,
+    "NumRecords": 4,
+    "Records": 8
+   },
+   "size": 24
+  },
+  "D3D12_NODE_ID": {
+   "fields": {
+    "ArrayIndex": 8,
+    "Name": 0
+   },
+   "size": 16
+  },
+  "D3D12_NODE_MASK": {
+   "fields": {
+    "NodeMask": 0
+   },
+   "size": 4
+  },
+  "D3D12_NODE_OUTPUT_OVERRIDES": {
+   "fields": {
+    "OutputIndex": 0,
+    "pAllowSparseNodes": 16,
+    "pMaxRecords": 24,
+    "pMaxRecordsSharedWithOutputIndex": 32,
+    "pNewName": 8
+   },
+   "size": 40
+  },
+  "D3D12_PACKED_MIP_INFO": {
+   "fields": {
+    "NumPackedMips": 1,
+    "NumStandardMips": 0,
+    "NumTilesForPackedMips": 4,
+    "StartTileIndexInOverallResource": 8
+   },
+   "size": 12
+  },
+  "D3D12_PIPELINE_STATE_STREAM_DESC": {
+   "fields": {
+    "SizeInBytes": 0,
+    "pPipelineStateSubobjectStream": 8
+   },
+   "size": 16
+  },
+  "D3D12_PLACED_SUBRESOURCE_FOOTPRINT": {
+   "fields": {
+    "Footprint": 8,
+    "Offset": 0
+   },
+   "size": 32
+  },
+  "D3D12_PRIMITIVE_TOPOLOGY_DESC": {
+   "fields": {
+    "PrimitiveTopology": 0
+   },
+   "size": 4
+  },
+  "D3D12_PROGRAM_IDENTIFIER": {
+   "fields": {
+    "OpaqueData": 0
+   },
+   "size": 32
+  },
+  "D3D12_PROTECTED_RESOURCE_SESSION_DESC": {
+   "fields": {
+    "Flags": 4,
+    "NodeMask": 0
+   },
+   "size": 8
+  },
+  "D3D12_PROTECTED_RESOURCE_SESSION_DESC1": {
+   "fields": {
+    "Flags": 4,
+    "NodeMask": 0,
+    "ProtectionType": 8
+   },
+   "size": 24
+  },
+  "D3D12_QUERY_DATA_PIPELINE_STATISTICS": {
+   "fields": {
+    "CInvocations": 40,
+    "CPrimitives": 48,
+    "CSInvocations": 80,
+    "DSInvocations": 72,
+    "GSInvocations": 24,
+    "GSPrimitives": 32,
+    "HSInvocations": 64,
+    "IAPrimitives": 8,
+    "IAVertices": 0,
+    "PSInvocations": 56,
+    "VSInvocations": 16
+   },
+   "size": 88
+  },
+  "D3D12_QUERY_DATA_PIPELINE_STATISTICS1": {
+   "fields": {
+    "ASInvocations": 88,
+    "CInvocations": 40,
+    "CPrimitives": 48,
+    "CSInvocations": 80,
+    "DSInvocations": 72,
+    "GSInvocations": 24,
+    "GSPrimitives": 32,
+    "HSInvocations": 64,
+    "IAPrimitives": 8,
+    "IAVertices": 0,
+    "MSInvocations": 96,
+    "MSPrimitives": 104,
+    "PSInvocations": 56,
+    "VSInvocations": 16
+   },
+   "size": 112
+  },
+  "D3D12_QUERY_DATA_SO_STATISTICS": {
+   "fields": {
+    "NumPrimitivesWritten": 0,
+    "PrimitivesStorageNeeded": 8
+   },
+   "size": 16
+  },
+  "D3D12_QUERY_DATA_VIDEO_DECODE_STATISTICS": {
+   "fields": {
+    "BitRate": 24,
+    "FrameRate": 16,
+    "NumMacroblocksAffected": 8,
+    "Status": 0
+   },
+   "size": 32
+  },
+  "D3D12_QUERY_HEAP_DESC": {
+   "fields": {
+    "Count": 4,
+    "NodeMask": 8,
+    "Type": 0
+   },
+   "size": 12
+  },
+  "D3D12_RANGE": {
+   "fields": {
+    "Begin": 0,
+    "End": 8
+   },
+   "size": 16
+  },
+  "D3D12_RANGE_UINT64": {
+   "fields": {
+    "Begin": 0,
+    "End": 8
+   },
+   "size": 16
+  },
+  "D3D12_RASTERIZER_DESC": {
+   "fields": {
+    "AntialiasedLineEnable": 32,
+    "ConservativeRaster": 40,
+    "CullMode": 4,
+    "DepthBias": 12,
+    "DepthBiasClamp": 16,
+    "DepthClipEnable": 24,
+    "FillMode": 0,
+    "ForcedSampleCount": 36,
+    "FrontCounterClockwise": 8,
+    "MultisampleEnable": 28,
+    "SlopeScaledDepthBias": 20
+   },
+   "size": 44
+  },
+  "D3D12_RASTERIZER_DESC1": {
+   "fields": {
+    "AntialiasedLineEnable": 32,
+    "ConservativeRaster": 40,
+    "CullMode": 4,
+    "DepthBias": 12,
+    "DepthBiasClamp": 16,
+    "DepthClipEnable": 24,
+    "FillMode": 0,
+    "ForcedSampleCount": 36,
+    "FrontCounterClockwise": 8,
+    "MultisampleEnable": 28,
+    "SlopeScaledDepthBias": 20
+   },
+   "size": 44
+  },
+  "D3D12_RASTERIZER_DESC2": {
+   "fields": {
+    "ConservativeRaster": 36,
+    "CullMode": 4,
+    "DepthBias": 12,
+    "DepthBiasClamp": 16,
+    "DepthClipEnable": 24,
+    "FillMode": 0,
+    "ForcedSampleCount": 32,
+    "FrontCounterClockwise": 8,
+    "LineRasterizationMode": 28,
+    "SlopeScaledDepthBias": 20
+   },
+   "size": 40
+  },
+  "D3D12_RAYTRACING_AABB": {
+   "fields": {
+    "MaxX": 12,
+    "MaxY": 16,
+    "MaxZ": 20,
+    "MinX": 0,
+    "MinY": 4,
+    "MinZ": 8
+   },
+   "size": 24
+  },
+  "D3D12_RAYTRACING_ACCELERATION_STRUCTURE_POSTBUILD_INFO_COMPACTED_SIZE_DESC": {
+   "fields": {
+    "CompactedSizeInBytes": 0
+   },
+   "size": 8
+  },
+  "D3D12_RAYTRACING_ACCELERATION_STRUCTURE_POSTBUILD_INFO_CURRENT_SIZE_DESC": {
+   "fields": {
+    "CurrentSizeInBytes": 0
+   },
+   "size": 8
+  },
+  "D3D12_RAYTRACING_ACCELERATION_STRUCTURE_POSTBUILD_INFO_DESC": {
+   "fields": {
+    "DestBuffer": 0,
+    "InfoType": 8
+   },
+   "size": 16
+  },
+  "D3D12_RAYTRACING_ACCELERATION_STRUCTURE_POSTBUILD_INFO_SERIALIZATION_DESC": {
+   "fields": {},
+   "size": 16
+  },
+  "D3D12_RAYTRACING_ACCELERATION_STRUCTURE_POSTBUILD_INFO_TOOLS_VISUALIZATION_DESC": {
+   "fields": {
+    "DecodedSizeInBytes": 0
+   },
+   "size": 8
+  },
+  "D3D12_RAYTRACING_ACCELERATION_STRUCTURE_PREBUILD_INFO": {
+   "fields": {
+    "ResultDataMaxSizeInBytes": 0,
+    "ScratchDataSizeInBytes": 8,
+    "UpdateScratchDataSizeInBytes": 16
+   },
+   "size": 24
+  },
+  "D3D12_RAYTRACING_ACCELERATION_STRUCTURE_SRV": {
+   "fields": {
+    "Location": 0
+   },
+   "size": 8
+  },
+  "D3D12_RAYTRACING_GEOMETRY_AABBS_DESC": {
+   "fields": {
+    "AABBCount": 0,
+    "AABBs": 8
+   },
+   "size": 24
+  },
+  "D3D12_RAYTRACING_GEOMETRY_DESC": {
+   "fields": {},
+   "size": 56
+  },
+  "D3D12_RAYTRACING_GEOMETRY_OMM_LINKAGE_DESC": {
+   "fields": {
+    "OpacityMicromapArray": 24,
+    "OpacityMicromapBaseLocation": 20,
+    "OpacityMicromapIndexBuffer": 0,
+    "OpacityMicromapIndexFormat": 16
+   },
+   "size": 32
+  },
+  "D3D12_RAYTRACING_GEOMETRY_OMM_TRIANGLES_DESC": {
+   "fields": {
+    "pOmmLinkage": 8,
+    "pTriangles": 0
+   },
+   "size": 16
+  },
+  "D3D12_RAYTRACING_GEOMETRY_TRIANGLES_DESC": {
+   "fields": {
+    "IndexBuffer": 24,
+    "IndexCount": 16,
+    "IndexFormat": 8,
+    "Transform3x4": 0,
+    "VertexBuffer": 32,
+    "VertexCount": 20,
+    "VertexFormat": 12
+   },
+   "size": 48
+  },
+  "D3D12_RAYTRACING_INSTANCE_DESC": {
+   "fields": {
+    "AccelerationStructure": 56
+   },
+   "size": 64
+  },
+  "D3D12_RAYTRACING_OPACITY_MICROMAP_ARRAY_DESC": {
+   "fields": {
+    "InputBuffer": 16,
+    "NumOmmHistogramEntries": 0,
+    "PerOmmDescs": 24,
+    "pOmmHistogram": 8
+   },
+   "size": 40
+  },
+  "D3D12_RAYTRACING_OPACITY_MICROMAP_ARRAY_POSTBUILD_INFO_CURRENT_SIZE_DESC": {
+   "fields": {
+    "CurrentSizeInBytes": 0
+   },
+   "size": 8
+  },
+  "D3D12_RAYTRACING_OPACITY_MICROMAP_ARRAY_POSTBUILD_INFO_DESC": {
+   "fields": {
+    "DestBuffer": 0,
+    "InfoType": 8
+   },
+   "size": 16
+  },
+  "D3D12_RAYTRACING_OPACITY_MICROMAP_ARRAY_POSTBUILD_INFO_TOOLS_VISUALIZATION_DESC": {
+   "fields": {
+    "DecodedSizeInBytes": 0
+   },
+   "size": 8
+  },
+  "D3D12_RAYTRACING_OPACITY_MICROMAP_HISTOGRAM_ENTRY": {
+   "fields": {
+    "Count": 0,
+    "Format": 8,
+    "SubdivisionLevel": 4
+   },
+   "size": 12
+  },
+  "D3D12_RAYTRACING_PIPELINE_CONFIG": {
+   "fields": {
+    "MaxTraceRecursionDepth": 0
+   },
+   "size": 4
+  },
+  "D3D12_RAYTRACING_PIPELINE_CONFIG1": {
+   "fields": {
+    "Flags": 4,
+    "MaxTraceRecursionDepth": 0
+   },
+   "size": 8
+  },
+  "D3D12_RAYTRACING_SERIALIZED_BLOCK": {
+   "fields": {
+    "NumBlockPointersAfterHeader": 8,
+    "Type": 0
+   },
+   "size": 16
+  },
+  "D3D12_RAYTRACING_SHADER_CONFIG": {
+   "fields": {
+    "MaxAttributeSizeInBytes": 4,
+    "MaxPayloadSizeInBytes": 0
+   },
+   "size": 8
+  },
+  "D3D12_RENDER_PASS_BEGINNING_ACCESS": {
+   "fields": {},
+   "size": 24
+  },
+  "D3D12_RENDER_PASS_BEGINNING_ACCESS_CLEAR_PARAMETERS": {
+   "fields": {
+    "ClearValue": 0
+   },
+   "size": 20
+  },
+  "D3D12_RENDER_PASS_BEGINNING_ACCESS_PRESERVE_LOCAL_PARAMETERS": {
+   "fields": {
+    "AdditionalHeight": 4,
+    "AdditionalWidth": 0
+   },
+   "size": 8
+  },
+  "D3D12_RENDER_PASS_DEPTH_STENCIL_DESC": {
+   "fields": {
+    "DepthBeginningAccess": 8,
+    "DepthEndingAccess": 56,
+    "StencilBeginningAccess": 32,
+    "StencilEndingAccess": 112,
+    "cpuDescriptor": 0
+   },
+   "size": 168
+  },
+  "D3D12_RENDER_PASS_ENDING_ACCESS": {
+   "fields": {},
+   "size": 56
+  },
+  "D3D12_RENDER_PASS_ENDING_ACCESS_PRESERVE_LOCAL_PARAMETERS": {
+   "fields": {
+    "AdditionalHeight": 4,
+    "AdditionalWidth": 0
+   },
+   "size": 8
+  },
+  "D3D12_RENDER_PASS_ENDING_ACCESS_RESOLVE_PARAMETERS": {
+   "fields": {
+    "Format": 32,
+    "PreserveResolveSource": 40,
+    "ResolveMode": 36,
+    "SubresourceCount": 16,
+    "pDstResource": 8,
+    "pSrcResource": 0
+   },
+   "size": 48
+  },
+  "D3D12_RENDER_PASS_ENDING_ACCESS_RESOLVE_SUBRESOURCE_PARAMETERS": {
+   "fields": {
+    "DstSubresource": 4,
+    "DstX": 8,
+    "DstY": 12,
+    "SrcRect": 16,
+    "SrcSubresource": 0
+   },
+   "size": 32
+  },
+  "D3D12_RENDER_PASS_RENDER_TARGET_DESC": {
+   "fields": {
+    "BeginningAccess": 8,
+    "EndingAccess": 32,
+    "cpuDescriptor": 0
+   },
+   "size": 88
+  },
+  "D3D12_RENDER_TARGET_BLEND_DESC": {
+   "fields": {
+    "BlendEnable": 0,
+    "BlendOp": 16,
+    "BlendOpAlpha": 28,
+    "DestBlend": 12,
+    "DestBlendAlpha": 24,
+    "LogicOp": 32,
+    "LogicOpEnable": 4,
+    "RenderTargetWriteMask": 36,
+    "SrcBlend": 8,
+    "SrcBlendAlpha": 20
+   },
+   "size": 40
+  },
+  "D3D12_RENDER_TARGET_VIEW_DESC": {
+   "fields": {},
+   "size": 24
+  },
+  "D3D12_RESOLVE_VIDEO_MOTION_VECTOR_HEAP_INPUT": {
+   "fields": {
+    "PixelHeight": 12,
+    "PixelWidth": 8,
+    "pMotionVectorHeap": 0
+   },
+   "size": 16
+  },
+  "D3D12_RESOLVE_VIDEO_MOTION_VECTOR_HEAP_OUTPUT": {
+   "fields": {
+    "MotionVectorCoordinate": 8,
+    "pMotionVectorTexture2D": 0
+   },
+   "size": 32
+  },
+  "D3D12_RESOURCE_ALIASING_BARRIER": {
+   "fields": {
+    "pResourceAfter": 8,
+    "pResourceBefore": 0
+   },
+   "size": 16
+  },
+  "D3D12_RESOURCE_ALLOCATION_INFO": {
+   "fields": {
+    "Alignment": 8,
+    "SizeInBytes": 0
+   },
+   "size": 16
+  },
+  "D3D12_RESOURCE_ALLOCATION_INFO1": {
+   "fields": {
+    "Alignment": 8,
+    "Offset": 0,
+    "SizeInBytes": 16
+   },
+   "size": 24
+  },
+  "D3D12_RESOURCE_BARRIER": {
+   "fields": {},
+   "size": 32
+  },
+  "D3D12_RESOURCE_COORDINATE": {
+   "fields": {
+    "SubresourceIndex": 16,
+    "X": 0,
+    "Y": 8,
+    "Z": 12
+   },
+   "size": 24
+  },
+  "D3D12_RESOURCE_DESC": {
+   "fields": {
+    "Alignment": 8,
+    "DepthOrArraySize": 28,
+    "Dimension": 0,
+    "Flags": 48,
+    "Format": 32,
+    "Height": 24,
+    "Layout": 44,
+    "MipLevels": 30,
+    "SampleDesc": 36,
+    "Width": 16
+   },
+   "size": 56
+  },
+  "D3D12_RESOURCE_DESC1": {
+   "fields": {
+    "Alignment": 8,
+    "DepthOrArraySize": 28,
+    "Dimension": 0,
+    "Flags": 48,
+    "Format": 32,
+    "Height": 24,
+    "Layout": 44,
+    "MipLevels": 30,
+    "SampleDesc": 36,
+    "SamplerFeedbackMipRegion": 52,
+    "Width": 16
+   },
+   "size": 64
+  },
+  "D3D12_RESOURCE_TRANSITION_BARRIER": {
+   "fields": {
+    "StateAfter": 16,
+    "StateBefore": 12,
+    "Subresource": 8,
+    "pResource": 0
+   },
+   "size": 24
+  },
+  "D3D12_RESOURCE_UAV_BARRIER": {
+   "fields": {
+    "pResource": 0
+   },
+   "size": 8
+  },
+  "D3D12_ROOT_CONSTANTS": {
+   "fields": {
+    "Num32BitValues": 8,
+    "RegisterSpace": 4,
+    "ShaderRegister": 0
+   },
+   "size": 12
+  },
+  "D3D12_ROOT_DESCRIPTOR": {
+   "fields": {
+    "RegisterSpace": 4,
+    "ShaderRegister": 0
+   },
+   "size": 8
+  },
+  "D3D12_ROOT_DESCRIPTOR1": {
+   "fields": {
+    "Flags": 8,
+    "RegisterSpace": 4,
+    "ShaderRegister": 0
+   },
+   "size": 12
+  },
+  "D3D12_ROOT_DESCRIPTOR_TABLE": {
+   "fields": {
+    "NumDescriptorRanges": 0,
+    "pDescriptorRanges": 8
+   },
+   "size": 16
+  },
+  "D3D12_ROOT_DESCRIPTOR_TABLE1": {
+   "fields": {
+    "NumDescriptorRanges": 0,
+    "pDescriptorRanges": 8
+   },
+   "size": 16
+  },
+  "D3D12_ROOT_PARAMETER": {
+   "fields": {},
+   "size": 32
+  },
+  "D3D12_ROOT_PARAMETER1": {
+   "fields": {},
+   "size": 32
+  },
+  "D3D12_ROOT_SIGNATURE_DESC": {
+   "fields": {
+    "Flags": 32,
+    "NumParameters": 0,
+    "NumStaticSamplers": 16,
+    "pParameters": 8,
+    "pStaticSamplers": 24
+   },
+   "size": 40
+  },
+  "D3D12_ROOT_SIGNATURE_DESC1": {
+   "fields": {
+    "Flags": 32,
+    "NumParameters": 0,
+    "NumStaticSamplers": 16,
+    "pParameters": 8,
+    "pStaticSamplers": 24
+   },
+   "size": 40
+  },
+  "D3D12_ROOT_SIGNATURE_DESC2": {
+   "fields": {
+    "Flags": 32,
+    "NumParameters": 0,
+    "NumStaticSamplers": 16,
+    "pParameters": 8,
+    "pStaticSamplers": 24
+   },
+   "size": 40
+  },
+  "D3D12_SAMPLER_DESC": {
+   "fields": {
+    "AddressU": 4,
+    "AddressV": 8,
+    "AddressW": 12,
+    "BorderColor": 28,
+    "ComparisonFunc": 24,
+    "Filter": 0,
+    "MaxAnisotropy": 20,
+    "MaxLOD": 48,
+    "MinLOD": 44,
+    "MipLODBias": 16
+   },
+   "size": 52
+  },
+  "D3D12_SAMPLER_DESC2": {
+   "fields": {},
+   "size": 56
+  },
+  "D3D12_SAMPLE_MASK": {
+   "fields": {
+    "SampleMask": 0
+   },
+   "size": 4
+  },
+  "D3D12_SAMPLE_POSITION": {
+   "fields": {
+    "X": 0,
+    "Y": 1
+   },
+   "size": 2
+  },
+  "D3D12_SERIALIZED_DATA_DRIVER_MATCHING_IDENTIFIER": {
+   "fields": {
+    "DriverOpaqueGUID": 0,
+    "DriverOpaqueVersioningData": 16
+   },
+   "size": 32
+  },
+  "D3D12_SERIALIZED_RAYTRACING_ACCELERATION_STRUCTURE_HEADER": {
+   "fields": {
+    "DeserializedSizeInBytes": 40,
+    "DriverMatchingIdentifier": 0,
+    "NumBottomLevelAccelerationStructurePointersAfterHeader": 48,
+    "SerializedSizeInBytesIncludingHeader": 32
+   },
+   "size": 56
+  },
+  "D3D12_SERIALIZED_RAYTRACING_ACCELERATION_STRUCTURE_HEADER1": {
+   "fields": {},
+   "size": 56
+  },
+  "D3D12_SET_GENERIC_PIPELINE_DESC": {
+   "fields": {
+    "ProgramIdentifier": 0
+   },
+   "size": 32
+  },
+  "D3D12_SET_PROGRAM_DESC": {
+   "fields": {},
+   "size": 88
+  },
+  "D3D12_SET_RAYTRACING_PIPELINE_DESC": {
+   "fields": {
+    "ProgramIdentifier": 0
+   },
+   "size": 32
+  },
+  "D3D12_SET_WORK_GRAPH_DESC": {
+   "fields": {
+    "BackingMemory": 40,
+    "Flags": 32,
+    "NodeLocalRootArgumentsTable": 56,
+    "ProgramIdentifier": 0
+   },
+   "size": 80
+  },
+  "D3D12_SHADER_BYTECODE": {
+   "fields": {
+    "BytecodeLength": 8,
+    "pShaderBytecode": 0
+   },
+   "size": 16
+  },
+  "D3D12_SHADER_CACHE_SESSION_DESC": {
+   "fields": {
+    "Flags": 20,
+    "Identifier": 0,
+    "MaximumInMemoryCacheEntries": 28,
+    "MaximumInMemoryCacheSizeBytes": 24,
+    "MaximumValueFileSizeBytes": 32,
+    "Mode": 16,
+    "Version": 40
+   },
+   "size": 48
+  },
+  "D3D12_SHADER_NODE": {
+   "fields": {},
+   "size": 24
+  },
+  "D3D12_SHADER_RESOURCE_VIEW_DESC": {
+   "fields": {},
+   "size": 40
+  },
+  "D3D12_SO_DECLARATION_ENTRY": {
+   "fields": {
+    "ComponentCount": 21,
+    "OutputSlot": 22,
+    "SemanticIndex": 16,
+    "SemanticName": 8,
+    "StartComponent": 20,
+    "Stream": 0
+   },
+   "size": 24
+  },
+  "D3D12_STATE_OBJECT_CONFIG": {
+   "fields": {
+    "Flags": 0
+   },
+   "size": 4
+  },
+  "D3D12_STATE_OBJECT_DESC": {
+   "fields": {
+    "NumSubobjects": 4,
+    "Type": 0,
+    "pSubobjects": 8
+   },
+   "size": 16
+  },
+  "D3D12_STATE_SUBOBJECT": {
+   "fields": {
+    "Type": 0,
+    "pDesc": 8
+   },
+   "size": 16
+  },
+  "D3D12_STATIC_SAMPLER_DESC": {
+   "fields": {
+    "AddressU": 4,
+    "AddressV": 8,
+    "AddressW": 12,
+    "BorderColor": 28,
+    "ComparisonFunc": 24,
+    "Filter": 0,
+    "MaxAnisotropy": 20,
+    "MaxLOD": 36,
+    "MinLOD": 32,
+    "MipLODBias": 16,
+    "RegisterSpace": 44,
+    "ShaderRegister": 40,
+    "ShaderVisibility": 48
+   },
+   "size": 52
+  },
+  "D3D12_STATIC_SAMPLER_DESC1": {
+   "fields": {
+    "AddressU": 4,
+    "AddressV": 8,
+    "AddressW": 12,
+    "BorderColor": 28,
+    "ComparisonFunc": 24,
+    "Filter": 0,
+    "Flags": 52,
+    "MaxAnisotropy": 20,
+    "MaxLOD": 36,
+    "MinLOD": 32,
+    "MipLODBias": 16,
+    "RegisterSpace": 44,
+    "ShaderRegister": 40,
+    "ShaderVisibility": 48
+   },
+   "size": 56
+  },
+  "D3D12_STREAM_OUTPUT_BUFFER_VIEW": {
+   "fields": {
+    "BufferFilledSizeLocation": 16,
+    "BufferLocation": 0,
+    "SizeInBytes": 8
+   },
+   "size": 24
+  },
+  "D3D12_STREAM_OUTPUT_DESC": {
+   "fields": {
+    "NumEntries": 8,
+    "NumStrides": 24,
+    "RasterizedStream": 28,
+    "pBufferStrides": 16,
+    "pSODeclaration": 0
+   },
+   "size": 32
+  },
+  "D3D12_SUBOBJECT_TO_EXPORTS_ASSOCIATION": {
+   "fields": {
+    "NumExports": 8,
+    "pExports": 16,
+    "pSubobjectToAssociate": 0
+   },
+   "size": 24
+  },
+  "D3D12_SUBRESOURCE_DATA": {
+   "fields": {
+    "RowPitch": 8,
+    "SlicePitch": 16,
+    "pData": 0
+   },
+   "size": 24
+  },
+  "D3D12_SUBRESOURCE_FOOTPRINT": {
+   "fields": {
+    "Depth": 12,
+    "Format": 0,
+    "Height": 8,
+    "RowPitch": 16,
+    "Width": 4
+   },
+   "size": 20
+  },
+  "D3D12_SUBRESOURCE_INFO": {
+   "fields": {
+    "DepthPitch": 12,
+    "Offset": 0,
+    "RowPitch": 8
+   },
+   "size": 16
+  },
+  "D3D12_SUBRESOURCE_RANGE_UINT64": {
+   "fields": {
+    "Range": 8,
+    "Subresource": 0
+   },
+   "size": 24
+  },
+  "D3D12_SUBRESOURCE_TILING": {
+   "fields": {
+    "DepthInTiles": 6,
+    "HeightInTiles": 4,
+    "StartTileIndexInOverallResource": 8,
+    "WidthInTiles": 0
+   },
+   "size": 12
+  },
+  "D3D12_TEX1D_ARRAY_DSV": {
+   "fields": {
+    "ArraySize": 8,
+    "FirstArraySlice": 4,
+    "MipSlice": 0
+   },
+   "size": 12
+  },
+  "D3D12_TEX1D_ARRAY_RTV": {
+   "fields": {
+    "ArraySize": 8,
+    "FirstArraySlice": 4,
+    "MipSlice": 0
+   },
+   "size": 12
+  },
+  "D3D12_TEX1D_ARRAY_SRV": {
+   "fields": {
+    "ArraySize": 12,
+    "FirstArraySlice": 8,
+    "MipLevels": 4,
+    "MostDetailedMip": 0,
+    "ResourceMinLODClamp": 16
+   },
+   "size": 20
+  },
+  "D3D12_TEX1D_ARRAY_UAV": {
+   "fields": {
+    "ArraySize": 8,
+    "FirstArraySlice": 4,
+    "MipSlice": 0
+   },
+   "size": 12
+  },
+  "D3D12_TEX1D_DSV": {
+   "fields": {
+    "MipSlice": 0
+   },
+   "size": 4
+  },
+  "D3D12_TEX1D_RTV": {
+   "fields": {
+    "MipSlice": 0
+   },
+   "size": 4
+  },
+  "D3D12_TEX1D_SRV": {
+   "fields": {
+    "MipLevels": 4,
+    "MostDetailedMip": 0,
+    "ResourceMinLODClamp": 8
+   },
+   "size": 12
+  },
+  "D3D12_TEX1D_UAV": {
+   "fields": {
+    "MipSlice": 0
+   },
+   "size": 4
+  },
+  "D3D12_TEX2DMS_ARRAY_DSV": {
+   "fields": {
+    "ArraySize": 4,
+    "FirstArraySlice": 0
+   },
+   "size": 8
+  },
+  "D3D12_TEX2DMS_ARRAY_RTV": {
+   "fields": {
+    "ArraySize": 4,
+    "FirstArraySlice": 0
+   },
+   "size": 8
+  },
+  "D3D12_TEX2DMS_ARRAY_SRV": {
+   "fields": {
+    "ArraySize": 4,
+    "FirstArraySlice": 0
+   },
+   "size": 8
+  },
+  "D3D12_TEX2DMS_ARRAY_UAV": {
+   "fields": {
+    "ArraySize": 4,
+    "FirstArraySlice": 0
+   },
+   "size": 8
+  },
+  "D3D12_TEX2DMS_DSV": {
+   "fields": {
+    "UnusedField_NothingToDefine": 0
+   },
+   "size": 4
+  },
+  "D3D12_TEX2DMS_RTV": {
+   "fields": {
+    "UnusedField_NothingToDefine": 0
+   },
+   "size": 4
+  },
+  "D3D12_TEX2DMS_SRV": {
+   "fields": {
+    "UnusedField_NothingToDefine": 0
+   },
+   "size": 4
+  },
+  "D3D12_TEX2DMS_UAV": {
+   "fields": {
+    "UnusedField_NothingToDefine": 0
+   },
+   "size": 4
+  },
+  "D3D12_TEX2D_ARRAY_DSV": {
+   "fields": {
+    "ArraySize": 8,
+    "FirstArraySlice": 4,
+    "MipSlice": 0
+   },
+   "size": 12
+  },
+  "D3D12_TEX2D_ARRAY_RTV": {
+   "fields": {
+    "ArraySize": 8,
+    "FirstArraySlice": 4,
+    "MipSlice": 0,
+    "PlaneSlice": 12
+   },
+   "size": 16
+  },
+  "D3D12_TEX2D_ARRAY_SRV": {
+   "fields": {
+    "ArraySize": 12,
+    "FirstArraySlice": 8,
+    "MipLevels": 4,
+    "MostDetailedMip": 0,
+    "PlaneSlice": 16,
+    "ResourceMinLODClamp": 20
+   },
+   "size": 24
+  },
+  "D3D12_TEX2D_ARRAY_UAV": {
+   "fields": {
+    "ArraySize": 8,
+    "FirstArraySlice": 4,
+    "MipSlice": 0,
+    "PlaneSlice": 12
+   },
+   "size": 16
+  },
+  "D3D12_TEX2D_DSV": {
+   "fields": {
+    "MipSlice": 0
+   },
+   "size": 4
+  },
+  "D3D12_TEX2D_RTV": {
+   "fields": {
+    "MipSlice": 0,
+    "PlaneSlice": 4
+   },
+   "size": 8
+  },
+  "D3D12_TEX2D_SRV": {
+   "fields": {
+    "MipLevels": 4,
+    "MostDetailedMip": 0,
+    "PlaneSlice": 8,
+    "ResourceMinLODClamp": 12
+   },
+   "size": 16
+  },
+  "D3D12_TEX2D_UAV": {
+   "fields": {
+    "MipSlice": 0,
+    "PlaneSlice": 4
+   },
+   "size": 8
+  },
+  "D3D12_TEX3D_RTV": {
+   "fields": {
+    "FirstWSlice": 4,
+    "MipSlice": 0,
+    "WSize": 8
+   },
+   "size": 12
+  },
+  "D3D12_TEX3D_SRV": {
+   "fields": {
+    "MipLevels": 4,
+    "MostDetailedMip": 0,
+    "ResourceMinLODClamp": 8
+   },
+   "size": 12
+  },
+  "D3D12_TEX3D_UAV": {
+   "fields": {
+    "FirstWSlice": 4,
+    "MipSlice": 0,
+    "WSize": 8
+   },
+   "size": 12
+  },
+  "D3D12_TEXCUBE_ARRAY_SRV": {
+   "fields": {
+    "First2DArrayFace": 8,
+    "MipLevels": 4,
+    "MostDetailedMip": 0,
+    "NumCubes": 12,
+    "ResourceMinLODClamp": 16
+   },
+   "size": 20
+  },
+  "D3D12_TEXCUBE_SRV": {
+   "fields": {
+    "MipLevels": 4,
+    "MostDetailedMip": 0,
+    "ResourceMinLODClamp": 8
+   },
+   "size": 12
+  },
+  "D3D12_TEXTURE_BARRIER": {
+   "fields": {
+    "AccessAfter": 12,
+    "AccessBefore": 8,
+    "Flags": 56,
+    "LayoutAfter": 20,
+    "LayoutBefore": 16,
+    "Subresources": 32,
+    "SyncAfter": 4,
+    "SyncBefore": 0
+   },
+   "size": 64
+  },
+  "D3D12_TEXTURE_COPY_LOCATION": {
+   "fields": {},
+   "size": 48
+  },
+  "D3D12_THREAD_LAUNCH_OVERRIDES": {
+   "fields": {
+    "NumOutputOverrides": 32,
+    "pLocalRootArgumentsTableIndex": 0,
+    "pNewName": 16,
+    "pOutputOverrides": 40,
+    "pProgramEntry": 8,
+    "pShareInputOf": 24
+   },
+   "size": 48
+  },
+  "D3D12_TILED_RESOURCE_COORDINATE": {
+   "fields": {
+    "Subresource": 12,
+    "X": 0,
+    "Y": 4,
+    "Z": 8
+   },
+   "size": 16
+  },
+  "D3D12_TILE_REGION_SIZE": {
+   "fields": {
+    "Depth": 14,
+    "Height": 12,
+    "NumTiles": 0,
+    "UseBox": 4,
+    "Width": 8
+   },
+   "size": 16
+  },
+  "D3D12_TILE_SHAPE": {
+   "fields": {
+    "DepthInTexels": 8,
+    "HeightInTexels": 4,
+    "WidthInTexels": 0
+   },
+   "size": 12
+  },
+  "D3D12_UNORDERED_ACCESS_VIEW_DESC": {
+   "fields": {},
+   "size": 40
+  },
+  "D3D12_VERSIONED_DEVICE_REMOVED_EXTENDED_DATA": {
+   "fields": {},
+   "size": 64
+  },
+  "D3D12_VERSIONED_ROOT_SIGNATURE_DESC": {
+   "fields": {},
+   "size": 48
+  },
+  "D3D12_VERTEX_BUFFER_VIEW": {
+   "fields": {
+    "BufferLocation": 0,
+    "SizeInBytes": 8,
+    "StrideInBytes": 12
+   },
+   "size": 16
+  },
+  "D3D12_VIDEO_DECODER_DESC": {
+   "fields": {
+    "Configuration": 4,
+    "NodeMask": 0
+   },
+   "size": 28
+  },
+  "D3D12_VIDEO_DECODER_HEAP_DESC": {
+   "fields": {
+    "BitRate": 48,
+    "Configuration": 4,
+    "DecodeHeight": 32,
+    "DecodeWidth": 28,
+    "Format": 36,
+    "FrameRate": 40,
+    "MaxDecodePictureBufferCount": 52,
+    "NodeMask": 0
+   },
+   "size": 56
+  },
+  "D3D12_VIDEO_DECODE_COMPRESSED_BITSTREAM": {
+   "fields": {
+    "Offset": 8,
+    "Size": 16,
+    "pBuffer": 0
+   },
+   "size": 24
+  },
+  "D3D12_VIDEO_DECODE_CONFIGURATION": {
+   "fields": {
+    "BitstreamEncryption": 16,
+    "DecodeProfile": 0,
+    "InterlaceType": 20
+   },
+   "size": 24
+  },
+  "D3D12_VIDEO_DECODE_CONVERSION_ARGUMENTS": {
+   "fields": {
+    "DecodeColorSpace": 24,
+    "Enable": 0,
+    "OutputColorSpace": 20,
+    "ReferenceSubresource": 16,
+    "pReferenceTexture2D": 8
+   },
+   "size": 32
+  },
+  "D3D12_VIDEO_DECODE_CONVERSION_ARGUMENTS1": {
+   "fields": {
+    "DecodeColorSpace": 24,
+    "Enable": 0,
+    "OutputColorSpace": 20,
+    "OutputHeight": 32,
+    "OutputWidth": 28,
+    "ReferenceSubresource": 16,
+    "pReferenceTexture2D": 8
+   },
+   "size": 40
+  },
+  "D3D12_VIDEO_DECODE_FRAME_ARGUMENT": {
+   "fields": {
+    "Size": 4,
+    "Type": 0
+   },
+   "size": 16
+  },
+  "D3D12_VIDEO_DECODE_INPUT_STREAM_ARGUMENTS": {
+   "fields": {
+    "CompressedBitstream": 200,
+    "FrameArguments": 8,
+    "NumFrameArguments": 0,
+    "ReferenceFrames": 168
+   },
+   "size": 232
+  },
+  "D3D12_VIDEO_DECODE_OUTPUT_HISTOGRAM": {
+   "fields": {
+    "Offset": 0,
+    "pBuffer": 8
+   },
+   "size": 16
+  },
+  "D3D12_VIDEO_DECODE_OUTPUT_STREAM_ARGUMENTS": {
+   "fields": {
+    "ConversionArguments": 16,
+    "OutputSubresource": 8,
+    "pOutputTexture2D": 0
+   },
+   "size": 48
+  },
+  "D3D12_VIDEO_DECODE_OUTPUT_STREAM_ARGUMENTS1": {
+   "fields": {
+    "ConversionArguments": 16,
+    "Histograms": 56,
+    "OutputSubresource": 8,
+    "pOutputTexture2D": 0
+   },
+   "size": 120
+  },
+  "D3D12_VIDEO_DECODE_REFERENCE_FRAMES": {
+   "fields": {
+    "NumTexture2Ds": 0,
+    "pSubresources": 16,
+    "ppHeaps": 24,
+    "ppTexture2Ds": 8
+   },
+   "size": 32
+  },
+  "D3D12_VIDEO_ENCODER_AV1_CDEF_CONFIG": {
+   "fields": {
+    "CdefBits": 0,
+    "CdefDampingMinus3": 8,
+    "CdefUVPriStrength": 80,
+    "CdefUVSecStrength": 208,
+    "CdefYPriStrength": 16,
+    "CdefYSecStrength": 144
+   },
+   "size": 272
+  },
+  "D3D12_VIDEO_ENCODER_AV1_CODEC_CONFIGURATION": {
+   "fields": {
+    "FeatureFlags": 0,
+    "OrderHintBitsMinus1": 4
+   },
+   "size": 8
+  },
+  "D3D12_VIDEO_ENCODER_AV1_CODEC_CONFIGURATION_SUPPORT": {
+   "fields": {
+    "MaxSpatialLayers": 80,
+    "MaxTemporalLayers": 76,
+    "PostEncodeValuesFlags": 72,
+    "RequiredFeatureFlags": 4,
+    "SegmentationBlockSize": 68,
+    "SupportedFeatureFlags": 0,
+    "SupportedInterpolationFilters": 8,
+    "SupportedSegmentationModes": 48,
+    "SupportedTxModes": 52
+   },
+   "size": 84
+  },
+  "D3D12_VIDEO_ENCODER_AV1_FRAME_SUBREGION_LAYOUT_CONFIG_SUPPORT": {
+   "fields": {
+    "MaxTileArea": 1088,
+    "MaxTileCols": 1072,
+    "MaxTileRows": 1064,
+    "MaxTileWidth": 1080,
+    "MinTileArea": 1084,
+    "MinTileCols": 1068,
+    "MinTileRows": 1060,
+    "MinTileWidth": 1076,
+    "TileSizeBytesMinus1": 1092,
+    "TilesConfiguration": 8,
+    "Use128SuperBlocks": 0,
+    "ValidationFlags": 1056
+   },
+   "size": 1096
+  },
+  "D3D12_VIDEO_ENCODER_AV1_LEVEL_TIER_CONSTRAINTS": {
+   "fields": {
+    "Level": 0,
+    "Tier": 4
+   },
+   "size": 8
+  },
+  "D3D12_VIDEO_ENCODER_AV1_PICTURE_CONTROL_CODEC_DATA": {
+   "fields": {
+    "CDEF": 880,
+    "CompoundPredictionType": 8,
+    "CustomSegmentation": 1168,
+    "CustomSegmentsMap": 1776,
+    "Flags": 0,
+    "FrameRestorationConfig": 16,
+    "FrameType": 4,
+    "InterpolationFilter": 12,
+    "LoopFilter": 616,
+    "LoopFilterDelta": 760,
+    "OrderHint": 48,
+    "PictureIndex": 52,
+    "PrimaryRefFrame": 604,
+    "QPMapValuesCount": 1152,
+    "Quantization": 784,
+    "QuantizationDelta": 864,
+    "ReferenceFramesReconPictureDescriptors": 64,
+    "ReferenceIndices": 576,
+    "RefreshFrameFlags": 608,
+    "SpatialLayerIndexPlus1": 60,
+    "SuperResDenominator": 44,
+    "TemporalLayerIndexPlus1": 56,
+    "TxMode": 40,
+    "pRateControlQPMap": 1160
+   },
+   "size": 1792
+  },
+  "D3D12_VIDEO_ENCODER_AV1_PICTURE_CONTROL_SUBREGIONS_LAYOUT_DATA_TILES": {
+   "fields": {
+    "ColCount": 8,
+    "ColWidths": 528,
+    "ContextUpdateTileId": 1040,
+    "RowCount": 0,
+    "RowHeights": 16
+   },
+   "size": 1048
+  },
+  "D3D12_VIDEO_ENCODER_AV1_POST_ENCODE_VALUES": {
+   "fields": {
+    "CDEF": 272,
+    "CompoundPredictionType": 0,
+    "LoopFilter": 8,
+    "LoopFilterDelta": 152,
+    "PrimaryRefFrame": 1152,
+    "Quantization": 176,
+    "QuantizationDelta": 256,
+    "ReferenceIndices": 1160,
+    "SegmentationConfig": 544
+   },
+   "size": 1216
+  },
+  "D3D12_VIDEO_ENCODER_AV1_REFERENCE_PICTURE_DESCRIPTOR": {
+   "fields": {
+    "FrameType": 12,
+    "OrderHint": 56,
+    "PictureIndex": 60,
+    "ReconstructedPictureResourceIndex": 0,
+    "SpatialLayerIndexPlus1": 8,
+    "TemporalLayerIndexPlus1": 4,
+    "WarpedMotionInfo": 16
+   },
+   "size": 64
+  },
+  "D3D12_VIDEO_ENCODER_AV1_REFERENCE_PICTURE_WARPED_MOTION_INFO": {
+   "fields": {
+    "InvalidAffineSet": 36,
+    "TransformationMatrix": 4,
+    "TransformationType": 0
+   },
+   "size": 40
+  },
+  "D3D12_VIDEO_ENCODER_AV1_RESTORATION_CONFIG": {
+   "fields": {
+    "FrameRestorationType": 0,
+    "LoopRestorationPixelSize": 12
+   },
+   "size": 24
+  },
+  "D3D12_VIDEO_ENCODER_AV1_SEGMENTATION_CONFIG": {
+   "fields": {
+    "NumSegments": 24,
+    "SegmentsData": 32,
+    "TemporalUpdate": 8,
+    "UpdateData": 16,
+    "UpdateMap": 0
+   },
+   "size": 608
+  },
+  "D3D12_VIDEO_ENCODER_AV1_SEGMENTATION_MAP": {
+   "fields": {
+    "SegmentsMapByteSize": 0,
+    "pSegmentsMap": 8
+   },
+   "size": 16
+  },
+  "D3D12_VIDEO_ENCODER_AV1_SEGMENT_DATA": {
+   "fields": {
+    "EnabledFeatures": 0,
+    "FeatureValue": 8
+   },
+   "size": 72
+  },
+  "D3D12_VIDEO_ENCODER_AV1_SEQUENCE_STRUCTURE": {
+   "fields": {
+    "InterFramePeriod": 4,
+    "IntraDistance": 0
+   },
+   "size": 8
+  },
+  "D3D12_VIDEO_ENCODER_CODEC_AV1_LOOP_FILTER_CONFIG": {
+   "fields": {
+    "LoopFilterDeltaEnabled": 40,
+    "LoopFilterLevel": 0,
+    "LoopFilterLevelU": 16,
+    "LoopFilterLevelV": 24,
+    "LoopFilterSharpnessLevel": 32,
+    "ModeDeltas": 128,
+    "RefDeltas": 56,
+    "UpdateModeDelta": 120,
+    "UpdateRefDelta": 48
+   },
+   "size": 144
+  },
+  "D3D12_VIDEO_ENCODER_CODEC_AV1_LOOP_FILTER_DELTA_CONFIG": {
+   "fields": {
+    "DeltaLFMulti": 8,
+    "DeltaLFPresent": 0,
+    "DeltaLFRes": 16
+   },
+   "size": 24
+  },
+  "D3D12_VIDEO_ENCODER_CODEC_AV1_PICTURE_CONTROL_SUPPORT": {
+   "fields": {
+    "MaxUniqueReferencesPerFrame": 4,
+    "PredictionMode": 0,
+    "SupportedFrameTypes": 8,
+    "SupportedReferenceWarpedMotionFlags": 12
+   },
+   "size": 16
+  },
+  "D3D12_VIDEO_ENCODER_CODEC_AV1_QUANTIZATION_CONFIG": {
+   "fields": {
+    "BaseQIndex": 0,
+    "QMU": 64,
+    "QMV": 72,
+    "QMY": 56,
+    "UACDeltaQ": 24,
+    "UDCDeltaQ": 16,
+    "UsingQMatrix": 48,
+    "VACDeltaQ": 40,
+    "VDCDeltaQ": 32,
+    "YDCDeltaQ": 8
+   },
+   "size": 80
+  },
+  "D3D12_VIDEO_ENCODER_CODEC_AV1_QUANTIZATION_DELTA_CONFIG": {
+   "fields": {
+    "DeltaQPresent": 0,
+    "DeltaQRes": 8
+   },
+   "size": 16
+  },
+  "D3D12_VIDEO_ENCODER_CODEC_CONFIGURATION": {
+   "fields": {},
+   "size": 16
+  },
+  "D3D12_VIDEO_ENCODER_CODEC_CONFIGURATION_H264": {
+   "fields": {
+    "ConfigurationFlags": 0,
+    "DirectModeConfig": 4,
+    "DisableDeblockingFilterConfig": 8
+   },
+   "size": 12
+  },
+  "D3D12_VIDEO_ENCODER_CODEC_CONFIGURATION_HEVC": {
+   "fields": {
+    "ConfigurationFlags": 0,
+    "MaxLumaCodingUnitSize": 8,
+    "MaxLumaTransformUnitSize": 16,
+    "MinLumaCodingUnitSize": 4,
+    "MinLumaTransformUnitSize": 12,
+    "max_transform_hierarchy_depth_inter": 20,
+    "max_transform_hierarchy_depth_intra": 21
+   },
+   "size": 24
+  },
+  "D3D12_VIDEO_ENCODER_CODEC_CONFIGURATION_SUPPORT": {
+   "fields": {},
+   "size": 16
+  },
+  "D3D12_VIDEO_ENCODER_CODEC_CONFIGURATION_SUPPORT_H264": {
+   "fields": {
+    "DisableDeblockingFilterSupportedModes": 4,
+    "SupportFlags": 0
+   },
+   "size": 8
+  },
+  "D3D12_VIDEO_ENCODER_CODEC_CONFIGURATION_SUPPORT_HEVC": {
+   "fields": {
+    "MaxLumaCodingUnitSize": 8,
+    "MaxLumaTransformUnitSize": 16,
+    "MinLumaCodingUnitSize": 4,
+    "MinLumaTransformUnitSize": 12,
+    "SupportFlags": 0,
+    "max_transform_hierarchy_depth_inter": 20,
+    "max_transform_hierarchy_depth_intra": 21
+   },
+   "size": 24
+  },
+  "D3D12_VIDEO_ENCODER_CODEC_CONFIGURATION_SUPPORT_HEVC1": {
+   "fields": {
+    "MaxLumaCodingUnitSize": 8,
+    "MaxLumaTransformUnitSize": 16,
+    "MinLumaCodingUnitSize": 4,
+    "MinLumaTransformUnitSize": 12,
+    "SupportFlags": 0,
+    "SupportFlags1": 92,
+    "allowed_cb_qp_offset_list_values": 44,
+    "allowed_chroma_qp_offset_list_len_minus1_values": 40,
+    "allowed_cr_qp_offset_list_values": 68,
+    "allowed_diff_cu_chroma_qp_offset_depth_values": 24,
+    "allowed_log2_max_transform_skip_block_size_minus2_values": 36,
+    "allowed_log2_sao_offset_scale_chroma_values": 32,
+    "allowed_log2_sao_offset_scale_luma_values": 28,
+    "max_transform_hierarchy_depth_inter": 20,
+    "max_transform_hierarchy_depth_intra": 21
+   },
+   "size": 96
+  },
+  "D3D12_VIDEO_ENCODER_CODEC_PICTURE_CONTROL_SUPPORT": {
+   "fields": {},
+   "size": 16
+  },
+  "D3D12_VIDEO_ENCODER_CODEC_PICTURE_CONTROL_SUPPORT_H264": {
+   "fields": {
+    "MaxDPBCapacity": 16,
+    "MaxL0ReferencesForB": 4,
+    "MaxL0ReferencesForP": 0,
+    "MaxL1ReferencesForB": 8,
+    "MaxLongTermReferences": 12
+   },
+   "size": 20
+  },
+  "D3D12_VIDEO_ENCODER_CODEC_PICTURE_CONTROL_SUPPORT_HEVC": {
+   "fields": {
+    "MaxDPBCapacity": 16,
+    "MaxL0ReferencesForB": 4,
+    "MaxL0ReferencesForP": 0,
+    "MaxL1ReferencesForB": 8,
+    "MaxLongTermReferences": 12
+   },
+   "size": 20
+  },
+  "D3D12_VIDEO_ENCODER_COMPRESSED_BITSTREAM": {
+   "fields": {
+    "FrameStartOffset": 8,
+    "pBuffer": 0
+   },
+   "size": 16
+  },
+  "D3D12_VIDEO_ENCODER_DESC": {
+   "fields": {
+    "CodecConfiguration": 40,
+    "EncodeCodec": 8,
+    "EncodeProfile": 16,
+    "Flags": 4,
+    "InputFormat": 32,
+    "MaxMotionEstimationPrecision": 56,
+    "NodeMask": 0
+   },
+   "size": 64
+  },
+  "D3D12_VIDEO_ENCODER_ENCODEFRAME_INPUT_ARGUMENTS": {
+   "fields": {
+    "CurrentFrameBitstreamMetadataSize": 156,
+    "InputFrameSubresource": 152,
+    "PictureControlDesc": 96,
+    "SequenceControlDesc": 0
+   },
+   "size": 160
+  },
+  "D3D12_VIDEO_ENCODER_ENCODEFRAME_OUTPUT_ARGUMENTS": {
+   "fields": {
+    "Bitstream": 0,
+    "EncoderOutputMetadata": 32,
+    "ReconstructedPicture": 16
+   },
+   "size": 48
+  },
+  "D3D12_VIDEO_ENCODER_ENCODE_OPERATION_METADATA_BUFFER": {
+   "fields": {
+    "Offset": 8,
+    "pBuffer": 0
+   },
+   "size": 16
+  },
+  "D3D12_VIDEO_ENCODER_FRAME_SUBREGION_LAYOUT_CONFIG_SUPPORT": {
+   "fields": {},
+   "size": 16
+  },
+  "D3D12_VIDEO_ENCODER_FRAME_SUBREGION_METADATA": {
+   "fields": {
+    "bHeaderSize": 16,
+    "bSize": 0,
+    "bStartOffset": 8
+   },
+   "size": 24
+  },
+  "D3D12_VIDEO_ENCODER_HEAP_DESC": {
+   "fields": {
+    "EncodeCodec": 8,
+    "EncodeLevel": 32,
+    "EncodeProfile": 16,
+    "Flags": 4,
+    "NodeMask": 0,
+    "ResolutionsListCount": 48,
+    "pResolutionList": 56
+   },
+   "size": 64
+  },
+  "D3D12_VIDEO_ENCODER_INTRA_REFRESH": {
+   "fields": {
+    "IntraRefreshDuration": 4,
+    "Mode": 0
+   },
+   "size": 8
+  },
+  "D3D12_VIDEO_ENCODER_LEVEL_SETTING": {
+   "fields": {},
+   "size": 16
+  },
+  "D3D12_VIDEO_ENCODER_LEVEL_TIER_CONSTRAINTS_HEVC": {
+   "fields": {
+    "Level": 0,
+    "Tier": 4
+   },
+   "size": 8
+  },
+  "D3D12_VIDEO_ENCODER_OUTPUT_METADATA": {
+   "fields": {
+    "EncodeErrorFlags": 0,
+    "EncodeStats": 8,
+    "EncodedBitstreamWrittenBytesCount": 56,
+    "WrittenSubregionsCount": 64
+   },
+   "size": 72
+  },
+  "D3D12_VIDEO_ENCODER_OUTPUT_METADATA_STATISTICS": {
+   "fields": {
+    "AverageMotionEstimationXDirection": 32,
+    "AverageMotionEstimationYDirection": 40,
+    "AverageQP": 0,
+    "InterCodingUnitsCount": 16,
+    "IntraCodingUnitsCount": 8,
+    "SkipCodingUnitsCount": 24
+   },
+   "size": 48
+  },
+  "D3D12_VIDEO_ENCODER_PICTURE_CONTROL_CODEC_DATA": {
+   "fields": {},
+   "size": 16
+  },
+  "D3D12_VIDEO_ENCODER_PICTURE_CONTROL_CODEC_DATA_H264": {
+   "fields": {
+    "Flags": 0,
+    "FrameDecodingOrderNumber": 20,
+    "FrameType": 4,
+    "List0RefPicModificationsCount": 88,
+    "List0ReferenceFramesCount": 28,
+    "List1RefPicModificationsCount": 104,
+    "List1ReferenceFramesCount": 40,
+    "PictureOrderCountNumber": 16,
+    "QPMapValuesCount": 120,
+    "RefPicMarkingOperationsCommandsCount": 76,
+    "ReferenceFramesReconPictureDescriptorsCount": 56,
+    "TemporalLayerIndex": 24,
+    "adaptive_ref_pic_marking_mode_flag": 72,
+    "idr_pic_id": 12,
+    "pList0RefPicModifications": 96,
+    "pList0ReferenceFrames": 32,
+    "pList1RefPicModifications": 112,
+    "pList1ReferenceFrames": 48,
+    "pRefPicMarkingOperationsCommands": 80,
+    "pReferenceFramesReconPictureDescriptors": 64,
+    "pic_parameter_set_id": 8
+   },
+   "size": 136
+  },
+  "D3D12_VIDEO_ENCODER_PICTURE_CONTROL_CODEC_DATA_H264_REFERENCE_PICTURE_LIST_MODIFICATION_OPERATION": {
+   "fields": {
+    "abs_diff_pic_num_minus1": 4,
+    "long_term_pic_num": 8,
+    "modification_of_pic_nums_idc": 0
+   },
+   "size": 12
+  },
+  "D3D12_VIDEO_ENCODER_PICTURE_CONTROL_CODEC_DATA_H264_REFERENCE_PICTURE_MARKING_OPERATION": {
+   "fields": {
+    "difference_of_pic_nums_minus1": 4,
+    "long_term_frame_idx": 12,
+    "long_term_pic_num": 8,
+    "max_long_term_frame_idx_plus1": 16,
+    "memory_management_control_operation": 0
+   },
+   "size": 20
+  },
+  "D3D12_VIDEO_ENCODER_PICTURE_CONTROL_CODEC_DATA_HEVC": {
+   "fields": {
+    "Flags": 0,
+    "FrameType": 4,
+    "List0RefPicModificationsCount": 64,
+    "List0ReferenceFramesCount": 20,
+    "List1RefPicModificationsCount": 80,
+    "List1ReferenceFramesCount": 32,
+    "PictureOrderCountNumber": 12,
+    "QPMapValuesCount": 96,
+    "ReferenceFramesReconPictureDescriptorsCount": 48,
+    "TemporalLayerIndex": 16,
+    "pList0RefPicModifications": 72,
+    "pList0ReferenceFrames": 24,
+    "pList1RefPicModifications": 88,
+    "pList1ReferenceFrames": 40,
+    "pReferenceFramesReconPictureDescriptors": 56,
+    "slice_pic_parameter_set_id": 8
+   },
+   "size": 112
+  },
+  "D3D12_VIDEO_ENCODER_PICTURE_CONTROL_CODEC_DATA_HEVC1": {
+   "fields": {
+    "Flags": 0,
+    "FrameType": 4,
+    "List0RefPicModificationsCount": 64,
+    "List0ReferenceFramesCount": 20,
+    "List1RefPicModificationsCount": 80,
+    "List1ReferenceFramesCount": 32,
+    "PictureOrderCountNumber": 12,
+    "QPMapValuesCount": 96,
+    "ReferenceFramesReconPictureDescriptorsCount": 48,
+    "TemporalLayerIndex": 16,
+    "cb_qp_offset_list": 117,
+    "chroma_qp_offset_list_len_minus1": 116,
+    "cr_qp_offset_list": 123,
+    "diff_cu_chroma_qp_offset_depth": 112,
+    "log2_max_transform_skip_block_size_minus2": 115,
+    "log2_sao_offset_scale_chroma": 114,
+    "log2_sao_offset_scale_luma": 113,
+    "pList0RefPicModifications": 72,
+    "pList0ReferenceFrames": 24,
+    "pList1RefPicModifications": 88,
+    "pList1ReferenceFrames": 40,
+    "pRateControlQPMap": 104,
+    "pReferenceFramesReconPictureDescriptors": 56,
+    "slice_pic_parameter_set_id": 8
+   },
+   "size": 136
+  },
+  "D3D12_VIDEO_ENCODER_PICTURE_CONTROL_DESC": {
+   "fields": {
+    "Flags": 4,
+    "IntraRefreshFrameIndex": 0,
+    "PictureControlCodecData": 8,
+    "ReferenceFrames": 24
+   },
+   "size": 48
+  },
+  "D3D12_VIDEO_ENCODER_PICTURE_CONTROL_SUBREGIONS_LAYOUT_DATA": {
+   "fields": {},
+   "size": 16
+  },
+  "D3D12_VIDEO_ENCODER_PICTURE_CONTROL_SUBREGIONS_LAYOUT_DATA_SLICES": {
+   "fields": {},
+   "size": 4
+  },
+  "D3D12_VIDEO_ENCODER_PICTURE_RESOLUTION_DESC": {
+   "fields": {
+    "Height": 4,
+    "Width": 0
+   },
+   "size": 8
+  },
+  "D3D12_VIDEO_ENCODER_PICTURE_RESOLUTION_RATIO_DESC": {
+   "fields": {
+    "HeightRatio": 4,
+    "WidthRatio": 0
+   },
+   "size": 8
+  },
+  "D3D12_VIDEO_ENCODER_PROFILE_DESC": {
+   "fields": {},
+   "size": 16
+  },
+  "D3D12_VIDEO_ENCODER_RATE_CONTROL": {
+   "fields": {
+    "ConfigParams": 8,
+    "Flags": 4,
+    "Mode": 0,
+    "TargetFrameRate": 24
+   },
+   "size": 32
+  },
+  "D3D12_VIDEO_ENCODER_RATE_CONTROL_ABSOLUTE_QP_MAP": {
+   "fields": {
+    "QualityVsSpeed": 0
+   },
+   "size": 4
+  },
+  "D3D12_VIDEO_ENCODER_RATE_CONTROL_CBR": {
+   "fields": {
+    "InitialQP": 0,
+    "InitialVBVFullness": 40,
+    "MaxFrameBitSize": 16,
+    "MaxQP": 8,
+    "MinQP": 4,
+    "TargetBitRate": 24,
+    "VBVCapacity": 32
+   },
+   "size": 48
+  },
+  "D3D12_VIDEO_ENCODER_RATE_CONTROL_CBR1": {
+   "fields": {
+    "InitialQP": 0,
+    "InitialVBVFullness": 40,
+    "MaxFrameBitSize": 16,
+    "MaxQP": 8,
+    "MinQP": 4,
+    "QualityVsSpeed": 48,
+    "TargetBitRate": 24,
+    "VBVCapacity": 32
+   },
+   "size": 56
+  },
+  "D3D12_VIDEO_ENCODER_RATE_CONTROL_CONFIGURATION_PARAMS": {
+   "fields": {},
+   "size": 16
+  },
+  "D3D12_VIDEO_ENCODER_RATE_CONTROL_CQP": {
+   "fields": {
+    "ConstantQP_FullIntracodedFrame": 0,
+    "ConstantQP_InterPredictedFrame_BiDirectionalRef": 8,
+    "ConstantQP_InterPredictedFrame_PrevRefOnly": 4
+   },
+   "size": 12
+  },
+  "D3D12_VIDEO_ENCODER_RATE_CONTROL_CQP1": {
+   "fields": {
+    "ConstantQP_FullIntracodedFrame": 0,
+    "ConstantQP_InterPredictedFrame_BiDirectionalRef": 8,
+    "ConstantQP_InterPredictedFrame_PrevRefOnly": 4,
+    "QualityVsSpeed": 12
+   },
+   "size": 16
+  },
+  "D3D12_VIDEO_ENCODER_RATE_CONTROL_QVBR": {
+   "fields": {
+    "ConstantQualityTarget": 40,
+    "InitialQP": 0,
+    "MaxFrameBitSize": 16,
+    "MaxQP": 8,
+    "MinQP": 4,
+    "PeakBitRate": 32,
+    "TargetAvgBitRate": 24
+   },
+   "size": 48
+  },
+  "D3D12_VIDEO_ENCODER_RATE_CONTROL_QVBR1": {
+   "fields": {
+    "ConstantQualityTarget": 40,
+    "InitialQP": 0,
+    "InitialVBVFullness": 56,
+    "MaxFrameBitSize": 16,
+    "MaxQP": 8,
+    "MinQP": 4,
+    "PeakBitRate": 32,
+    "QualityVsSpeed": 64,
+    "TargetAvgBitRate": 24,
+    "VBVCapacity": 48
+   },
+   "size": 72
+  },
+  "D3D12_VIDEO_ENCODER_RATE_CONTROL_VBR": {
+   "fields": {
+    "InitialQP": 0,
+    "InitialVBVFullness": 48,
+    "MaxFrameBitSize": 16,
+    "MaxQP": 8,
+    "MinQP": 4,
+    "PeakBitRate": 32,
+    "TargetAvgBitRate": 24,
+    "VBVCapacity": 40
+   },
+   "size": 56
+  },
+  "D3D12_VIDEO_ENCODER_RATE_CONTROL_VBR1": {
+   "fields": {
+    "InitialQP": 0,
+    "InitialVBVFullness": 48,
+    "MaxFrameBitSize": 16,
+    "MaxQP": 8,
+    "MinQP": 4,
+    "PeakBitRate": 32,
+    "QualityVsSpeed": 56,
+    "TargetAvgBitRate": 24,
+    "VBVCapacity": 40
+   },
+   "size": 64
+  },
+  "D3D12_VIDEO_ENCODER_RECONSTRUCTED_PICTURE": {
+   "fields": {
+    "ReconstructedPictureSubresource": 8
+   },
+   "size": 16
+  },
+  "D3D12_VIDEO_ENCODER_REFERENCE_PICTURE_DESCRIPTOR_H264": {
+   "fields": {
+    "FrameDecodingOrderNumber": 16,
+    "IsLongTermReference": 4,
+    "LongTermPictureIdx": 8,
+    "PictureOrderCountNumber": 12,
+    "ReconstructedPictureResourceIndex": 0,
+    "TemporalLayerIndex": 20
+   },
+   "size": 24
+  },
+  "D3D12_VIDEO_ENCODER_REFERENCE_PICTURE_DESCRIPTOR_HEVC": {
+   "fields": {
+    "IsLongTermReference": 8,
+    "IsRefUsedByCurrentPic": 4,
+    "PictureOrderCountNumber": 12,
+    "ReconstructedPictureResourceIndex": 0,
+    "TemporalLayerIndex": 16
+   },
+   "size": 20
+  },
+  "D3D12_VIDEO_ENCODER_RESOLVE_METADATA_INPUT_ARGUMENTS": {
+   "fields": {
+    "EncodedPictureEffectiveResolution": 28,
+    "EncoderCodec": 0,
+    "EncoderInputFormat": 24,
+    "EncoderProfile": 8,
+    "HWLayoutMetadata": 40
+   },
+   "size": 56
+  },
+  "D3D12_VIDEO_ENCODER_RESOLVE_METADATA_OUTPUT_ARGUMENTS": {
+   "fields": {
+    "ResolvedLayoutMetadata": 0
+   },
+   "size": 16
+  },
+  "D3D12_VIDEO_ENCODER_SEQUENCE_CONTROL_DESC": {
+   "fields": {
+    "CodecGopSequence": 80,
+    "Flags": 0,
+    "FrameSubregionsLayoutData": 64,
+    "IntraRefreshConfig": 4,
+    "PictureTargetResolution": 48,
+    "RateControl": 16,
+    "SelectedLayoutMode": 56
+   },
+   "size": 96
+  },
+  "D3D12_VIDEO_ENCODER_SEQUENCE_GOP_STRUCTURE": {
+   "fields": {},
+   "size": 16
+  },
+  "D3D12_VIDEO_ENCODER_SEQUENCE_GOP_STRUCTURE_H264": {
+   "fields": {
+    "GOPLength": 0,
+    "PPicturePeriod": 4,
+    "log2_max_frame_num_minus4": 9,
+    "log2_max_pic_order_cnt_lsb_minus4": 10,
+    "pic_order_cnt_type": 8
+   },
+   "size": 12
+  },
+  "D3D12_VIDEO_ENCODER_SEQUENCE_GOP_STRUCTURE_HEVC": {
+   "fields": {
+    "GOPLength": 0,
+    "PPicturePeriod": 4,
+    "log2_max_pic_order_cnt_lsb_minus4": 8
+   },
+   "size": 12
+  },
+  "D3D12_VIDEO_ENCODE_REFERENCE_FRAMES": {
+   "fields": {
+    "NumTexture2Ds": 0,
+    "pSubresources": 16,
+    "ppTexture2Ds": 8
+   },
+   "size": 24
+  },
+  "D3D12_VIDEO_EXTENSION_COMMAND_DESC": {
+   "fields": {
+    "CommandId": 4,
+    "NodeMask": 0
+   },
+   "size": 20
+  },
+  "D3D12_VIDEO_EXTENSION_COMMAND_INFO": {
+   "fields": {
+    "CommandId": 0,
+    "CommandListSupportFlags": 24,
+    "Name": 16
+   },
+   "size": 32
+  },
+  "D3D12_VIDEO_EXTENSION_COMMAND_PARAMETER_INFO": {
+   "fields": {
+    "Flags": 12,
+    "Name": 0,
+    "Type": 8
+   },
+   "size": 16
+  },
+  "D3D12_VIDEO_FORMAT": {
+   "fields": {
+    "ColorSpace": 4,
+    "Format": 0
+   },
+   "size": 8
+  },
+  "D3D12_VIDEO_MOTION_ESTIMATOR_DESC": {
+   "fields": {
+    "BlockSize": 8,
+    "InputFormat": 4,
+    "NodeMask": 0,
+    "Precision": 12,
+    "SizeRange": 16
+   },
+   "size": 32
+  },
+  "D3D12_VIDEO_MOTION_ESTIMATOR_INPUT": {
+   "fields": {
+    "InputSubresourceIndex": 8,
+    "ReferenceSubresourceIndex": 24,
+    "pHintMotionVectorHeap": 32,
+    "pInputTexture2D": 0,
+    "pReferenceTexture2D": 16
+   },
+   "size": 40
+  },
+  "D3D12_VIDEO_MOTION_ESTIMATOR_OUTPUT": {
+   "fields": {
+    "pMotionVectorHeap": 0
+   },
+   "size": 8
+  },
+  "D3D12_VIDEO_MOTION_VECTOR_HEAP_DESC": {
+   "fields": {
+    "BlockSize": 8,
+    "InputFormat": 4,
+    "NodeMask": 0,
+    "Precision": 12,
+    "SizeRange": 16
+   },
+   "size": 32
+  },
+  "D3D12_VIDEO_PROCESS_ALPHA_BLENDING": {
+   "fields": {
+    "Alpha": 4,
+    "Enable": 0
+   },
+   "size": 8
+  },
+  "D3D12_VIDEO_PROCESS_FILTER_RANGE": {
+   "fields": {
+    "Default": 8,
+    "Maximum": 4,
+    "Minimum": 0,
+    "Multiplier": 12
+   },
+   "size": 16
+  },
+  "D3D12_VIDEO_PROCESS_INPUT_STREAM": {
+   "fields": {
+    "ReferenceSet": 16,
+    "Subresource": 8
+   },
+   "size": 64
+  },
+  "D3D12_VIDEO_PROCESS_INPUT_STREAM_ARGUMENTS": {
+   "fields": {
+    "AlphaBlending": 304,
+    "FilterLevels": 176,
+    "Flags": 164,
+    "InputStream": 0,
+    "RateInfo": 168,
+    "Transform": 128
+   },
+   "size": 312
+  },
+  "D3D12_VIDEO_PROCESS_INPUT_STREAM_ARGUMENTS1": {
+   "fields": {
+    "AlphaBlending": 304,
+    "FieldType": 312,
+    "FilterLevels": 176,
+    "Flags": 164,
+    "InputStream": 0,
+    "RateInfo": 168,
+    "Transform": 128
+   },
+   "size": 320
+  },
+  "D3D12_VIDEO_PROCESS_INPUT_STREAM_DESC": {
+   "fields": {
+    "ColorSpace": 4,
+    "DeinterlaceMode": 80,
+    "DestinationAspectRatio": 16,
+    "DestinationSizeRange": 48,
+    "EnableAlphaBlending": 84,
+    "EnableAutoProcessing": 108,
+    "EnableOrientation": 64,
+    "FieldType": 76,
+    "FilterFlags": 68,
+    "Format": 0,
+    "FrameRate": 24,
+    "LumaKey": 88,
+    "NumFutureFrames": 104,
+    "NumPastFrames": 100,
+    "SourceAspectRatio": 8,
+    "SourceSizeRange": 32,
+    "StereoFormat": 72
+   },
+   "size": 112
+  },
+  "D3D12_VIDEO_PROCESS_INPUT_STREAM_RATE": {
+   "fields": {
+    "InputFrameOrField": 4,
+    "OutputIndex": 0
+   },
+   "size": 8
+  },
+  "D3D12_VIDEO_PROCESS_LUMA_KEY": {
+   "fields": {
+    "Enable": 0,
+    "Lower": 4,
+    "Upper": 8
+   },
+   "size": 12
+  },
+  "D3D12_VIDEO_PROCESS_OUTPUT_STREAM": {
+   "fields": {
+    "Subresource": 8,
+    "pTexture2D": 0
+   },
+   "size": 16
+  },
+  "D3D12_VIDEO_PROCESS_OUTPUT_STREAM_ARGUMENTS": {
+   "fields": {
+    "OutputStream": 0,
+    "TargetRectangle": 32
+   },
+   "size": 48
+  },
+  "D3D12_VIDEO_PROCESS_OUTPUT_STREAM_DESC": {
+   "fields": {
+    "AlphaFillMode": 8,
+    "AlphaFillModeSourceStreamIndex": 12,
+    "BackgroundColor": 16,
+    "ColorSpace": 4,
+    "EnableStereo": 40,
+    "Format": 0,
+    "FrameRate": 32
+   },
+   "size": 44
+  },
+  "D3D12_VIDEO_PROCESS_REFERENCE_SET": {
+   "fields": {
+    "NumFutureFrames": 24,
+    "NumPastFrames": 0
+   },
+   "size": 48
+  },
+  "D3D12_VIDEO_PROCESS_TRANSFORM": {
+   "fields": {
+    "DestinationRectangle": 16,
+    "Orientation": 32,
+    "SourceRectangle": 0
+   },
+   "size": 36
+  },
+  "D3D12_VIDEO_SAMPLE": {
+   "fields": {
+    "Format": 8,
+    "Height": 4,
+    "Width": 0
+   },
+   "size": 16
+  },
+  "D3D12_VIDEO_SCALE_SUPPORT": {
+   "fields": {
+    "Flags": 16,
+    "OutputSizeRange": 0
+   },
+   "size": 20
+  },
+  "D3D12_VIDEO_SIZE_RANGE": {
+   "fields": {
+    "MaxHeight": 4,
+    "MaxWidth": 0,
+    "MinHeight": 12,
+    "MinWidth": 8
+   },
+   "size": 16
+  },
+  "D3D12_VIEWPORT": {
+   "fields": {
+    "Height": 12,
+    "MaxDepth": 20,
+    "MinDepth": 16,
+    "TopLeftX": 0,
+    "TopLeftY": 4,
+    "Width": 8
+   },
+   "size": 24
+  },
+  "D3D12_VIEW_INSTANCE_LOCATION": {
+   "fields": {
+    "RenderTargetArrayIndex": 4,
+    "ViewportArrayIndex": 0
+   },
+   "size": 8
+  },
+  "D3D12_VIEW_INSTANCING_DESC": {
+   "fields": {
+    "Flags": 16,
+    "ViewInstanceCount": 0,
+    "pViewInstanceLocations": 8
+   },
+   "size": 24
+  },
+  "D3D12_WORK_GRAPH_DESC": {
+   "fields": {
+    "Flags": 8,
+    "NumEntrypoints": 12,
+    "NumExplicitlyDefinedNodes": 24,
+    "ProgramName": 0,
+    "pEntrypoints": 16,
+    "pExplicitlyDefinedNodes": 32
+   },
+   "size": 40
+  },
+  "D3D12_WORK_GRAPH_MEMORY_REQUIREMENTS": {
+   "fields": {
+    "MaxSizeInBytes": 8,
+    "MinSizeInBytes": 0,
+    "SizeGranularityInBytes": 16
+   },
+   "size": 24
+  },
+  "D3D12_WRITEBUFFERIMMEDIATE_PARAMETER": {
+   "fields": {
+    "Dest": 0,
+    "Value": 8
+   },
+   "size": 16
   },
   "D3DCOLORVALUE": {
    "fields": {

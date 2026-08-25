@@ -102,6 +102,7 @@ import comtypes
 # LUID and SECURITY_ATTRIBUTES live in the canonical type table, not in
 # any IDL - they are Windows types the IDLs reference without declaring.
 from Direct3D.PyIdl.typemap import LUID, SECURITY_ATTRIBUTES
+{helpers}
 '''
 
 
@@ -186,12 +187,17 @@ class Emitter(object):
         for name, spec in structs.items():
             refs = set()
             candidates = list(spec.get("parsed_fields", []))
-            for _kind, fields in spec.get("segments") or []:
+            for kind, payload in spec.get("segments") or []:
                 # A union-carrying structure has no parsed_fields, so its
                 # dependencies live in the segments. Missing these ordered
                 # D3D11_DEPTH_STENCIL_VIEW_DESC before D3D11_TEX1D_DSV, which it
                 # contains.
-                candidates += list(fields)
+                if kind == "fields":
+                    candidates += list(payload)
+                    continue
+                candidates += list(payload["members"])
+                for _field_name, nested_fields in payload["nested"]:
+                    candidates += list(nested_fields)
             for ftype, _fname, _bound, _bits in candidates:
                 base = ftype.rstrip("*")
                 if base in structs and base != name:
@@ -213,6 +219,56 @@ class Emitter(object):
                 remaining = sorted(set(structs) - placed)
                 raise SystemExit(
                     "cycle among structures, cannot order: %s" % remaining)
+        return order
+
+    def _enum_order(self):
+        """Enumerations in dependency order.
+
+        Members are usually literals, but not always:
+
+            D3D12_COMMAND_LIST_SUPPORT_FLAG_DIRECT = 1 << D3D12_COMMAND_LIST_TYPE_DIRECT
+
+        is a member of one enumeration whose value is written in terms of a
+        member of another. File order happens to satisfy every such reference in
+        DXGI and Direct3D 11, and does not in d3d12.idl, where seven members of
+        D3D12_COMMAND_LIST_SUPPORT_FLAGS name an enumeration declared later.
+
+        Same sort as _struct_order over a different graph: an enumeration
+        depends on every other whose member names appear in its values.
+        """
+        enums = self.parsed["enums"]
+        owner = {}
+        for name, spec in enums.items():
+            for member, _value in spec["members"]:
+                owner[member] = name
+
+        deps = {}
+        for name, spec in enums.items():
+            refs = set()
+            for _member, value in spec["members"]:
+                if not value:
+                    continue
+                for token in re.findall(r"[A-Za-z_][A-Za-z0-9_]*", value):
+                    holder = owner.get(token)
+                    if holder and holder != name:
+                        refs.add(holder)
+            deps[name] = refs
+
+        order, placed, guard = [], set(), 0
+        while len(placed) < len(enums) and guard < 5000:
+            guard += 1
+            progressed = False
+            for name in sorted(enums):
+                if name in placed:
+                    continue
+                if deps[name] <= placed:
+                    order.append(name)
+                    placed.add(name)
+                    progressed = True
+            if not progressed:
+                remaining = sorted(set(enums) - placed)
+                raise SystemExit(
+                    "cycle among enumerations, cannot order: %s" % remaining)
         return order
 
     def _interface_order(self):
@@ -278,6 +334,86 @@ class Emitter(object):
                 out.append("%-34s = %s" % (alias, rendered))
         return NEWLINE.join(out)
 
+    def emit_callback(self, name, restype, parameters):
+        """A `typedef void (__stdcall *Name)(...)` as a ctypes function type.
+
+        WINFUNCTYPE rather than CFUNCTYPE: `__stdcall` is the calling convention
+        and getting it wrong corrupts the stack on the way back out, which is
+        not the kind of defect that shows up as a wrong number.
+
+        The return type comes first, matching ctypes' own argument order rather
+        than C's declaration order.
+        """
+        rendered = self.ctype(restype)
+        arguments = ["None" if rendered is None else rendered]
+        comments = []
+        for ptype, pname in parameters:
+            arguments.append(self.ctype(ptype) or "ctypes.c_void_p")
+            comments.append("%s %s" % (ptype, pname))
+
+        lines = ["%s = ctypes.WINFUNCTYPE(" % name]
+        width = max(len(a) for a in arguments)
+        for index, argument in enumerate(arguments):
+            note = "the return type" if index == 0 else comments[index - 1]
+            lines.append("    %-*s  # %s" % (width + 1, argument + ",", note))
+        lines.append(")")
+        return NEWLINE.join(lines)
+
+    #: C operators that differ from Python, longest first. `&&` MUST be
+    #: rewritten before anything looks at `&`, and `||` before `|` - turning a
+    #: bitwise or into a logical one produces a number that is wrong rather than
+    #: an error, and D3D12_ENCODE_BASIC_FILTER is built entirely out of them.
+    _OPERATOR_REWRITES = ((r"&&", " and "), (r"\|\|", " or "))
+
+    def emit_macro(self, name, parameters, body):
+        """A function-like cpp_quote macro, as a Python function.
+
+        All 24 in the target set are pure integer arithmetic, and `&`, `|`,
+        `<<`, `>>` and `==` mean the same thing in both languages. Three things
+        do not survive verbatim:
+
+          * C casts. `((D3D12_FILTER)(expr))` has to lose the cast, because the
+            generated enums are ctypes types and calling one returns an instance
+            rather than an int.
+          * `&&` and `||`.
+          * The parameter names, which are left exactly as the SDK writes them
+            even where that shadows a builtin - D3D12_ENCODE_BASIC_FILTER takes
+            `min`, and a caller reading MSDN should find the same word here.
+        """
+        translated = body
+        for pattern, replacement in self._OPERATOR_REWRITES:
+            translated = re.sub(pattern, replacement, translated)
+
+        local = set(parameters)
+
+        def strip_cast(match):
+            token = match.group(1)
+            if token in local:
+                return match.group(0)      # a parameter, not a type
+            if self._is_type_name(token):
+                return ""
+            return match.group(0)
+
+        # A parenthesised identifier immediately followed by another open
+        # parenthesis: that is a cast applied to an expression. `(Src0)&MASK` is
+        # not one, because `&` follows rather than `(`.
+        translated = re.sub(r"\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)\s*(?=\()",
+                            strip_cast, translated)
+        translated = re.sub(r"\s+", " ", translated).strip()
+
+        signature = "def %s(%s):" % (name, ", ".join(parameters))
+        return "%s\n    return %s" % (signature, translated)
+
+    def _is_type_name(self, token):
+        """Does this identifier name a type, as opposed to a constant?"""
+        if token in self.parsed["enums"] or token in self.parsed["structs"]:
+            return True
+        if token in self.parsed.get("unions", {}):
+            return True
+        if token in self.interfaces or token in self.C_KEYWORDS:
+            return True
+        return token in self.source
+
     def emit_defines(self):
         out = []
         for name, value in self.parsed["defines"]:
@@ -301,6 +437,33 @@ class Emitter(object):
         return "\n".join(lines)
 
 
+    def _render_fields(self, fields, indent):
+        """`_fields_ = [...]`, aligned, at the given indentation.
+
+        A nested class name arrives as the field type verbatim - `_VertexBuffer`
+        - and must not be run through the type map, which would not find it.
+        """
+        pad = " " * indent
+        width = max(len(f[1]) for f in fields)
+        rendered = []
+        for ftype, fname, bound, bits in fields:
+            if ftype.startswith("_") and bound is None:
+                base = ftype                       # a nested class, declared above
+            else:
+                base = self._field_type(ftype, bound)
+            gap = " " * (width - len(fname))
+            if bits:
+                rendered.append("('%s',%s %s, %d)" % (fname, gap, base, bits))
+            else:
+                rendered.append("('%s',%s %s)" % (fname, gap, base))
+
+        out = [pad + "_fields_ = [" + rendered[0] + ","]
+        continuation = pad + " " * len("_fields_ = [")
+        for item in rendered[1:]:
+            out.append(continuation + item + ",")
+        out.append(pad + "]")
+        return out
+
     def _emit_struct_with_union(self, name, segments):
         """A structure carrying one or more anonymous unions.
 
@@ -317,25 +480,30 @@ class Emitter(object):
         total = sum(1 for kind, _f in segments if kind == "union")
         outer, anonymous, index = [], [], 0
 
-        for kind, fields in segments:
+        for kind, payload in segments:
             if kind == "fields":
-                outer.extend(fields)
+                outer.extend(payload)
                 continue
             index += 1
             cls = "_U" if total == 1 else "_U%d" % index
             attr = "u" if total == 1 else "u%d" % index
             lines.append("    class %s(ctypes.Union):" % cls)
-            if not fields:
+
+            # The union may hold NAMED structures of its own -
+            # D3D12_INDIRECT_ARGUMENT_DESC overlays six, one per argument kind.
+            # Each becomes a nested class, reached as .VertexBuffer and so on,
+            # which needs no _anonymous_ because the SDK gave it a name.
+            members = list(payload["members"])
+            for field_name, nested_fields in payload["nested"]:
+                nested_cls = "_" + field_name
+                lines.append("        class %s(ctypes.Structure):" % nested_cls)
+                lines.extend(self._render_fields(nested_fields, indent=12))
+                members.append((nested_cls, field_name, None, None))
+
+            if not members:
                 lines.append("        _fields_ = []")
             else:
-                width = max(len(f[1]) for f in fields)
-                rendered = ["('%s',%s %s)" % (f[1], " " * (width - len(f[1])),
-                                              self._field_type(f[0], f[2]))
-                            for f in fields]
-                lines.append("        _fields_ = [" + rendered[0] + ",")
-                for item in rendered[1:]:
-                    lines.append("                    " + item + ",")
-                lines.append("        ]")
+                lines.extend(self._render_fields(members, indent=8))
             outer.append(("__union__" + cls, attr, None, None))
             anonymous.append(attr)
 
@@ -450,6 +618,24 @@ class Emitter(object):
             else:
                 rendered.append("('%s',%s %s)"
                                 % (fname, " " * (width - len(fname)), base))
+        if any(ftype.rstrip("*") == name for ftype, _n, _b, _bits in fields):
+            # A structure that points at itself: D3D12_AUTO_BREADCRUMB_NODE
+            # ends with `const struct D3D12_AUTO_BREADCRUMB_NODE *pNext`, which
+            # is a linked list. The class object has to exist before its own
+            # _fields_ can name it, so the body is assigned afterwards - the
+            # same shape ctypes documents for recursive structures, and the same
+            # trick the interface vtables already use.
+            lines = ["class %s(ctypes.Structure):" % name,
+                     "    pass",
+                     "",
+                     "",
+                     "%s._fields_ = [" % name + rendered[0] + ","]
+            pad = " " * (len(name) + len("._fields_ = ["))
+            for item in rendered[1:]:
+                lines.append(pad + item + ",")
+            lines.append("]")
+            return "\n".join(lines)
+
         lines.append("    _fields_ = [" + rendered[0] + ",")
         for item in rendered[1:]:
             lines.append("                " + item + ",")
@@ -477,13 +663,18 @@ class Emitter(object):
         """The vtable, assigned once every class object exists."""
         spec = self.parsed["interfaces"][name]
         if not spec["methods"]:
-            # ID3D11VertexShader and seven siblings add nothing to
-            # ID3D11DeviceChild - they exist so the type system can tell a
-            # vertex shader from a pixel shader. Emitting `_methods_ = []` for
-            # them is a no-op to comtypes but it makes them indistinguishable
-            # from an interface whose vtable went missing, which is exactly what
-            # the F-08 test watches for. Say so in a comment instead.
-            return "## %s adds no methods to %s." % (name, spec["base"])
+            # An interface the SDK genuinely declares empty. ID3D11VertexShader
+            # and seven siblings add nothing to ID3D11DeviceChild; they exist so
+            # the type system can tell a vertex shader from a pixel shader.
+            #
+            # The empty list is not decoration. comtypes refuses to build a
+            # vtable for a class whose base has no _methods_ - "baseinterface
+            # 'ID3D12Pageable' has no _methods_" - and ID3D12Pageable is the
+            # base of eleven interfaces. Every empty interface in the D3D11
+            # family happens to be a leaf, so emitting a comment here worked
+            # until Direct3D 12 arrived. See C-39.
+            return ("## %s adds no methods to %s.%s%s._methods_ = []"
+                    % (name, spec["base"], NEWLINE, name))
 
         lines = ["%s._methods_ = [" % name]
         for method in spec["methods"]:
@@ -508,7 +699,16 @@ class Emitter(object):
 
     # -------------------------------------------------------------- whole --
     def emit(self):
-        parts = [HEADER.format(sdk=os.path.basename(self.sdk), idl=self.name)]
+        # MAKE_HRESULT is a winerror.h macro that no .idl declares, and
+        # d3d11.idl's MAKE_D3D11_HRESULT is written in terms of it. Imported
+        # only where a macro actually needs it, so a module without one does not
+        # carry an unused import.
+        needs_hresult = any("MAKE_HRESULT" in body
+                            for _n, _a, body in self.parsed.get("macros", []))
+        helpers = ("from Direct3D.PyIdl.status import MAKE_HRESULT"
+                   if needs_hresult else "")
+        parts = [HEADER.format(sdk=os.path.basename(self.sdk), idl=self.name,
+                               helpers=helpers)]
 
         imports = [i[:-4] for i in self.parsed["imports"]]
         if imports:
@@ -522,6 +722,24 @@ class Emitter(object):
                          "typedefs ----")
             parts.append(self.emit_typedefs(local=False))
 
+        if self.parsed.get("macros"):
+            # Before the constants, because a constant may call one:
+            # D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING is defined as
+            # D3D12_ENCODE_SHADER_4_COMPONENT_MAPPING(0,1,2,3). The bodies are
+            # not evaluated until called, so anything they name only has to
+            # exist by then - and the SDK's own file order already guarantees
+            # that for every call made at module level.
+            parts.append(NEWLINE + NEWLINE +
+                         "## ------------------------------------------------ "
+                         "macros ----")
+            parts.append(NEWLINE + "## Function-like macros from cpp_quote, as "
+                         "functions. Pure integer")
+            parts.append("## arithmetic in the SDK and pure integer arithmetic "
+                         "here.")
+            for name, parameters, body in self.parsed["macros"]:
+                parts.append(NEWLINE + NEWLINE
+                             + self.emit_macro(name, parameters, body))
+
         if self.parsed["defines"]:
             parts.append("\n\n## ---------------------------------------------- "
                          "constants ----")
@@ -530,8 +748,19 @@ class Emitter(object):
         if self.parsed["enums"]:
             parts.append("\n\n## -------------------------------------------- "
                          "enumerations ----")
-            for name in sorted(self.parsed["enums"]):
+            for name in self._enum_order():
                 parts.append("\n" + self.emit_enum(name))
+
+        if self.parsed.get("callbacks"):
+            # After the enumerations, because a callback names them:
+            # D3D12MessageFunc takes a D3D12_MESSAGE_CATEGORY. Unlike a macro
+            # body, a WINFUNCTYPE argument list is evaluated immediately.
+            parts.append(NEWLINE + NEWLINE +
+                         "## ---------------------------------------- "
+                         "callback types ----")
+            for name, restype, parameters in self.parsed["callbacks"]:
+                parts.append(NEWLINE + NEWLINE
+                             + self.emit_callback(name, restype, parameters))
 
         # Three passes, in this order, because the references run both ways:
         #

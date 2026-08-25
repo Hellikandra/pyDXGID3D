@@ -38,6 +38,25 @@ def _hr(value):
     return value & 0xFFFFFFFF
 
 
+def MAKE_HRESULT(severity, facility, code):
+    """The Windows macro of the same name, which no .idl declares.
+
+    d3d11.idl builds its own status codes out of it:
+
+        cpp_quote( "#define MAKE_D3D11_HRESULT( code )  MAKE_HRESULT( 1, _FACD3D11, code )" )
+
+    winerror.h defines it and the IDLs assume it, the same way they assume LUID
+    and SECURITY_ATTRIBUTES. It lives here rather than in typemap.py because it
+    constructs an HRESULT, which is what this module is for.
+    """
+    return _hr((severity << 31) | (facility << 16) | code)
+
+
+def MAKE_STATUS(facility, code):
+    """MAKE_HRESULT with severity 0 - a success code rather than a failure."""
+    return MAKE_HRESULT(0, facility, code)
+
+
 def succeeded(hr):
     """True if the HRESULT indicates success. Note S_FALSE and the DXGI_STATUS_*
     codes are successes, so testing `hr == 0` is not the same thing."""
