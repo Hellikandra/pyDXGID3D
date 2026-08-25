@@ -220,10 +220,14 @@ DXGI_MAP_DISCARD = 4 # 3UL
 class IDXGISurface(IDXGIDeviceSubObject):
     _iid_ = comtypes.GUID("{cafcb56c-6ac3-4889-bf47-9e23bbd260ec}")
     _methods_ = [
+        ## dxgi.idl: HRESULT GetDesc([out] DXGI_SURFACE_DESC *pDesc);
+        ## One parameter. Until P8 this carried Map's two as well, copied down
+        ## from the line below - so calling it correctly raised ArgumentError
+        ## and calling it as declared passed two arguments the method never
+        ## reads. The vtable slot was right, which is why every alignment check
+        ## passed. See F-62.
         comtypes.STDMETHOD(comtypes.HRESULT, "GetDesc", [
             ctypes.POINTER(DXGI_SURFACE_DESC),
-            ctypes.POINTER(DXGI_MAPPED_RECT),
-            wintypes.UINT,
             ]),
         comtypes.STDMETHOD(comtypes.HRESULT, "Map", [
             ctypes.POINTER(DXGI_MAPPED_RECT),

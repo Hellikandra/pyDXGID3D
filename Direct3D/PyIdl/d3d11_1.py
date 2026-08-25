@@ -379,7 +379,7 @@ ID3D11DeviceContext1._methods_ = [
         ]),
     comtypes.STDMETHOD(None, "ClearView", [
         ctypes.POINTER(ID3D11View),                  # ID3D11View* pView
-        ctypes.c_float,                              # FLOAT Color
+        ctypes.POINTER(ctypes.c_float),              # FLOAT* Color
         ctypes.POINTER(D3D11_RECT),                  # D3D11_RECT* pRect
         ctypes.c_uint32,                             # UINT NumRects
         ]),

@@ -215,6 +215,21 @@ examples/d3d12_device.py   a Direct3D 12 device, and what it will accept
 They need nothing installed beyond the package: the PNG writer is forty lines of `zlib` in
 `examples/_png.py` rather than a Pillow dependency.
 
+### Will my game capture?
+
+```bash
+python tools/dxgi_report.py --game
+```
+
+names the window in front, works out which case it is in, and says what to change.
+
+| what you want to capture | works | how |
+| --- | --- | --- |
+| a **borderless windowed** game | **yes, exactly** | it covers the output, so capture the output |
+| a **fullscreen exclusive** game | **no** | `DuplicateOutput` raises `Unsupported`. Switch the game to borderless windowed - by far the most common cause of failure, and a setting in the game rather than anything here |
+| a **windowed** game, or any window | **approximately** | crop to its DWM frame bounds; anything drawn on top is in the frame |
+| an **occluded or minimised** window | **no** | Desktop Duplication returns the composed desktop, not a window's own content |
+
 **`window.py` is approximate and says so.** Desktop Duplication captures an *output*, so
 cropping to a window's rectangle also captures anything drawn on top of it. There is no fix
 within this API — `Windows.Graphics.Capture` is the one that captures a window's own
@@ -250,7 +265,7 @@ pip install pytest comtypes
 python -m pytest tests -q
 ```
 
-265 tests in four tiers:
+290 tests in four tiers:
 
 - **Tier 0** — abstract-syntax checks on the binding modules. Runs on any OS, no comtypes.
 - **Tier 1** — bindings against the SDK: vtable order, method signatures, structure sizes
@@ -259,6 +274,12 @@ python -m pytest tests -q
 - **Tier 2** — a real adapter and a real display.
 - **Tier 3** — throughput, and the packaging check that builds a wheel and
   imports it from outside the repository.
+
+Two are worth knowing about because they check what the others cannot.
+`tools/render_probe.py` renders a known colour and captures it back — the only test that
+the frame contains what was on screen rather than merely being the right shape. And
+`tools/exercise.py` calls every method that cannot change anything, reporting how much of
+the API has actually been executed as opposed to declared.
 
 ## What does not work
 
@@ -340,6 +361,7 @@ Direct3D/PyIdl/     Translated interface definitions, one module per .idl
 
 tools/              Generator, SDK parser, layout probe, diagnostics
   exercise.py         calls the API and reports what actually ran
+  render_probe.py     renders a known colour and captures it back
   dxgi_report.py      end-to-end diagnostic and benchmark
   tier0_sandbox.py    runs tier 0 as a bare CI runner sees it
 tests/              Four tiers - see Tests above

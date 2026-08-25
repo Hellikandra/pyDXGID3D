@@ -191,3 +191,59 @@ def test_no_method_that_returns_something_is_declared_void(module, sdk_include):
     assert not problems, (
         "declared void where the SDK returns a value - the call will succeed "
         "and hand the caller None:\n  " + "\n  ".join(problems))
+
+
+@pytest.mark.parametrize("module", sorted(MODULE_IDL))
+def test_array_parameters_are_bound_as_pointers(module, sdk_include):
+    """F-60: a parameter the SDK declares as an array, bound as a scalar.
+
+    In C a parameter written `const FLOAT ColorRGBA[4]` is a FLOAT* - the array
+    decays. Binding it as a single FLOAT does not merely lose the length; it
+    makes the method impossible to call, because ctypes refuses to marshal an
+    array where a scalar is declared:
+
+        ctypes.ArgumentError: argument 2: TypeError:
+                              must be real number, not c_float_Array_4
+
+    Ten of them, all on the rendering path - ClearRenderTargetView,
+    OMSetBlendState, the two ClearUnorderedAccessView* - which is why nothing
+    that only captures ever reached one.
+    """
+    interfaces, _structs = idl.load(sdk_include, MODULE_IDL[module])
+    if interfaces is None:
+        pytest.skip("%s not present in this SDK" % MODULE_IDL[module])
+
+    parsed = idl.module_constructs(sdk_include, MODULE_IDL[module])
+    binding = importlib.import_module("Direct3D.PyIdl." + module)
+
+    problems = []
+    for interface, spec in parsed["interfaces"].items():
+        klass = getattr(binding, interface, None)
+        if klass is None:
+            continue
+        declared = {m.name: m for m in getattr(klass, "_methods_", [])}
+        for method, (_restype, params) in spec.get("signatures", {}).items():
+            found = declared.get(method)
+            if found is None or not found.argtypes:
+                continue
+            offset = len(found.argtypes) - len(params)   # the F-58 hidden slot
+            for index, (ptype, pname) in enumerate(params):
+                if not ptype.endswith("*"):
+                    continue
+                position = index + offset
+                if position < 0 or position >= len(found.argtypes):
+                    continue
+                argtype = found.argtypes[position]
+                name = getattr(argtype, "__name__", "")
+                is_pointer = (name.startswith("LP_") or name.startswith("POINTER(")
+                              or argtype in (ctypes.c_void_p, ctypes.c_char_p,
+                                             ctypes.c_wchar_p))
+                if not is_pointer:
+                    problems.append(
+                        "%s::%s parameter %d (%s %s) is %s, but the SDK gives a "
+                        "pointer" % (interface, method, position, ptype, pname,
+                                     getattr(argtype, "__name__", argtype)))
+
+    assert not problems, (
+        "a pointer parameter bound as a scalar cannot be called at all:\n  "
+        + "\n  ".join(problems))

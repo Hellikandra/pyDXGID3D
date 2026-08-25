@@ -21,6 +21,7 @@ works here, end to end, through these bindings.
     python tools/dxgi_report.py --benchmark      run flat out, time each stage
     python tools/dxgi_report.py --benchmark --deliver copy   include the pixel copy
     python tools/dxgi_report.py --sweep          readback cost vs capture size
+    python tools/dxgi_report.py --game           will the window in front capture?
     python tools/dxgi_report.py --benchmark --no-readback   GPU copy only
 
 Needs Windows, comtypes, a GPU and an interactive desktop session. It cannot
@@ -505,6 +506,94 @@ def _write_ppm(path, buf, width, height, pitch):
             handle.write(bytes(row))
 
 
+
+def game_check(adapter, output, odesc):
+    """Will the thing in front of me capture, and if not, what do I change?
+
+    "Will my game work?" is the question this project gets asked, and it has
+    three answers with three different fixes. Answering it should take one
+    command rather than a support thread.
+    """
+    user32 = ctypes.WinDLL("user32")
+    dwmapi = ctypes.WinDLL("dwmapi")
+    user32.GetForegroundWindow.restype = ctypes.c_void_p
+
+    rule("The window in front")
+    hwnd = user32.GetForegroundWindow()
+    if not hwnd:
+        print("  nothing is in the foreground")
+        return False
+
+    title = ctypes.create_unicode_buffer(512)
+    user32.GetWindowTextW(ctypes.c_void_p(hwnd), title, 512)
+    print("  title            : %s" % (title.value or "(untitled)"))
+
+    class RECT(ctypes.Structure):
+        _fields_ = [("left", ctypes.c_long), ("top", ctypes.c_long),
+                    ("right", ctypes.c_long), ("bottom", ctypes.c_long)]
+
+    frame = RECT()
+    # DWMWA_EXTENDED_FRAME_BOUNDS. GetWindowRect includes the invisible resize
+    # border, which for a maximised window is a rectangle outside the monitor.
+    if dwmapi.DwmGetWindowAttribute(ctypes.c_void_p(hwnd), ctypes.c_uint(9),
+                                    ctypes.byref(frame),
+                                    ctypes.sizeof(frame)) != 0:
+        user32.GetWindowRect(ctypes.c_void_p(hwnd), ctypes.byref(frame))
+        print("  bounds           : from GetWindowRect - DWM declined, so this")
+        print("                     window is probably not composited")
+    print("  visible bounds   : (%d, %d, %d, %d)  %dx%d"
+          % (frame.left, frame.top, frame.right, frame.bottom,
+             frame.right - frame.left, frame.bottom - frame.top))
+
+    box = odesc.DesktopCoordinates
+    covers = (frame.left <= box.left and frame.top <= box.top
+              and frame.right >= box.right and frame.bottom >= box.bottom)
+    print("  output           : %s  %dx%d at (%d, %d)"
+          % (odesc.DeviceName, box.right - box.left, box.bottom - box.top,
+             box.left, box.top))
+    print("  covers the output: %s" % ("yes" if covers else "no"))
+
+    rule("Verdict")
+    try:
+        device, _context, duplication = _open_duplication(adapter, output)
+        del duplication, device
+    except comtypes.COMError as exc:
+        code = exc.hresult & 0xFFFFFFFF
+        if code == 0x887A0004:
+            print("  CANNOT CAPTURE - fullscreen exclusive.")
+            print("")
+            print("  DuplicateOutput returned DXGI_ERROR_UNSUPPORTED. With a game")
+            print("  in front, that means it has taken the display exclusively")
+            print("  and Desktop Duplication cannot see it at all.")
+            print("")
+            print("  THE FIX: set the game to BORDERLESS WINDOWED - sometimes")
+            print("  called 'windowed fullscreen' or just 'borderless'. It is by")
+            print("  far the most common cause of failure, and it is a setting in")
+            print("  the game rather than anything to change here.")
+            return False
+        print("  CANNOT CAPTURE - %s" % name_of(code))
+        return False
+
+    if covers:
+        print("  CAPTURES EXACTLY. The window covers the whole output, so")
+        print("  capturing the output captures the window and nothing else.")
+        print("")
+        print("      CaptureOptions(output=0)")
+        return True
+
+    print("  CAPTURES APPROXIMATELY. The window is smaller than the output, so")
+    print("  cropping to its rectangle also captures anything drawn on top of it")
+    print("  - a notification, a tooltip, another window. Desktop Duplication")
+    print("  returns the COMPOSED DESKTOP; it cannot isolate one window's own")
+    print("  content, and no option here changes that.")
+    print("")
+    print("      CaptureOptions(output=0, region=(%d, %d, %d, %d))"
+          % (frame.left, frame.top, frame.right, frame.bottom))
+    print("")
+    print("  For a game, prefer borderless windowed - it covers the output and")
+    print("  the capture becomes exact.")
+    return True
+
 def main():
     argv = sys.argv[1:]
 
@@ -534,7 +623,9 @@ def main():
 
     _ai, _oi, adapter, output, odesc = match[0]
 
-    if "--sweep" in argv:
+    if "--game" in argv:
+        ok = game_check(adapter, output, odesc)
+    elif "--sweep" in argv:
         ok = sweep(adapter, output, odesc, opt("--seconds", 3, int))
     elif "--benchmark" in argv:
         deliver = opt("--deliver", "touch")
