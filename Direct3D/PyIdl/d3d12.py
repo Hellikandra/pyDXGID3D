@@ -4596,7 +4596,9 @@ ID3D12DSRDeviceFactory._methods_ = [
 ]
 
 ID3D12DeviceConfiguration._methods_ = [
-    comtypes.STDMETHOD(D3D12_DEVICE_CONFIGURATION_DESC, "GetDesc", []),
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_DEVICE_CONFIGURATION_DESC), "GetDesc", [
+        ctypes.POINTER(D3D12_DEVICE_CONFIGURATION_DESC), # D3D12_DEVICE_CONFIGURATION_DESC, the x64 hidden return slot
+        ]),
     comtypes.STDMETHOD(comtypes.HRESULT, "GetEnabledExperimentalFeatures", [
         ctypes.POINTER(comtypes.GUID),               # GUID* pGuids
         ctypes.c_uint32,                             # UINT NumGuids
@@ -4804,13 +4806,16 @@ ID3D12StateObjectProperties._methods_ = [
 ]
 
 ID3D12StateObjectProperties1._methods_ = [
-    comtypes.STDMETHOD(D3D12_PROGRAM_IDENTIFIER, "GetProgramIdentifier", [
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_PROGRAM_IDENTIFIER), "GetProgramIdentifier", [
+        ctypes.POINTER(D3D12_PROGRAM_IDENTIFIER),    # D3D12_PROGRAM_IDENTIFIER, the x64 hidden return slot
         ctypes.c_wchar_p,                            # LPCWSTR pProgramName
         ]),
 ]
 
 ID3D12SwapChainAssistant._methods_ = [
-    comtypes.STDMETHOD(LUID, "GetLUID", []),
+    comtypes.STDMETHOD(ctypes.POINTER(LUID), "GetLUID", [
+        ctypes.POINTER(LUID),                        # LUID, the x64 hidden return slot
+        ]),
     comtypes.STDMETHOD(comtypes.HRESULT, "GetSwapChainObject", [
         comtypes.GUID,                               # REFIID riid
         ctypes.POINTER(ctypes.c_void_p),             # void** ppv
@@ -4877,7 +4882,8 @@ ID3D12WorkGraphProperties._methods_ = [
     comtypes.STDMETHOD(ctypes.c_uint32, "GetNumNodes", [
         ctypes.c_uint32,                             # UINT WorkGraphIndex
         ]),
-    comtypes.STDMETHOD(D3D12_NODE_ID, "GetNodeID", [
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_NODE_ID), "GetNodeID", [
+        ctypes.POINTER(D3D12_NODE_ID),               # D3D12_NODE_ID, the x64 hidden return slot
         ctypes.c_uint32,                             # UINT WorkGraphIndex
         ctypes.c_uint32,                             # UINT NodeIndex
         ]),
@@ -4892,7 +4898,8 @@ ID3D12WorkGraphProperties._methods_ = [
     comtypes.STDMETHOD(ctypes.c_uint32, "GetNumEntrypoints", [
         ctypes.c_uint32,                             # UINT WorkGraphIndex
         ]),
-    comtypes.STDMETHOD(D3D12_NODE_ID, "GetEntrypointID", [
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_NODE_ID), "GetEntrypointID", [
+        ctypes.POINTER(D3D12_NODE_ID),               # D3D12_NODE_ID, the x64 hidden return slot
         ctypes.c_uint32,                             # UINT WorkGraphIndex
         ctypes.c_uint32,                             # UINT EntrypointIndex
         ]),
@@ -5008,12 +5015,14 @@ ID3D12Device._methods_ = [
         D3D12_CPU_DESCRIPTOR_HANDLE,                 # D3D12_CPU_DESCRIPTOR_HANDLE SrcDescriptorRangeStart
         D3D12_DESCRIPTOR_HEAP_TYPE,                  # D3D12_DESCRIPTOR_HEAP_TYPE DescriptorHeapsType
         ]),
-    comtypes.STDMETHOD(D3D12_RESOURCE_ALLOCATION_INFO, "GetResourceAllocationInfo", [
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_RESOURCE_ALLOCATION_INFO), "GetResourceAllocationInfo", [
+        ctypes.POINTER(D3D12_RESOURCE_ALLOCATION_INFO), # D3D12_RESOURCE_ALLOCATION_INFO, the x64 hidden return slot
         ctypes.c_uint32,                             # UINT visibleMask
         ctypes.c_uint32,                             # UINT numResourceDescs
         ctypes.POINTER(D3D12_RESOURCE_DESC),         # D3D12_RESOURCE_DESC* pResourceDescs
         ]),
-    comtypes.STDMETHOD(D3D12_HEAP_PROPERTIES, "GetCustomHeapProperties", [
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_HEAP_PROPERTIES), "GetCustomHeapProperties", [
+        ctypes.POINTER(D3D12_HEAP_PROPERTIES),       # D3D12_HEAP_PROPERTIES, the x64 hidden return slot
         ctypes.c_uint32,                             # UINT nodeMask
         D3D12_HEAP_TYPE,                             # D3D12_HEAP_TYPE heapType
         ]),
@@ -5112,7 +5121,9 @@ ID3D12Device._methods_ = [
         ctypes.c_uint32,                             # UINT FirstSubresourceTilingToGet
         ctypes.POINTER(D3D12_SUBRESOURCE_TILING),    # D3D12_SUBRESOURCE_TILING* pSubresourceTilingsForNonPackedMips
         ]),
-    comtypes.STDMETHOD(LUID, "GetAdapterLuid", []),
+    comtypes.STDMETHOD(ctypes.POINTER(LUID), "GetAdapterLuid", [
+        ctypes.POINTER(LUID),                        # LUID, the x64 hidden return slot
+        ]),
 ]
 
 ID3D12Device1._methods_ = [
@@ -5201,7 +5212,8 @@ ID3D12Device4._methods_ = [
         comtypes.GUID,                               # REFIID riid
         ctypes.POINTER(ctypes.c_void_p),             # void** ppvResource
         ]),
-    comtypes.STDMETHOD(D3D12_RESOURCE_ALLOCATION_INFO, "GetResourceAllocationInfo1", [
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_RESOURCE_ALLOCATION_INFO), "GetResourceAllocationInfo1", [
+        ctypes.POINTER(D3D12_RESOURCE_ALLOCATION_INFO), # D3D12_RESOURCE_ALLOCATION_INFO, the x64 hidden return slot
         ctypes.c_uint32,                             # UINT visibleMask
         ctypes.c_uint32,                             # UINT numResourceDescs
         ctypes.POINTER(D3D12_RESOURCE_DESC),         # D3D12_RESOURCE_DESC* pResourceDescs
@@ -5274,7 +5286,8 @@ ID3D12Device7._methods_ = [
 ]
 
 ID3D12Device8._methods_ = [
-    comtypes.STDMETHOD(D3D12_RESOURCE_ALLOCATION_INFO, "GetResourceAllocationInfo2", [
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_RESOURCE_ALLOCATION_INFO), "GetResourceAllocationInfo2", [
+        ctypes.POINTER(D3D12_RESOURCE_ALLOCATION_INFO), # D3D12_RESOURCE_ALLOCATION_INFO, the x64 hidden return slot
         ctypes.c_uint32,                             # UINT visibleMask
         ctypes.c_uint32,                             # UINT numResourceDescs
         ctypes.POINTER(D3D12_RESOURCE_DESC1),        # D3D12_RESOURCE_DESC1* pResourceDescs
@@ -5410,7 +5423,9 @@ ID3D12Resource._methods_ = [
         ctypes.c_uint32,                             # UINT Subresource
         ctypes.POINTER(D3D12_RANGE),                 # D3D12_RANGE* pWrittenRange
         ]),
-    comtypes.STDMETHOD(D3D12_RESOURCE_DESC, "GetDesc", []),
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_RESOURCE_DESC), "GetDesc", [
+        ctypes.POINTER(D3D12_RESOURCE_DESC),         # D3D12_RESOURCE_DESC, the x64 hidden return slot
+        ]),
     comtypes.STDMETHOD(D3D12_GPU_VIRTUAL_ADDRESS, "GetGPUVirtualAddress", []),
     comtypes.STDMETHOD(comtypes.HRESULT, "WriteToSubresource", [
         ctypes.c_uint32,                             # UINT DstSubresource
@@ -5440,7 +5455,9 @@ ID3D12Resource1._methods_ = [
 ]
 
 ID3D12Resource2._methods_ = [
-    comtypes.STDMETHOD(D3D12_RESOURCE_DESC1, "GetDesc1", []),
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_RESOURCE_DESC1), "GetDesc1", [
+        ctypes.POINTER(D3D12_RESOURCE_DESC1),        # D3D12_RESOURCE_DESC1, the x64 hidden return slot
+        ]),
 ]
 
 ## ID3D12RootSignature adds no methods to ID3D12DeviceChild.
@@ -5460,7 +5477,9 @@ ID3D12ShaderCacheSession._methods_ = [
         ctypes.c_uint32,                             # UINT ValueSize
         ]),
     comtypes.STDMETHOD(None, "SetDeleteOnDestroy", []),
-    comtypes.STDMETHOD(D3D12_SHADER_CACHE_SESSION_DESC, "GetDesc", []),
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_SHADER_CACHE_SESSION_DESC), "GetDesc", [
+        ctypes.POINTER(D3D12_SHADER_CACHE_SESSION_DESC), # D3D12_SHADER_CACHE_SESSION_DESC, the x64 hidden return slot
+        ]),
 ]
 
 ## ID3D12StateObject adds no methods to ID3D12Pageable.
@@ -5525,16 +5544,24 @@ ID3D12CommandQueue._methods_ = [
         ctypes.POINTER(ctypes.c_uint64),             # UINT64* pGpuTimestamp
         ctypes.POINTER(ctypes.c_uint64),             # UINT64* pCpuTimestamp
         ]),
-    comtypes.STDMETHOD(D3D12_COMMAND_QUEUE_DESC, "GetDesc", []),
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_COMMAND_QUEUE_DESC), "GetDesc", [
+        ctypes.POINTER(D3D12_COMMAND_QUEUE_DESC),    # D3D12_COMMAND_QUEUE_DESC, the x64 hidden return slot
+        ]),
 ]
 
 ## ID3D12CommandSignature adds no methods to ID3D12Pageable.
 ID3D12CommandSignature._methods_ = []
 
 ID3D12DescriptorHeap._methods_ = [
-    comtypes.STDMETHOD(D3D12_DESCRIPTOR_HEAP_DESC, "GetDesc", []),
-    comtypes.STDMETHOD(D3D12_CPU_DESCRIPTOR_HANDLE, "GetCPUDescriptorHandleForHeapStart", []),
-    comtypes.STDMETHOD(D3D12_GPU_DESCRIPTOR_HANDLE, "GetGPUDescriptorHandleForHeapStart", []),
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_DESCRIPTOR_HEAP_DESC), "GetDesc", [
+        ctypes.POINTER(D3D12_DESCRIPTOR_HEAP_DESC),  # D3D12_DESCRIPTOR_HEAP_DESC, the x64 hidden return slot
+        ]),
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_CPU_DESCRIPTOR_HANDLE), "GetCPUDescriptorHandleForHeapStart", [
+        ctypes.POINTER(D3D12_CPU_DESCRIPTOR_HANDLE), # D3D12_CPU_DESCRIPTOR_HANDLE, the x64 hidden return slot
+        ]),
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_GPU_DESCRIPTOR_HANDLE), "GetGPUDescriptorHandleForHeapStart", [
+        ctypes.POINTER(D3D12_GPU_DESCRIPTOR_HANDLE), # D3D12_GPU_DESCRIPTOR_HANDLE, the x64 hidden return slot
+        ]),
 ]
 
 ID3D12Device10._methods_ = [
@@ -5581,7 +5608,8 @@ ID3D12Device11._methods_ = [
 ]
 
 ID3D12Device12._methods_ = [
-    comtypes.STDMETHOD(D3D12_RESOURCE_ALLOCATION_INFO, "GetResourceAllocationInfo3", [
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_RESOURCE_ALLOCATION_INFO), "GetResourceAllocationInfo3", [
+        ctypes.POINTER(D3D12_RESOURCE_ALLOCATION_INFO), # D3D12_RESOURCE_ALLOCATION_INFO, the x64 hidden return slot
         ctypes.c_uint32,                             # UINT visibleMask
         ctypes.c_uint32,                             # UINT numResourceDescs
         ctypes.POINTER(D3D12_RESOURCE_DESC1),        # D3D12_RESOURCE_DESC1* pResourceDescs
@@ -6018,7 +6046,9 @@ ID3D12GraphicsCommandList9._methods_ = [
 ]
 
 ID3D12Heap._methods_ = [
-    comtypes.STDMETHOD(D3D12_HEAP_DESC, "GetDesc", []),
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_HEAP_DESC), "GetDesc", [
+        ctypes.POINTER(D3D12_HEAP_DESC),             # D3D12_HEAP_DESC, the x64 hidden return slot
+        ]),
 ]
 
 ID3D12Heap1._methods_ = [
@@ -6036,11 +6066,15 @@ ID3D12MetaCommand._methods_ = [
 ]
 
 ID3D12ProtectedResourceSession._methods_ = [
-    comtypes.STDMETHOD(D3D12_PROTECTED_RESOURCE_SESSION_DESC, "GetDesc", []),
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_PROTECTED_RESOURCE_SESSION_DESC), "GetDesc", [
+        ctypes.POINTER(D3D12_PROTECTED_RESOURCE_SESSION_DESC), # D3D12_PROTECTED_RESOURCE_SESSION_DESC, the x64 hidden return slot
+        ]),
 ]
 
 ID3D12ProtectedResourceSession1._methods_ = [
-    comtypes.STDMETHOD(D3D12_PROTECTED_RESOURCE_SESSION_DESC1, "GetDesc1", []),
+    comtypes.STDMETHOD(ctypes.POINTER(D3D12_PROTECTED_RESOURCE_SESSION_DESC1), "GetDesc1", [
+        ctypes.POINTER(D3D12_PROTECTED_RESOURCE_SESSION_DESC1), # D3D12_PROTECTED_RESOURCE_SESSION_DESC1, the x64 hidden return slot
+        ]),
 ]
 
 ID3D12GraphicsCommandList10._methods_ = [

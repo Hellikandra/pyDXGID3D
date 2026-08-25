@@ -659,6 +659,18 @@ class Emitter(object):
         return ('class %s(%s):%s    _iid_ = comtypes.GUID("{%s}")'
                 % (name, base, NEWLINE, spec["uuid"]))
 
+    def _returns_struct_by_value(self, restype):
+        """The structure name if this return type is one BY VALUE, else None.
+
+        A pointer return is ordinary and needs no special handling; it is the
+        by-value case that carries the x64 hidden-argument convention. See F-58.
+        """
+        if restype.endswith("*"):
+            return None
+        if restype in self.parsed["structs"] or restype in self.parsed.get("unions", {}):
+            return restype
+        return None
+
     def emit_interface_methods(self, name):
         """The vtable, assigned once every class object exists."""
         spec = self.parsed["interfaces"][name]
@@ -682,6 +694,37 @@ class Emitter(object):
                                                              ("HRESULT", []))
             ret = self.ctype(restype)
             ret = "None" if ret is None else ret
+
+            sret = self._returns_struct_by_value(restype)
+            if sret:
+                # F-58. On x64 a COM method returning a structure by value takes
+                # a hidden pointer to the caller's storage as its FIRST argument
+                # and returns that pointer; it does not hand the structure back
+                # in a register. Declaring the structure as the restype makes
+                # ctypes read a register holding something else and write
+                # through it, which faults rather than failing.
+                #
+                # Proved by calling one vtable slot both ways:
+                #   restype is the struct        -> access violation
+                #   hidden out-pointer + byref   -> a valid handle
+                # and that holds even for an eight-byte structure, which is the
+                # part that catches people out.
+                #
+                # So the caller passes byref(out) and reads `out`. Not pretty,
+                # but the alternative is a method that cannot be called.
+                pointer = "ctypes.POINTER(%s)" % sret
+                lines.append('    comtypes.STDMETHOD(%s, "%s", [' % (pointer, method))
+                pad = " " * max(1, 44 - len(pointer))
+                lines.append("        %s,%s# %s, the x64 hidden return slot"
+                             % (pointer, pad, sret))
+                for ptype, pname in params:
+                    rendered = self.ctype(ptype) or "ctypes.c_void_p"
+                    pad = " " * max(1, 44 - len(rendered))
+                    lines.append("        %s,%s# %s %s"
+                                 % (rendered, pad, ptype, pname))
+                lines.append("        ]),")
+                continue
+
             if not params:
                 lines.append('    comtypes.STDMETHOD(%s, "%s", []),'
                              % (ret, method))

@@ -267,10 +267,10 @@ def test_explicit_release_is_a_double_free(warp_device):
 def test_bindings_do_not_call_release_on_com_pointers():
     """F-52, statically: no new code should adopt the explicit-Release habit.
 
-    Scoped to the layers that are meant to be correct. OutputManager.py and
-    DesktopDuplication.py are the unported sample and are excluded until they
-    are rewritten - their Release() calls are tracked as F-52 rather than
-    silently tolerated here.
+    Every Python file in the package is in scope now. The exclusion that used
+    to live here covered OutputManager.py and DesktopDuplication.py, the
+    unported C++ sample; those were deleted in P6, so the rule applies
+    everywhere without exception.
     """
     import ast
     import glob

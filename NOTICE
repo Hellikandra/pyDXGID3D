@@ -22,30 +22,14 @@ property of Microsoft Corporation.
     Copyright (C) Microsoft Corporation. All rights reserved.
 
 Translated from: Windows SDK 10.0.19041.0
-Source files:    dxgi.idl, dxgi1_2.idl, dxgicommon.idl, dxgiformat.idl,
-                 dxgitype.idl, dxgidebug.h, d3d11.idl, d3d11sdklayers.idl,
-                 d3dcommon.idl
+Source files:    dxgi.idl through dxgi1_6.idl, dxgicommon.idl, dxgiformat.idl,
+                 dxgitype.idl, dxgidebug.h, d3d11.idl through d3d11_4.idl,
+                 d3d11sdklayers.idl, d3dcommon.idl, d3d12.idl,
+                 d3d12sdklayers.idl, d3d12video.idl, d3d11on12.idl,
+                 d3d12compatibility.idl
 
 --------------------------------------------------------------------------------
-2. Compiled shader blobs
---------------------------------------------------------------------------------
-
-VertexShader.py and PixelShader.py contain compiled DXBC bytecode built from the
-HLSL shaders in Microsoft's DXGI desktop duplication sample. The HLSL source text
-is embedded in the compiled blobs and carries:
-
-    // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-    // ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-    // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-    // PARTICULAR PURPOSE.
-    //
-    // Copyright (c) Microsoft Corporation. All rights reserved
-
-Original sample:
-https://github.com/microsoftarchive/msdn-code-gallery-microsoft/tree/master/Official%20Windows%20Platform%20Sample/DXGI%20desktop%20duplication%20sample
-
---------------------------------------------------------------------------------
-3. Structural inspiration
+2. Structural inspiration
 --------------------------------------------------------------------------------
 
 The application-layer class structure (OutputManager, ThreadManager) follows the

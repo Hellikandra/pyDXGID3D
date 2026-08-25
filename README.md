@@ -178,11 +178,6 @@ python -m pytest tests -q
 
 ## What does not work
 
-- **The sample application.** `DesktopDuplication.py`, `OutputManager.py` and
-  `ThreadManager.py` are a partial port of Microsoft's C++ desktop duplication sample.
-  Nothing calls `DuplicateOutput`, and several defects sit on the paths that execute
-  first. Treat these files as work in progress, not as an example to copy — use
-  `tools/dxgi_report.py` instead.
 - **There is no GPU-side delivery.** `deliver='gpu'` — a shared handle and keyed mutex for a
   consumer doing its own GPU work — is designed but not built. Every frame comes back
   through system memory.
@@ -249,11 +244,6 @@ Direct3D/PyIdl/     Translated interface definitions, one module per .idl
 tools/              Generator, SDK parser, layout probe, diagnostics
 tests/              Four tiers - see Tests above
 
-DesktopDuplication.py   Sample application - does not currently run
-OutputManager.py        Sample application - does not currently run
-ThreadManager.py        Sample application - stub
-VertexShader.py         Compiled DXBC blob used by the sample
-PixelShader.py          Compiled DXBC blob used by the sample
 ```
 
 ## Source SDK
