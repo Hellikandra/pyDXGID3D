@@ -160,6 +160,89 @@ Desktop Duplication produces a frame when the desktop composes one, so a 60 Hz p
 at most 60 per second no matter how fast the game runs. On 144 Hz you get up to 144. If the
 goal is more frames than the monitor shows, no desktop-level capture API can do it.
 
+## Using this from your own project
+
+```bash
+pip install pyDXGID3D[numpy]
+```
+
+```python
+from Direct3D.Capture import enumerate_outputs, CaptureOptions, DesktopCapture
+```
+
+**Those three names are the whole contract.** If you find yourself importing from
+`Direct3D.PyIdl` to do something the capture API should do for you, that is a gap in this
+package rather than a workaround you should keep — please say so.
+
+Three things to know before you build on it:
+
+**The frame is borrowed, not given.** `frame.array` is a view over pages Direct3D mapped for
+one iteration. It stops being valid the moment the loop moves on. Touching it afterwards
+raises `StaleFrameError` rather than reading freed memory — but only because the check is
+there, so do not remove it.
+
+**Reuse your destination.** `frame.copy()` allocates, and the allocation costs more than the
+copy: about 3.9 ms of page faults on a full 1920×1200 frame, against 3.76 ms for the copy
+itself. Hold one array outside the loop:
+
+```python
+buffer = numpy.empty((capture.height, capture.width, 4), numpy.uint8)
+for frame in capture:
+    process(frame.copy_into(buffer))
+```
+
+That is 253 fps of pipeline capacity instead of 128, for one line.
+
+**numpy is optional.** Without it, `frame.memoryview` gives you the same bytes and every
+piece of metadata still works. `frame.array` and `frame.copy()` raise an `ImportError` that
+names the extra.
+
+The packaging is asserted, not assumed: `tests/test_tier3_packaging.py` builds a wheel,
+installs it into a throwaway virtual environment and captures a frame from a directory that
+is not this repository, on every CI run.
+
+## Examples
+
+```
+examples/screenshot.py     one frame to a PNG - the smallest complete thing
+examples/region.py         a fixed crop, sustained, into a buffer you keep
+examples/displays.py       every monitor, and which GPU drives each
+examples/window.py         the area a window occupies - read its caveats
+examples/record.py         to H.264, by piping raw frames to ffmpeg
+examples/d3d12_device.py   a Direct3D 12 device, and what it will accept
+```
+
+They need nothing installed beyond the package: the PNG writer is forty lines of `zlib` in
+`examples/_png.py` rather than a Pillow dependency.
+
+**`window.py` is approximate and says so.** Desktop Duplication captures an *output*, so
+cropping to a window's rectangle also captures anything drawn on top of it. There is no fix
+within this API — `Windows.Graphics.Capture` is the one that captures a window's own
+content, and this package does not bind it.
+
+## How much of this has actually been run
+
+The suite proves the **declarations** match the SDK — vtable order, IIDs, structure sizes,
+field offsets, parameter counts, return types. That is static, and it is thorough: 649
+structures and 2,480 field offsets against a compiled measurement.
+
+It is not the same as the code having been executed. `tools/exercise.py` measures that half:
+
+```bash
+python tools/exercise.py
+```
+
+It builds every COM object this machine can produce and calls every method that can be
+called without changing anything — the `Get`, `Check`, `Is`, `Query` and `Enum` families —
+reporting what worked. On the development machine that is 44 of the 68 interrogative methods
+across 14 interfaces; the rest need an argument the tool will not invent, such as a real
+resource or a named GUID.
+
+That distinction matters. The two worst defects this project has had — 27 methods that
+faulted the interpreter, and one that made every shader blob unreadable — were both wrong
+return types, invisible to every static check, and found by calling a method rather than
+reading it.
+
 ## Tests
 
 ```bash
@@ -167,14 +250,15 @@ pip install pytest comtypes
 python -m pytest tests -q
 ```
 
-168 tests in four tiers:
+265 tests in four tiers:
 
 - **Tier 0** — abstract-syntax checks on the binding modules. Runs on any OS, no comtypes.
 - **Tier 1** — bindings against the SDK: vtable order, method signatures, structure sizes
   and field offsets, IIDs. Needs Windows and comtypes; uses **WARP**, the software
   rasteriser, so it runs on a machine with no GPU.
 - **Tier 2** — a real adapter and a real display.
-- **Tier 3** — throughput.
+- **Tier 3** — throughput, and the packaging check that builds a wheel and
+  imports it from outside the repository.
 
 ## What does not work
 
@@ -184,15 +268,26 @@ python -m pytest tests -q
 - **The cursor is not composited into the frame.** `IDXGIOutputDuplication` delivers the
   pointer shape separately; the bindings for it exist and nothing uses them yet.
   `CaptureOptions(cursor=True)` says so rather than silently ignoring the flag.
+- **Nothing renders.** Direct3D 12 is bound and a device can be created, but no code here
+  draws a triangle or encodes a video on the GPU. `d3d12video` in particular — hardware
+  encode and decode — is declared and has never been executed.
+- **Exact window capture is not possible with this API.** Cropping to a window's rectangle
+  also captures whatever is drawn on top of it. See `examples/window.py`.
 
 ## Planned
 
 In priority order:
 
-- A worked Direct3D 12 example — create a device, clear a render target — so the D3D12
-  bindings are executed and not merely declared
+- **A rendered frame.** `examples/d3d12_device.py` creates a device, queues, heaps and a root
+  signature; nothing yet builds a pipeline state and draws. That is the step which would
+  exercise the parts of Direct3D 12 that `tools/exercise.py` currently reports as untouched.
+- **GPU-side delivery** — `deliver='gpu'`, a shared handle and keyed mutex, for a consumer
+  that does its own GPU work rather than reading pixels back to system memory.
+- **Cursor compositing**, using the pointer-shape interfaces that are already bound.
 
-**Direct3D 10 and Direct3D 9 are deliberately out of scope.**
+**Direct3D 10 and Direct3D 9 are deliberately out of scope.** So is
+`Windows.Graphics.Capture`: it is the right API for exact window capture and it is a
+different family (WinRT) that would double the surface of this package.
 
 ## Requirements
 
@@ -207,6 +302,8 @@ pip install comtypes
 ## Layout
 
 ```
+examples/           Runnable examples - see Examples above
+
 Direct3D/Capture/   The capture API - this is what you import
   __init__.py         enumerate_outputs, CaptureOptions, DesktopCapture
   enumerate.py        outputs, each paired with the adapter that drives it
@@ -242,6 +339,9 @@ Direct3D/PyIdl/     Translated interface definitions, one module per .idl
   typemap.py          the canonical IDL-to-ctypes type table
 
 tools/              Generator, SDK parser, layout probe, diagnostics
+  exercise.py         calls the API and reports what actually ran
+  dxgi_report.py      end-to-end diagnostic and benchmark
+  tier0_sandbox.py    runs tier 0 as a bare CI runner sees it
 tests/              Four tiers - see Tests above
 
 ```

@@ -74,3 +74,31 @@ jobs:
           else
             echo "tests/ not present yet - skipping"
           fi
+
+  packaging:
+    # Tier 3, the packaging half: build a wheel, install it into a throwaway
+    # venv, and import it from a directory that is not the repository. Every
+    # other job has the repo on sys.path, so none of them can see a module that
+    # was left out of the wheel.
+    #
+    # No display on a hosted runner, so the capture assertions skip themselves.
+    # What still runs is the part that matters here - does it install, and is
+    # everything in it.
+    name: Tier 3 - the package from outside
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install the build tooling
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build pytest comtypes
+
+      - name: Build, install elsewhere, and import
+        shell: bash
+        run: pytest tests/test_tier3_packaging.py -v
